@@ -1,0 +1,47 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Gateway.Controllers.Notifications;
+
+/*
+public class NotificationsController : ContractController
+{
+    public NotificationsController(IMediator mediator) : base(mediator) { }
+
+
+
+    [HttpGet]
+    public async Task<IActionResult> Get([FromQuery] QueryNotificationDto dto)
+    {
+        GetPagedNotificationsQuery query = new(dto, ClientId);
+        return await Send(query);
+    }
+
+    [HttpPost("Instructor")]
+    [Authorize]
+    public async Task<IActionResult> Create([FromForm] CreateInstructorRequestDto dto)
+    {
+        CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
+        return await Send(command);
+    }
+
+    [HttpPost("Withdrawal")]
+    [Authorize]
+    public async Task<IActionResult> Create([FromForm] CreateWithdrawalRequestDto dto)
+    {
+        CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
+        return await Send(command);
+    }
+
+    //[HttpPost("MultiReceiver")]
+
+    [HttpPatch]
+    [Authorize]
+    public async Task<IActionResult> Update(UpdateNotificationDto dto)
+    {
+        UpdateNotificationCommand command = new(dto, ClientId);
+        return await Send(command);
+    }
+}
+*/
