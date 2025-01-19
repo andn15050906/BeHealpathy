@@ -10,7 +10,7 @@ public sealed class McqQuestion : Entity
     public Guid SurveyId { get; set; }
 
     // Navigations
-    public List<McqAnswer> Choices { get; set; }
+    public List<McqAnswer> Answers { get; set; }
 
 
 
@@ -28,6 +28,6 @@ public sealed class McqQuestion : Entity
         Content = content;
         Explanation = explanation;
         SurveyId = surveyId;
-        Choices = choices;
+        Answers = choices;
     }
 }

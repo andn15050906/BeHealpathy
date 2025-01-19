@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Contract.Requests.Progress.SubmissionRequests.Dtos;
+using Contract.Responses.Progress;
 
 namespace Contract.Requests.Progress.SubmissionRequests;
-internal class GetPagedSubmissionsQuery
+
+public sealed class GetPagedSubmissionsQuery : IRequest<Result<PagedResult<SubmissionModel>>>
 {
+    public QuerySubmissionDto Rq { get; init; }
+    public Guid UserId { get; init; }
+
+
+
+    public GetPagedSubmissionsQuery(QuerySubmissionDto rq, Guid userId)
+    {
+        Rq = rq;
+        UserId = userId;
+    }
 }

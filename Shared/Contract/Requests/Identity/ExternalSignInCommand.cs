@@ -1,5 +1,5 @@
 ﻿using Contract.Messaging.Models;
-using Contract.Responses.Identity.TempModels;
+using Contract.Responses.Identity;
 using System.Security.Claims;
 
 namespace Contract.Requests.Identity;

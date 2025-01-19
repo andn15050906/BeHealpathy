@@ -1,4 +1,5 @@
-﻿using Contract.Messaging.ApiClients.Http;
+﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Library.MediaRequests;
 using Contract.Requests.Library.MediaRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -24,9 +25,22 @@ public sealed class MediaResourcesController : ContractController
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create(CreateMediaResourceDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateMediaResourceDto dto, [FromServices] IFileService fileService)
     {
-        CreateMediaResourceCommand command = new(Guid.NewGuid(), dto, ClientId);
+        var id = Guid.NewGuid();
+        Multimedia media = await fileService.SaveImageAndUpdateDto(dto.Media, id);
+
+        CreateMediaResourceCommand command = new(Guid.NewGuid(), dto, ClientId, media);
+        return await Send(command);
+    }
+
+    [HttpPatch]
+    [Authorize]
+    public async Task<IActionResult> Update([FromForm] UpdateMediaResourceDto dto, [FromServices] IFileService fileService)
+    {
+        Multimedia media = await fileService.SaveImageAndUpdateDto(dto.ReplacedMedia, dto.Id);
+
+        UpdateMediaResourceCommand command = new(dto, ClientId, media);
         return await Send(command);
     }
 

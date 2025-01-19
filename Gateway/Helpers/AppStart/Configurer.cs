@@ -1,5 +1,6 @@
 ﻿using Contract.Helpers;
 using Contract.Helpers.AppExploration;
+using Contract.Helpers.FeatureFlags;
 using Contract.Helpers.Storage;
 using Core.Helpers;
 using Gateway.Services.Microservices;
@@ -26,6 +27,7 @@ public class Configurer
 
     public static EmailOptions EmailOptions;
     public static OAuthOptions OAuthOptions;
+    public static FeatureFlagOptions FeatureFlags;
 
     private static CookieConfigOptions _authCookieOptions;
 
@@ -52,6 +54,7 @@ public class Configurer
 
         EmailOptions = Get<EmailOptions>("External:Gmail");
         OAuthOptions = Get<OAuthOptions>("External:OAuth:Google");
+        FeatureFlags = Get<FeatureFlagOptions>("FeatureFlags");
 
         _authCookieOptions = Get<CookieConfigOptions>("CookieOptions");
     }

@@ -1,4 +1,4 @@
-﻿using Contract.Domain.Shared.CommentBase;
+﻿using Contract.Domain.Shared.ReactionBase;
 
 namespace Contract.Domain.CourseAggregate;
 
@@ -9,7 +9,7 @@ public sealed class LectureReaction : Reaction
 
     }
 
-    public LectureReaction(Guid creatorId, Guid sourceEntityId, string content) : base(creatorId, sourceEntityId, content)
+    public LectureReaction(Guid id, Guid creatorId, Guid sourceEntityId, string content) : base(id, creatorId, sourceEntityId, content)
     {
 
     }

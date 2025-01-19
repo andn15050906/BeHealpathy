@@ -1,5 +1,4 @@
 ﻿using Contract.Domain.Shared.CommentBase;
-using Contract.Domain.Shared.MultimediaBase;
 
 namespace Contract.Domain.CourseAggregate;
 
@@ -20,8 +19,8 @@ public sealed class LectureComment : Comment
 
     }
 
-    public LectureComment(Guid id, Guid creatorId, Guid sourceId, string content, List<Multimedia> medias)
-        : base(id, creatorId, sourceId, content, medias)
+    public LectureComment(Guid id, Guid creatorId, Guid sourceId, string content)
+        : base(id, creatorId, sourceId, content)
     {
 
     }

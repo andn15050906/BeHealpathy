@@ -1,8 +1,7 @@
 ﻿using Contract.Helpers;
-using Contract.Responses.Identity.TempModels;
-using Contract.Responses.Identity.UserModels;
 using Contract.Requests.Identity;
 using Microsoft.EntityFrameworkCore;
+using Contract.Responses.Identity;
 
 namespace Gateway.Services.Identity;
 

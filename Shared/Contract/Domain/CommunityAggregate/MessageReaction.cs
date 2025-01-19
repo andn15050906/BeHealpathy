@@ -1,15 +1,15 @@
-﻿using Contract.Domain.Shared.CommentBase;
+﻿using Contract.Domain.Shared.ReactionBase;
 
 namespace Contract.Domain.CommunityAggregate;
 
 public sealed class MessageReaction : Reaction
 {
-    public MessageReaction()
+    public MessageReaction() : base()
     {
 
     }
 
-    public MessageReaction(Guid creatorId, Guid sourceEntityId, string content) : base(creatorId, sourceEntityId, content)
+    public MessageReaction(Guid id, Guid creatorId, Guid sourceEntityId, string content) : base(id, creatorId, sourceEntityId, content)
     {
 
     }

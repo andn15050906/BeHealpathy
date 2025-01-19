@@ -1,5 +1,4 @@
 ﻿using Contract.Requests.Identity.Dtos;
-using Contract.Requests.Shared.Base;
 
 namespace Contract.Requests.Identity;
 

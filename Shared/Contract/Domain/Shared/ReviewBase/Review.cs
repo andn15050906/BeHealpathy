@@ -1,4 +1,5 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Domain.UserAggregate;
 
 namespace Contract.Domain.Shared.ReviewBase;
 
@@ -13,6 +14,7 @@ public abstract class Review : AuditedEntity
 
     // Navigations
     public List<Multimedia> Medias { get; set; }
+    public User Creator { get; set; }
 
 
 
@@ -26,7 +28,7 @@ public abstract class Review : AuditedEntity
     }
 #pragma warning restore CS8618
 
-    public Review(Guid id, Guid creatorId, Guid sourceId, string content, byte rating, List<Multimedia> medias)
+    public Review(Guid id, Guid creatorId, Guid sourceId, string content, byte rating)
     {
         Id = id;
         CreatorId = creatorId;
@@ -34,6 +36,5 @@ public abstract class Review : AuditedEntity
         SourceId = sourceId;
         Content = content;
         Rating = rating;
-        Medias = medias;
     }
 }

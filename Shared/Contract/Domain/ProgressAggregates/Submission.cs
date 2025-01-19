@@ -1,10 +1,15 @@
-﻿namespace Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.UserAggregate;
 
+namespace Contract.Domain.ProgressAggregates;
 
 public sealed class Submission : AuditedEntity
 {
+    public Guid SurveyId { get; set; }
+
     // Navigations
+    public Survey Survey { get; set; }
     public List<McqChoice> Choices { get; set; }
+    public User Creator { get; set; }
 
 
 
@@ -16,11 +21,13 @@ public sealed class Submission : AuditedEntity
     {
 
     }
-#pragma warning restore CS8618
 
-    public Submission(Guid id, Guid creatorId)
+    public Submission(Guid id, Guid creatorId, Guid surveyId, List<McqChoice> choices)
     {
         Id = id;
         CreatorId = creatorId;
+        SurveyId = surveyId;
+        Choices = choices;
     }
+#pragma warning restore CS8618
 }

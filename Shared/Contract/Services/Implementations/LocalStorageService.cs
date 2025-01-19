@@ -48,7 +48,7 @@ public sealed class LocalStorageService : IStorageService
             using var createdStream = File.Create(identifier);
             await media.Stream.CopyToAsync(createdStream);
             media.Stream.Dispose();
-            return new Multimedia(identifier, media.Type, string.Empty, media.Title);
+            return new Multimedia(media.SourceId, identifier, media.Type, string.Empty, media.Title);
         }
         catch (Exception ex)
         {

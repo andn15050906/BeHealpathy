@@ -1,6 +1,7 @@
-﻿using Contract.Requests.Courses.CourseReviewRequests;
-using Contract.Requests.Courses.InstructorRequests;
+﻿using Contract.Requests.Courses.AdvisorRequests;
 using Contract.Requests.Courses.LectureRequests;
+using Contract.Requests.Shared.BaseRequests.Comments;
+using Contract.Requests.Shared.BaseRequests.Reviews;
 using Core.Helpers;
 
 namespace Contract.Messaging.ApiClients.Http;
@@ -21,7 +22,7 @@ public static class API
 
         public const string InstructorBaseUri = "api/instructors";
 
-        public static string GetPagedInstructorUri(GetPagedInstructorsQuery query)
+        public static string GetPagedInstructorUri(GetPagedAdvisorsQuery query)
             => $"{InstructorBaseUri}?{QueryBuilder.BuildQuery(query.Rq)}";
 
 
@@ -69,7 +70,7 @@ public static class API
 
         public const string CourseReviewBaseUri = "api/coursereviews";
 
-        public static string GetPagedCourseReviewUri(GetPagedCourseReviewsQuery query)
+        public static string GetPagedCourseReviewUri(GetPagedReviewsQuery query)
             => $"{CourseReviewBaseUri}?{QueryBuilder.BuildQuery(query.Rq)}";
 
 
@@ -77,13 +78,13 @@ public static class API
 
 
 
-        public const string CourseCommentBaseUri = "api/coursecomments";
+        public const string LectureCommentBaseUri = "api/LectureComments";
 
-        public static string GetPagedCourseCommentsUri(GetPagedLectureCommentsQuery query)
-            => $"{CourseCommentBaseUri}?{QueryBuilder.BuildQuery(query.Rq)}";
+        public static string GetPagedLectureCommentsUri(GetPagedCommentsQuery query)
+            => $"{LectureCommentBaseUri}?{QueryBuilder.BuildQuery(query.Rq)}";
 
-        public static string DeleteCourseCommentByIdUri(Guid id)
-            => $"{CourseCommentBaseUri}/{id}";
+        public static string DeleteLectureCommentByIdUri(Guid id)
+            => $"{LectureCommentBaseUri}/{id}";
 
 
 

@@ -234,11 +234,16 @@ namespace Gateway.Migrations
                     b.Property<Guid>("SourceId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ChatMessageId");
 
                     b.HasIndex("CreatorId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("MessageReactions", (string)null);
                 });
@@ -423,6 +428,8 @@ namespace Gateway.Migrations
 
                     b.HasIndex("AdvisorId");
 
+                    b.HasIndex("CreatorId");
+
                     b.HasIndex("LeafCategoryId");
 
                     b.ToTable("Courses", null, t =>
@@ -474,6 +481,8 @@ namespace Gateway.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
+
+                    b.HasIndex("CreatorId");
 
                     b.ToTable("CourseReviews", null, t =>
                         {
@@ -545,7 +554,7 @@ namespace Gateway.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("CourseId")
+                    b.Property<Guid>("CourseId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreationTime")
@@ -568,9 +577,6 @@ namespace Gateway.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SectionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Title")
@@ -633,6 +639,8 @@ namespace Gateway.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatorId");
+
                     b.HasIndex("LectureCommentId");
 
                     b.HasIndex("LectureId");
@@ -669,6 +677,8 @@ namespace Gateway.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatorId");
+
                     b.HasIndex("LectureCommentId");
 
                     b.ToTable("LectureReactions", (string)null);
@@ -682,10 +692,6 @@ namespace Gateway.Migrations
 
                     b.Property<int>("CommentCount")
                         .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(3000)");
 
                     b.Property<DateTime>("CreationTime")
                         .ValueGeneratedOnAdd()
@@ -721,6 +727,8 @@ namespace Gateway.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
 
                     b.ToTable("Articles", (string)null);
                 });
@@ -773,6 +781,8 @@ namespace Gateway.Migrations
 
                     b.HasIndex("ArticleId");
 
+                    b.HasIndex("CreatorId");
+
                     b.ToTable("ArticleComments", (string)null);
                 });
 
@@ -812,7 +822,36 @@ namespace Gateway.Migrations
 
                     b.HasIndex("ArticleId");
 
+                    b.HasIndex("CreatorId");
+
                     b.ToTable("ArticleReactions", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleSection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(3000)");
+
+                    b.Property<string>("Header")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.ToTable("ArticleSections", (string)null);
                 });
 
             modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleTag", b =>
@@ -873,6 +912,8 @@ namespace Gateway.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatorId");
+
                     b.ToTable("MediaResources", (string)null);
                 });
 
@@ -892,6 +933,54 @@ namespace Gateway.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ProgressAggregates.DiaryNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Mood")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Theme")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("DiaryNotes", (string)null);
                 });
 
             modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqAnswer", b =>
@@ -999,7 +1088,13 @@ namespace Gateway.Migrations
                         .IsRequired()
                         .HasColumnType("NVARCHAR(255)");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(100)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
 
                     b.ToTable("Routines", (string)null);
                 });
@@ -1060,7 +1155,14 @@ namespace Gateway.Migrations
                     b.Property<Guid>("LastModifierId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("SurveyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("SurveyId");
 
                     b.ToTable("Submissions", (string)null);
                 });
@@ -1379,7 +1481,7 @@ namespace Gateway.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Contract.Domain.CommunityAggregate.ChatMessage", b =>
@@ -1449,11 +1551,18 @@ namespace Gateway.Migrations
                         .WithMany("Reactions")
                         .HasForeignKey("ChatMessageId");
 
-                    b.HasOne("Contract.Domain.UserAggregate.User", null)
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Contract.Domain.CourseAggregate.Course", b =>
@@ -1462,11 +1571,19 @@ namespace Gateway.Migrations
                         .WithMany("Courses")
                         .HasForeignKey("AdvisorId");
 
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Contract.Domain.CourseAggregate.Category", "LeafCategory")
                         .WithMany()
                         .HasForeignKey("LeafCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Creator");
 
                     b.Navigation("LeafCategory");
                 });
@@ -1476,6 +1593,14 @@ namespace Gateway.Migrations
                     b.HasOne("Contract.Domain.CourseAggregate.Course", null)
                         .WithMany("Reviews")
                         .HasForeignKey("CourseId");
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Contract.Domain.CourseAggregate.Enrollment", b =>
@@ -1486,18 +1611,34 @@ namespace Gateway.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.Navigation("Course");
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Contract.Domain.CourseAggregate.Lecture", b =>
                 {
                     b.HasOne("Contract.Domain.CourseAggregate.Course", null)
                         .WithMany("Lectures")
-                        .HasForeignKey("CourseId");
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Contract.Domain.CourseAggregate.LectureComment", b =>
                 {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Contract.Domain.CourseAggregate.LectureComment", null)
                         .WithMany("Replies")
                         .HasForeignKey("LectureCommentId");
@@ -1505,13 +1646,34 @@ namespace Gateway.Migrations
                     b.HasOne("Contract.Domain.CourseAggregate.Lecture", null)
                         .WithMany("Comments")
                         .HasForeignKey("LectureId");
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Contract.Domain.CourseAggregate.LectureReaction", b =>
                 {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Contract.Domain.CourseAggregate.LectureComment", null)
                         .WithMany("Reactions")
                         .HasForeignKey("LectureCommentId");
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.LibraryAggregate.Article", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleComment", b =>
@@ -1525,6 +1687,14 @@ namespace Gateway.Migrations
                         .WithMany("Comments")
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleReaction", b =>
@@ -1538,6 +1708,25 @@ namespace Gateway.Migrations
                         .WithMany("Reactions")
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleSection", b =>
+                {
+                    b.HasOne("Contract.Domain.LibraryAggregate.Article", "Article")
+                        .WithMany("Sections")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
                 });
 
             modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleTag", b =>
@@ -1555,10 +1744,32 @@ namespace Gateway.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Contract.Domain.LibraryAggregate.MediaResource", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ProgressAggregates.DiaryNote", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqAnswer", b =>
                 {
                     b.HasOne("Contract.Domain.ProgressAggregates.McqQuestion", null)
-                        .WithMany("Choices")
+                        .WithMany("Answers")
                         .HasForeignKey("McqQuestionId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
@@ -1591,6 +1802,17 @@ namespace Gateway.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Routine", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoutineLog", b =>
                 {
                     b.HasOne("Contract.Domain.ProgressAggregates.Routine", null)
@@ -1598,6 +1820,25 @@ namespace Gateway.Migrations
                         .HasForeignKey("RoutineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Submission", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Contract.Domain.ProgressAggregates.Survey", "Survey")
+                        .WithMany()
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Survey");
                 });
 
             modelBuilder.Entity("Contract.Domain.Shared.Bill", b =>
@@ -1626,7 +1867,7 @@ namespace Gateway.Migrations
             modelBuilder.Entity("Contract.Domain.UserAggregate.Preference", b =>
                 {
                     b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
+                        .WithMany("Preferences")
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1637,7 +1878,7 @@ namespace Gateway.Migrations
             modelBuilder.Entity("Contract.Domain.UserAggregate.Setting", b =>
                 {
                     b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
+                        .WithMany("Settings")
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1723,6 +1964,8 @@ namespace Gateway.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Reactions");
+
+                    b.Navigation("Sections");
                 });
 
             modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleComment", b =>
@@ -1734,7 +1977,7 @@ namespace Gateway.Migrations
 
             modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqQuestion", b =>
                 {
-                    b.Navigation("Choices");
+                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("Contract.Domain.ProgressAggregates.Routine", b =>
@@ -1750,6 +1993,13 @@ namespace Gateway.Migrations
             modelBuilder.Entity("Contract.Domain.ProgressAggregates.Survey", b =>
                 {
                     b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("Contract.Domain.UserAggregate.User", b =>
+                {
+                    b.Navigation("Preferences");
+
+                    b.Navigation("Settings");
                 });
 #pragma warning restore 612, 618
         }

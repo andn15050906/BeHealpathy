@@ -1,0 +1,46 @@
+﻿using Contract.Domain.ProgressAggregates;
+using Contract.Helpers;
+using Contract.Requests.Progress.RoutineRequests;
+using Contract.Requests.Progress.RoutineRequests.Dtos;
+using Contract.Responses.Progress;
+using System.Linq.Expressions;
+
+namespace Gateway.Services.Library.RoutineHandlers;
+
+public sealed class GetPagedRoutinesHandler : RequestHandler<GetPagedRoutinesQuery, PagedResult<RoutineModel>, HealpathyContext>
+{
+    public GetPagedRoutinesHandler(HealpathyContext context, IAppLogger logger) : base(context, logger)
+    {
+    }
+
+    public override async Task<Result<PagedResult<RoutineModel>>> Handle(GetPagedRoutinesQuery request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var query = _context.GetPagingQuery(
+                RoutineModel.MapExpression,
+                GetPredicate(request.Rq),
+                request.Rq.PageIndex,
+                request.Rq.PageSize,
+                false
+            );
+            var result = await query.ExecuteWithOrderBy(_ => _.LastModificationTime);
+
+            return ToQueryResult(result);
+        }
+        catch (Exception ex)
+        {
+            return ServerError(ex.Message);
+        }
+    }
+
+    private Expression<Func<Routine, bool>>? GetPredicate(QueryRoutineDto dto)
+    {
+        if (dto.CreatorId is not null)
+            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
+        if (dto.Title is not null)
+            return _ => _.Title.Contains(_.Title, StringComparison.OrdinalIgnoreCase) && !_.IsDeleted;
+
+        return _ => !_.IsDeleted;
+    }
+}

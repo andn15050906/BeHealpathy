@@ -1,20 +1,14 @@
 ﻿using Contract.Helpers.Storage;
 using Contract.Messaging.ApiClients.Http;
-using Contract.Messaging.Models;
+using Contract.Requests.Courses.AdvisorRequests;
 using Contract.Requests.Courses.CategoryRequests;
-using Contract.Requests.Courses.CourseReviewRequests;
 using Contract.Requests.Courses.EnrollmentRequests;
-using Contract.Requests.Courses.InstructorRequests;
 using Contract.Requests.Courses.LectureRequests;
-using Contract.Responses.Courses.CategoryModels;
-using Contract.Responses.Courses.CourseModels;
-using Contract.Responses.Courses.CourseReviewModels;
-using Contract.Responses.Courses.EnrollmentModels;
-using Contract.Responses.Courses.InstructorModels;
-using Contract.Responses.Courses.LectureCommentModels;
-using Contract.Responses.Courses.LectureModels;
+using Contract.Requests.Shared.BaseRequests.Comments;
+using Contract.Requests.Shared.BaseRequests.Reviews;
+using Contract.Responses.Courses;
+using Contract.Responses.Shared;
 using Contract.Services.Contracts;
-using Core.Responses;
 
 namespace Contract.Services.Implementations;
 
@@ -32,7 +26,7 @@ public sealed class CourseHttpService : HttpApiClient, ICourseApiService
 
 
 
-    public async Task<Result<List<CategoryModel>>> GetCategoriesAsync(GetCategoriesQuery query)
+    public async Task<Result<List<CategoryModel>>> GetCategoriesAsync(GetAllCategoriesQuery query)
         => await GetAsync<List<CategoryModel>>(API.Courses.CategoryBaseUri);
 
     public async Task<Result> CreateAsync(CreateCategoryCommand command)
@@ -49,13 +43,13 @@ public sealed class CourseHttpService : HttpApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<InstructorModel>>> GetPagedAsync(GetPagedInstructorsQuery query)
-        => await GetAsync<PagedResult<InstructorModel>>(API.Courses.InstructorBaseUri);
+    public async Task<Result<PagedResult<AdvisorModel>>> GetPagedAsync(GetPagedAdvisorsQuery query)
+        => await GetAsync<PagedResult<AdvisorModel>>(API.Courses.InstructorBaseUri);
 
-    public async Task<Result> CreateAsync(CreateInstructorCommand command)
+    public async Task<Result> CreateAsync(CreateAdvisorCommand command)
         => await PostAsync(API.Courses.InstructorBaseUri, command.Rq);
 
-    public async Task<Result> UpdateAsync(UpdateInstructorCommand command)
+    public async Task<Result> UpdateAsync(UpdateAdvisorCommand command)
         => await PatchAsync(API.Courses.InstructorBaseUri, command.Rq);
 
 
@@ -82,9 +76,9 @@ public sealed class CourseHttpService : HttpApiClient, ICourseApiService
     public async Task<Result> CreateAsync(CreateCourseCommand command)
     {
         var thumb = await _fileService.SaveImage(
-            await MediaWithStream.FromImageDto(command.Rq.Thumb, _ => _fileService.GetCourseThumbIdentifier(command.Id))
+            await MediaWithStream.FromImageDto(command.Rq.Thumb, command.Id, _ => _fileService.GetCourseThumbIdentifier(command.Id))
         );
-        command.Rq.Thumb.ReplaceFileWithUrl(thumb);
+        command.Rq.Thumb.UpdateAfterSave(thumb);
 
         var result = await PostAsync(API.Courses.CourseBaseUri, command);
 
@@ -126,30 +120,30 @@ public sealed class CourseHttpService : HttpApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<LectureCommentModel>>> GetPagedAsync(GetPagedLectureCommentsQuery query)
-        => await GetAsync<PagedResult<LectureCommentModel>>(API.Courses.GetPagedCourseCommentsUri(query));
+    public async Task<Result<PagedResult<CommentModel>>> GetPagedLectureCommentsAsync(GetPagedCommentsQuery query)
+        => await GetAsync<PagedResult<CommentModel>>(API.Courses.GetPagedLectureCommentsUri(query));
 
-    public async Task<Result> CreateAsync(CreateLectureCommentCommand command)
-        => await PostAsync(API.Courses.CourseCommentBaseUri, command.Rq);
+    public async Task<Result> CreateLectureCommentAsync(CreateCommentCommand command)
+        => await PostAsync(API.Courses.LectureCommentBaseUri, command.Rq);
 
-    public async Task<Result> UpdateAsync(UpdateLectureCommentCommand command)
-        => await PatchAsync(API.Courses.CourseCommentBaseUri, command);
+    public async Task<Result> UpdateLectureCommentAsync(UpdateCommentCommand command)
+        => await PatchAsync(API.Courses.LectureCommentBaseUri, command);
 
-    public async Task<Result> DeleteAsync(DeleteLectureCommentCommand command)
-        => await DeleteAsync(API.Courses.DeleteCourseCommentByIdUri(command.Id));
-
-
+    public async Task<Result> DeleteLectureCommentAsync(DeleteCommentCommand command)
+        => await DeleteAsync(API.Courses.DeleteLectureCommentByIdUri(command.Id));
 
 
 
 
-    public async Task<Result<PagedResult<CourseReviewModel>>> GetPagedAsync(GetPagedCourseReviewsQuery query)
-        => await GetAsync<PagedResult<CourseReviewModel>>(API.Courses.GetPagedCourseReviewUri(query));
 
-    public async Task<Result> CreateAsync(CreateCourseReviewCommand command)
+
+    public async Task<Result<PagedResult<ReviewModel>>> GetPagedCourseReviewsAsync(GetPagedReviewsQuery query)
+        => await GetAsync<PagedResult<ReviewModel>>(API.Courses.GetPagedCourseReviewUri(query));
+
+    public async Task<Result> CreateCourseReviewAsync(CreateReviewCommand command)
         => await PostAsync(API.Courses.CourseReviewBaseUri, command.Rq);
 
-    public async Task<Result> UpdateAsync(UpdateCourseReviewCommand command)
+    public async Task<Result> UpdateCourseReviewAsync(UpdateReviewCommand command)
         => await PatchAsync(API.Courses.CourseReviewBaseUri, command.Rq);
 
 

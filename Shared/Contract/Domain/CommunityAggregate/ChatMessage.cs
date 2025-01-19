@@ -1,4 +1,5 @@
 ﻿using Contract.Domain.CommunityAggregate.Enums;
+using Contract.Domain.Shared.MultimediaBase;
 
 namespace Contract.Domain.CommunityAggregate;
 
@@ -12,13 +13,11 @@ public sealed class ChatMessage : AuditedEntity
     public Guid ConversationId { get; set; }
 
     // Navigations
+    public List<Multimedia> Attachments { get; set; }
     public List<MessageReaction> Reactions { get; set; }
 
 
-
-
-
-
+    
 #pragma warning disable CS8618
     public ChatMessage()
     {

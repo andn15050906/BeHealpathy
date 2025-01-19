@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Contract.Requests.Community.MeetingRequests;
 
-namespace Contract.Requests.Community.MeetingRequests;
-internal class DeleteMeetingCommand
+public sealed class DeleteMeetingCommand : DeleteCommand
 {
+    public DeleteMeetingCommand(Guid id, Guid userId, bool isCompensating = false)
+        : base(id, userId, isCompensating)
+    {
+    }
 }

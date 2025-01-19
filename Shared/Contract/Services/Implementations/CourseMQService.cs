@@ -1,21 +1,15 @@
 ﻿using MassTransit;
 using Contract.Services.Contracts;
 using Contract.Messaging.ApiClients.MQ;
-using Contract.Messaging.Models;
-using Contract.Responses.Courses.CategoryModels;
 using Contract.Requests.Courses.CategoryRequests;
-using Core.Responses;
-using Contract.Responses.Courses.InstructorModels;
-using Contract.Requests.Courses.InstructorRequests;
-using Contract.Responses.Courses.CourseModels;
-using Contract.Responses.Courses.LectureModels;
 using Contract.Requests.Courses.LectureRequests;
-using Contract.Responses.Courses.LectureCommentModels;
-using Contract.Requests.Courses.CourseReviewRequests;
-using Contract.Responses.Courses.CourseReviewModels;
 using Contract.Requests.Courses.EnrollmentRequests;
-using Contract.Responses.Courses.EnrollmentModels;
 using Contract.Helpers.Storage;
+using Contract.Responses.Shared;
+using Contract.Requests.Courses.AdvisorRequests;
+using Contract.Responses.Courses;
+using Contract.Requests.Shared.BaseRequests.Comments;
+using Contract.Requests.Shared.BaseRequests.Reviews;
 
 namespace Contract.Services.Implementations;
 
@@ -33,8 +27,8 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
 
 
 
-    public async Task<Result<List<CategoryModel>>> GetCategoriesAsync(GetCategoriesQuery query)
-        => await Send<GetCategoriesQuery, List<CategoryModel>>(query);
+    public async Task<Result<List<CategoryModel>>> GetCategoriesAsync(GetAllCategoriesQuery query)
+        => await Send<GetAllCategoriesQuery, List<CategoryModel>>(query);
 
     public async Task<Result> CreateAsync(CreateCategoryCommand command)
         => await Send(command);
@@ -50,13 +44,13 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<InstructorModel>>> GetPagedAsync(GetPagedInstructorsQuery query)
-        => await Send<GetPagedInstructorsQuery, PagedResult<InstructorModel>>(query);
+    public async Task<Result<PagedResult<AdvisorModel>>> GetPagedAsync(GetPagedAdvisorsQuery query)
+        => await Send<GetPagedAdvisorsQuery, PagedResult<AdvisorModel>>(query);
 
-    public async Task<Result> CreateAsync(CreateInstructorCommand command)
+    public async Task<Result> CreateAsync(CreateAdvisorCommand command)
         => await Send(command);
 
-    public async Task<Result> UpdateAsync(UpdateInstructorCommand command)
+    public async Task<Result> UpdateAsync(UpdateAdvisorCommand command)
         => await Send(command);
 
 
@@ -83,10 +77,10 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
     public async Task<Result> CreateAsync(CreateCourseCommand command)
     {
         var thumb = await _fileService.SaveImage(
-            await MediaWithStream.FromImageDto(command.Rq.Thumb, _ => _fileService.GetCourseThumbIdentifier(command.Id))
+            await MediaWithStream.FromImageDto(command.Rq.Thumb, command.Id, _ => _fileService.GetCourseThumbIdentifier(command.Id))
         );
 
-        command.Rq.Thumb.ReplaceFileWithUrl(thumb);
+        command.Rq.Thumb.UpdateAfterSave(thumb);
         return await Send(command);
     }
 
@@ -95,10 +89,10 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
         if (command.Rq.Thumb is not null)
         {
             var thumb = await _fileService.SaveImage(
-                await MediaWithStream.FromImageDto(command.Rq.Thumb, _ => _fileService.GetCourseThumbIdentifier(command.Rq.Id))
+                await MediaWithStream.FromImageDto(command.Rq.Thumb, command.Rq.Id, _ => _fileService.GetCourseThumbIdentifier(command.Rq.Id))
             );
 
-            command.Rq.Thumb.ReplaceFileWithUrl(thumb);
+            command.Rq.Thumb.UpdateAfterSave(thumb);
         }
 
         return await Send(command);
@@ -129,16 +123,16 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<LectureCommentModel>>> GetPagedAsync(GetPagedLectureCommentsQuery query)
-        => await Send<GetPagedLectureCommentsQuery, PagedResult<LectureCommentModel>>(query);
+    public async Task<Result<PagedResult<CommentModel>>> GetPagedLectureCommentsAsync(GetPagedCommentsQuery query)
+        => await Send<GetPagedCommentsQuery, PagedResult<CommentModel>>(query);
 
-    public async Task<Result> CreateAsync(CreateLectureCommentCommand command)
+    public async Task<Result> CreateLectureCommentAsync(CreateCommentCommand command)
         => await Send(command);
 
-    public async Task<Result> UpdateAsync(UpdateLectureCommentCommand command)
+    public async Task<Result> UpdateLectureCommentAsync(UpdateCommentCommand command)
         => await Send(command);
 
-    public async Task<Result> DeleteAsync(DeleteLectureCommentCommand command)
+    public async Task<Result> DeleteLectureCommentAsync(DeleteCommentCommand command)
         => await Send(command);
 
 
@@ -146,13 +140,13 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<CourseReviewModel>>> GetPagedAsync(GetPagedCourseReviewsQuery query)
-        => await Send<GetPagedCourseReviewsQuery, PagedResult<CourseReviewModel>>(query);
+    public async Task<Result<PagedResult<ReviewModel>>> GetPagedCourseReviewsAsync(GetPagedReviewsQuery query)
+        => await Send<GetPagedReviewsQuery, PagedResult<ReviewModel>>(query);
 
-    public async Task<Result> CreateAsync(CreateCourseReviewCommand command)
+    public async Task<Result> CreateCourseReviewAsync(CreateReviewCommand command)
         => await Send(command);
 
-    public async Task<Result> UpdateAsync(UpdateCourseReviewCommand command)
+    public async Task<Result> UpdateCourseReviewAsync(UpdateReviewCommand command)
         => await Send(command);
 
 

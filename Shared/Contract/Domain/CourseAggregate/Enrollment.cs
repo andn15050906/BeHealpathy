@@ -1,4 +1,5 @@
 ﻿using Contract.Domain.CourseAggregate.Enums;
+using Contract.Domain.UserAggregate;
 using Core.Domain;
 
 namespace Contract.Domain.CourseAggregate;
@@ -17,6 +18,7 @@ public sealed class Enrollment : AuditedEntity
 
     // Navigations
     public Course Course { get; set; }
+    public User Creator { get; set; }
 
 
 

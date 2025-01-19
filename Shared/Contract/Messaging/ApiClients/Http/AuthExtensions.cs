@@ -31,7 +31,7 @@ public static class AuthExtensions
         var builder = services
             .AddAuthentication(options =>
             {
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultScheme = SCHEME;
             })
             .AddPolicyScheme(SCHEME, SCHEME, options =>

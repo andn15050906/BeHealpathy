@@ -1,32 +1,26 @@
-﻿using Contract.Messaging.Models;
+﻿using Contract.Requests.Courses.AdvisorRequests;
 using Contract.Requests.Courses.CategoryRequests;
-using Contract.Requests.Courses.CourseReviewRequests;
 using Contract.Requests.Courses.EnrollmentRequests;
-using Contract.Requests.Courses.InstructorRequests;
 using Contract.Requests.Courses.LectureRequests;
-using Contract.Responses.Courses.CategoryModels;
-using Contract.Responses.Courses.CourseModels;
-using Contract.Responses.Courses.CourseReviewModels;
-using Contract.Responses.Courses.EnrollmentModels;
-using Contract.Responses.Courses.InstructorModels;
-using Contract.Responses.Courses.LectureCommentModels;
-using Contract.Responses.Courses.LectureModels;
-using Core.Responses;
+using Contract.Requests.Shared.BaseRequests.Comments;
+using Contract.Requests.Shared.BaseRequests.Reviews;
+using Contract.Responses.Courses;
+using Contract.Responses.Shared;
 
 namespace Contract.Services.Contracts;
 
 public interface ICourseApiService
 {
-    Task<Result<List<CategoryModel>>> GetCategoriesAsync(GetCategoriesQuery query);
+    Task<Result<List<CategoryModel>>> GetCategoriesAsync(GetAllCategoriesQuery query);
     Task<Result> CreateAsync(CreateCategoryCommand command);
     Task<Result> UpdateAsync(UpdateCategoryCommand command);
     Task<Result> DeleteAsync(DeleteCategoryCommand command);
 
 
 
-    Task<Result<PagedResult<InstructorModel>>> GetPagedAsync(GetPagedInstructorsQuery query);
-    Task<Result> CreateAsync(CreateInstructorCommand command);
-    Task<Result> UpdateAsync(UpdateInstructorCommand command);
+    Task<Result<PagedResult<AdvisorModel>>> GetPagedAsync(GetPagedAdvisorsQuery query);
+    Task<Result> CreateAsync(CreateAdvisorCommand command);
+    Task<Result> UpdateAsync(UpdateAdvisorCommand command);
 
 
 
@@ -49,10 +43,10 @@ public interface ICourseApiService
 
 
 
-    Task<Result<PagedResult<LectureCommentModel>>> GetPagedAsync(GetPagedLectureCommentsQuery query);
-    Task<Result> CreateAsync(CreateLectureCommentCommand command);
-    Task<Result> UpdateAsync(UpdateLectureCommentCommand command);
-    Task<Result> DeleteAsync(DeleteLectureCommentCommand command);
+    Task<Result<PagedResult<CommentModel>>> GetPagedLectureCommentsAsync(GetPagedCommentsQuery query);
+    Task<Result> CreateLectureCommentAsync(CreateCommentCommand command);
+    Task<Result> UpdateLectureCommentAsync(UpdateCommentCommand command);
+    Task<Result> DeleteLectureCommentAsync(DeleteCommentCommand command);
 
 
 
@@ -62,7 +56,7 @@ public interface ICourseApiService
 
 
 
-    Task<Result<PagedResult<CourseReviewModel>>> GetPagedAsync(GetPagedCourseReviewsQuery query);
-    Task<Result> CreateAsync(CreateCourseReviewCommand command);
-    Task<Result> UpdateAsync(UpdateCourseReviewCommand command);
+    Task<Result<PagedResult<ReviewModel>>> GetPagedCourseReviewsAsync(GetPagedReviewsQuery query);
+    Task<Result> CreateCourseReviewAsync(CreateReviewCommand command);
+    Task<Result> UpdateCourseReviewAsync(UpdateReviewCommand command);
 }

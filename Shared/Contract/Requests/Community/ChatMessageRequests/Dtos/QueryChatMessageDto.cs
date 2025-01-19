@@ -2,5 +2,7 @@
 
 public sealed class QueryChatMessageDto : PagingQueryDto
 {
-    public Guid ConversationId { get; set; }
+    public Guid? CreatorId { get; set; }
+
+    public Guid? ConversationId { get; set; }
 }

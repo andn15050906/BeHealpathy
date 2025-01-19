@@ -1,5 +1,5 @@
 ﻿using Contract.Requests.Shared.Base;
-using Contract.Responses.Identity.UserModels;
+using Contract.Responses.Identity;
 
 namespace Contract.Requests.Identity;
 

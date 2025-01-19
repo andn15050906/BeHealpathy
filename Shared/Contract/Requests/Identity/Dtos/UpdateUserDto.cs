@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Contract.Requests.Shared.Media;
+using Contract.Requests.Shared.BaseDtos.Media;
 
 namespace Contract.Requests.Identity.Dtos;
 

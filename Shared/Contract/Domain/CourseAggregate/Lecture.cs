@@ -9,9 +9,9 @@ public sealed class Lecture : AuditedEntity
     public string Content { get; set; }
     public string ContentSummary { get; set; }
     public bool IsPreviewable { get; set; }
-
-    // FKs
-    public Guid SectionId { get; set; }
+    
+    //public Guid SectionId { get; set; }
+    public Guid CourseId { get; set; }
 
     // Navigations
     public List<Multimedia> Materials { get; set; }
@@ -28,17 +28,15 @@ public sealed class Lecture : AuditedEntity
     {
 
     }
-#pragma warning restore CS8618
 
-    public Lecture(Guid id, Guid creatorId, Guid sectionId, string title, string content, string contentSummary, bool isPreviewable, List<Multimedia> materials)
+    public Lecture(Guid id, Guid creatorId, string title, string content, string contentSummary, bool isPreviewable)
     {
         Id = id;
         CreatorId = creatorId;
-        SectionId = sectionId;
         Title = title;
         Content = content;
         ContentSummary = contentSummary;
         IsPreviewable = isPreviewable;
-        Materials = materials;
     }
+#pragma warning restore CS8618
 }

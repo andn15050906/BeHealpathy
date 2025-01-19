@@ -1,6 +1,5 @@
-﻿using Contract.Messaging.Models;
-using Contract.Requests.Identity.Dtos;
-using Contract.Responses.Identity.UserModels;
+﻿using Contract.Requests.Identity.Dtos;
+using Contract.Responses.Identity;
 
 namespace Contract.Requests.Identity;
 

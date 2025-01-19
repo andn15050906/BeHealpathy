@@ -1,4 +1,5 @@
-﻿using Contract.Messaging.ApiClients.Http;
+﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Community.ConversationRequests;
 using Contract.Requests.Community.ConversationRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -24,17 +25,24 @@ public sealed class ConversationsController : ContractController
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create([FromForm] CreateConversationDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateConversationDto dto, [FromServices] IFileService fileService)
     {
-        CreateConversationCommand command = new(Guid.NewGuid(), dto, ClientId);
+        var id = Guid.NewGuid();
+        var thumb = await fileService.SaveImageAndUpdateDto(dto.Thumb, id);
+
+        CreateConversationCommand command = new(id, dto, ClientId, thumb);
         return await Send(command);
     }
 
     [HttpPatch]
     [Authorize]
-    public async Task<IActionResult> Update([FromForm] UpdateConversationDto dto)
+    public async Task<IActionResult> Update([FromForm] UpdateConversationDto dto, [FromServices] IFileService fileService)
     {
-        UpdateConversationCommand command = new(dto, ClientId);
+        Multimedia? thumb = null;
+        if (dto.Thumb is not null)
+            thumb = await fileService.SaveImageAndUpdateDto(dto.Thumb, dto.Id);
+
+        UpdateConversationCommand command = new(dto, ClientId, thumb);
         return await Send(command);
     }
 

@@ -1,5 +1,6 @@
 ﻿namespace Contract.Domain.CommunityAggregate;
 
+// Creator <> the User
 public sealed class ConversationMember : CreationAuditedDomainObject
 {
     // Part of PK

@@ -1,7 +1,7 @@
 ﻿using Contract.Helpers;
 using Contract.Requests.Identity;
 using Contract.Requests.Identity.Dtos;
-using Contract.Responses.Identity.UserModels;
+using Contract.Responses.Identity;
 using Core.Helpers;
 using System.Linq.Expressions;
 
@@ -43,7 +43,21 @@ public sealed class GetPagedUsersHandler : RequestHandler<GetPagedUsersQuery, Pa
     private Expression<Func<User, bool>>? GetPredicate(QueryUserDto dto)
     {
         if (dto.Name is not null)
-            return _ => _.MetaFullName.Contains(TextHelper.Normalize(dto.Name));
-        return null;
+            return _ => _.MetaFullName.Contains(TextHelper.Normalize(dto.Name)) && !_.IsDeleted;
+        if (dto.AdvisorId is not null)
+            return _ => _.AdvisorId == dto.AdvisorId && !_.IsDeleted;
+
+        if (dto.Email is not null)
+            return _ => _.Email == dto.Email && !_.IsDeleted;
+        if (dto.Role is not null)
+            return _ => _.Role == dto.Role && !_.IsDeleted;
+        if (dto.IsVerified is not null)
+            return _ => _.IsVerified == dto.IsVerified && !_.IsDeleted;
+        if (dto.IsApproved is not null)
+            return _ => _.IsApproved == dto.IsApproved && !_.IsDeleted;
+        if (dto.IsBanned is not null)
+            return _ => _.IsBanned == dto.IsBanned && !_.IsDeleted;
+
+        return _ => !_.IsDeleted;
     }
 }

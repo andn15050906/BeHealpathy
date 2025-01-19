@@ -1,8 +1,7 @@
 ﻿using Contract.Domain.UserAggregate.Enums;
 using Contract.Helpers;
 using Contract.Requests.Identity;
-using Contract.Responses.Identity.TempModels;
-using Contract.Responses.Identity.UserModels;
+using Contract.Responses.Identity;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;

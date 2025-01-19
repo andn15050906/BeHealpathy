@@ -1,4 +1,5 @@
 ﻿using Contract.Helpers.AppExploration;
+using Contract.Helpers.FeatureFlags;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Identity;
 using Contract.Requests.Identity.Dtos;
@@ -32,13 +33,13 @@ public sealed class UsersController : ContractController
 
     [HttpPost]
     public async Task<IActionResult> Insert(
-        [FromBody] CreateUserDto dto,
-        [FromServices] EmailService emailService, [FromServices] IOptions<AppInfoOptions> appInfo)
+        [FromBody] CreateUserDto dto, [FromServices] EmailService emailService,
+        [FromServices] IOptions<AppInfoOptions> appInfo, [FromServices] IOptions<FeatureFlagOptions> flags)
     {
         CreateUserCommand command = new(Guid.NewGuid(), dto);
         var result = await _mediator.Send(command);
 
-        if (result.IsSuccessful)
+        if (result.IsSuccessful && flags.Value.EmailEnabled)
         {
             string link = $"{appInfo.Value.MainFrontendApp}/sign-in?email={dto.Email}&token={result.Data}";
             try
@@ -56,7 +57,7 @@ public sealed class UsersController : ContractController
     }
 
     [HttpPut]
-    public async Task<IActionResult> Update(UpdateUserDto dto)
+    public async Task<IActionResult> Update([FromForm] UpdateUserDto dto)
     {
         UpdateUserCommand command = new(dto, ClientId);
         return await Send(command);
@@ -71,8 +72,11 @@ public sealed class UsersController : ContractController
     //}
 
     [HttpPost("verify")]
-    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailDto dto)
+    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailDto dto, [FromServices] IOptions<FeatureFlagOptions> flags)
     {
+        if (!flags.Value.EmailEnabled)
+            return Ok(BusinessMessages.FEATURE_DISABLED);
+
         VerifyEmailCommand command = new(dto);
         return await Send(command);
     }

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Contract.Requests.Progress.RoutineRequests.Dtos;
 
-namespace Contract.Requests.Progress.RoutineRequests.Dtos;
-internal class QueryRoutineDto
+public sealed class QueryRoutineDto : PagingQueryDto
 {
+    public Guid? CreatorId { get; set; }
+
+    public string? Title { get; set; }
 }

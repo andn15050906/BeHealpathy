@@ -1,5 +1,4 @@
-﻿using Contract.Messaging.Models;
-using Contract.Requests.Community.ConversationRequests.Dtos;
+﻿using Contract.Requests.Community.ConversationRequests.Dtos;
 using Contract.Responses.Community;
 
 namespace Contract.Requests.Community.ConversationRequests;

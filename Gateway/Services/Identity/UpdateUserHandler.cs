@@ -54,7 +54,7 @@ public class UpdateUserHandler : RequestHandler<UpdateUserCommand, HealpathyCont
         {
             // should've been Multimedia
             entity.AvatarUrl = (await _fileService.ReplaceImage(
-                await MediaWithStream.FromImageDto(dto.Avatar, _ => _fileService.GetUserAvatarIdentifier(entity.Id)),
+                await MediaWithStream.FromImageDto(dto.Avatar, entity.Id, _ => _fileService.GetUserAvatarIdentifier(entity.Id)),
                 entity.AvatarUrl
             ))?.Url ?? string.Empty;
         }

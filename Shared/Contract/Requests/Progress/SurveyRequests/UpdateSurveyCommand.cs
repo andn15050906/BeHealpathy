@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Contract.Requests.Progress.SurveyRequests.Dtos;
 
 namespace Contract.Requests.Progress.SurveyRequests;
-internal class UpdateSurveyCommand
+
+public sealed class UpdateSurveyCommand : UpdateCommand
 {
+    public UpdateSurveyDto Rq { get; init; }
+    public Guid UserId { get; init; }
+
+
+
+    public UpdateSurveyCommand(UpdateSurveyDto rq, Guid userId, bool isCompensating = false)
+        : base(isCompensating)
+    {
+        Rq = rq;
+        UserId = userId;
+    }
 }

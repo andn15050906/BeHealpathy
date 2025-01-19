@@ -15,7 +15,7 @@ public sealed class McqChoice : DomainObject
 
 
 
-
+#pragma warning disable CS8618
     public McqChoice()
     {
 
@@ -28,4 +28,5 @@ public sealed class McqChoice : DomainObject
 
         McqAnswerId = mcqAnswerId;
     }
+#pragma warning restore CS8618
 }

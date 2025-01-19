@@ -6,13 +6,11 @@ namespace Contract.Requests.Community.ArticleRequests;
 public sealed class GetPagedArticlesQuery : IRequest<Result<PagedResult<ArticleModel>>>
 {
     public QueryArticleDto Rq { get; init; }
-    public Guid UserId { get; init; }
 
 
 
-    public GetPagedArticlesQuery(QueryArticleDto rq, Guid userId)
+    public GetPagedArticlesQuery(QueryArticleDto rq)
     {
         Rq = rq;
-        UserId = userId;
     }
 }

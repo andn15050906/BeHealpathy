@@ -1,0 +1,42 @@
+﻿using Contract.Domain.CourseAggregate;
+using Contract.Helpers;
+using Contract.Requests.Courses.LectureRequests;
+using Core.Helpers;
+using Infrastructure.DataAccess.SQLServer.Helpers;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+namespace Gateway.Services.Course.LectureHandlers;
+
+public class UpdateLectureHandler : RequestHandler<UpdateLectureCommand, HealpathyContext>
+{
+    public UpdateLectureHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
+
+    public override async Task<Result> Handle(UpdateLectureCommand command, CancellationToken cancellationToken)
+    {
+        var entity = await _context.Lectures.FindExt(command.Rq.Id);
+        if (entity is null)
+            return NotFound(string.Empty);
+
+        ApplyChanges(entity, command);
+        try
+        {
+            if (command.AddedMedias is not null)
+                _context.Multimedia.AddRange(command.AddedMedias);
+            if (command.RemovedMedias is not null)
+                await _context.Multimedia.DeleteExt(command.RemovedMedias);
+            await _context.SaveChangesAsync(cancellationToken);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return ServerError(ex.Message);
+        }
+    }
+
+    private void ApplyChanges(Lecture entity, UpdateLectureCommand command)
+    {
+        entity.Content = command.Rq.Content ?? string.Empty;
+        entity.ContentSummary = command.Rq.ContentSummary ?? string.Empty;
+        entity.LastModificationTime = TimeHelper.Now;
+    }
+}

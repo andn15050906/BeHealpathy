@@ -1,4 +1,5 @@
-﻿using Contract.Messaging.ApiClients.Http;
+﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Progress.DiaryNoteRequests;
 using Contract.Requests.Progress.DiaryNoteRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -25,17 +26,35 @@ public sealed class DiaryNotesController : ContractController
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create(CreateDiaryNoteDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateDiaryNoteDto dto, [FromServices] IFileService fileService)
     {
-        CreateDiaryNoteCommand command = new(Guid.NewGuid(), dto, ClientId);
+        var id = Guid.NewGuid();
+
+        List<Multimedia> medias = [];
+        if (dto.Medias is not null)
+            medias.AddRange(await fileService.SaveMediasAndUpdateDtos(dto.Medias.Select(_ => (_, id)).ToList()));
+
+        CreateDiaryNoteCommand command = new(id, dto, ClientId, medias);
         return await Send(command);
     }
 
     [HttpPatch]
     [Authorize]
-    public async Task<IActionResult> Update([FromForm] UpdateDiaryNoteDto dto)
+    public async Task<IActionResult> Update([FromForm] UpdateDiaryNoteDto dto, [FromServices] IFileService fileService)
     {
-        UpdateDiaryNoteCommand command = new(dto, ClientId);
+        List<Multimedia> addedMedias = [];
+        var mediaDtos = dto.AddedMedias is null
+            ? []
+            : dto.AddedMedias.Select(_ => (_, dto.Id)).ToList();
+        if (mediaDtos is not null && mediaDtos.Count > 0)
+        {
+            var medias = await fileService.SaveMediasAndUpdateDtos(mediaDtos!);
+            if (medias is not null)
+                addedMedias.AddRange(medias!);
+        }
+        List<Guid> removedMedias = dto.RemovedMedias?.ToList() ?? [];
+
+        UpdateDiaryNoteCommand command = new(dto, ClientId, addedMedias, removedMedias);
         return await Send(command);
     }
 

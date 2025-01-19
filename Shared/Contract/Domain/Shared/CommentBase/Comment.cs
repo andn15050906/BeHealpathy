@@ -1,5 +1,6 @@
 ﻿using Contract.Domain.Shared.CommentBase.Enums;
 using Contract.Domain.Shared.MultimediaBase;
+using Contract.Domain.UserAggregate;
 
 namespace Contract.Domain.Shared.CommentBase;
 
@@ -8,10 +9,13 @@ public abstract class Comment : AuditedEntity
     // Attributes
     public string Content { get; set; }
     public CommentStatus Status { get; set; }
-    public List<Multimedia> Medias { get; set; }
 
     // FKs
     public Guid SourceId { get; set; }
+
+    // Navigations
+    public List<Multimedia> Medias { get; set; }
+    public User Creator { get; set; }
 
 
 
@@ -24,7 +28,7 @@ public abstract class Comment : AuditedEntity
 
     }
 
-    public Comment(Guid id, Guid creatorId, Guid sourceId, string content, List<Multimedia> medias)
+    public Comment(Guid id, Guid creatorId, Guid sourceId, string content)
     {
         Id = id;
         CreatorId = creatorId;
@@ -32,7 +36,6 @@ public abstract class Comment : AuditedEntity
         SourceId = sourceId;
         Content = content;
         Status = CommentStatus.None;
-        Medias = medias;
     }
 #pragma warning restore CS8618
 }

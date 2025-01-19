@@ -20,8 +20,9 @@ public class Multimedia : Entity
     }
 #pragma warning restore CS8618
 
-    public Multimedia(string identifier, MediaType type, string url, string title)
+    public Multimedia(Guid sourceId, string identifier, MediaType type, string url, string title)
     {
+        SourceId = sourceId;
         Identifier = identifier;
         Type = type;
         Url = url;

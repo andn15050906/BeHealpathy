@@ -1,5 +1,4 @@
-﻿using Contract.BusinessRules.Messaging;
-using Contract.Domain.UserAggregate.Enums;
+﻿using Contract.Domain.UserAggregate.Enums;
 using Core.Helpers;
 
 namespace Contract.Domain.UserAggregate;
@@ -34,6 +33,8 @@ public sealed class User : TimeAuditedEntity
 
     // Navigations
     public List<UserLogin> UserLogins { get; set; }
+    public List<Preference> Preferences { get; set; }
+    public List<Setting> Settings { get; set; }
 
 
 
@@ -72,7 +73,7 @@ public sealed class User : TimeAuditedEntity
         UserName = userName;
         Password = string.Empty;
         Email = email is not null ? email : string.Empty;
-        SetFullName(userName);
+        SetFullName(userName);                  // default Full Name is UserName
         Role = role;
         Token = string.Empty;
         RefreshToken = string.Empty;

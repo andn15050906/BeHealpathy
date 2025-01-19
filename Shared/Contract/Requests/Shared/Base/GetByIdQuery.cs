@@ -1,6 +1,4 @@
-﻿using Contract.Messaging.Models;
-
-namespace Contract.Requests.Shared.Base;
+﻿namespace Contract.Requests.Shared.Base;
 
 public abstract class GetByIdQuery<T> : IRequest<Result<T>>
 {

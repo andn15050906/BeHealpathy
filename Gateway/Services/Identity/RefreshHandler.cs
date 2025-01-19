@@ -1,9 +1,8 @@
 ﻿using Contract.Helpers;
-using Contract.Responses.Identity.TempModels;
-using Contract.Responses.Identity.UserModels;
 using Contract.Requests.Identity;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using System.Security.Claims;
+using Contract.Responses.Identity;
 
 namespace Gateway.Services.Identity;
 

@@ -1,0 +1,71 @@
+﻿using Contract.Domain.CommunityAggregate;
+using Contract.Helpers;
+using Contract.Requests.Community.MeetingRequests;
+using Contract.Requests.Community.MeetingRequests.Dtos;
+using Contract.Responses.Community;
+using System.Linq.Expressions;
+
+namespace Gateway.Services.Community.MeetingHandlers;
+
+public sealed class GetPagedMeetingsHandler : RequestHandler<GetPagedMeetingsQuery, PagedResult<MeetingModel>, HealpathyContext>
+{
+    public GetPagedMeetingsHandler(HealpathyContext context, IAppLogger logger) : base(context, logger)
+    {
+    }
+
+    public override async Task<Result<PagedResult<MeetingModel>>> Handle(GetPagedMeetingsQuery request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var query = _context.GetPagingQuery(
+                MeetingModel.MapExpression,
+                GetPredicate(request.Rq),
+                request.Rq.PageIndex,
+                request.Rq.PageSize,
+                false,
+                _ => _.Participants
+            );
+            var result = await query.ExecuteWithOrderBy(_ => _.StartAt);
+
+            return ToQueryResult(result);
+        }
+        catch (Exception ex)
+        {
+            return ServerError(ex.Message);
+        }
+    }
+
+    private Expression<Func<Meeting, bool>>? GetPredicate(QueryMeetingDto dto)
+    {
+        if (dto.CreatorId is not null)
+            return _ => _.CreatorId == dto.CreatorId;
+        if (dto.Title is not null)
+            return _ => _.Title.Contains(dto.Title, StringComparison.OrdinalIgnoreCase) && !_.IsDeleted;
+
+        if (dto.StartAfter is not null || dto.StartBefore is not null)
+        {
+            if (dto.StartBefore is null)
+                return _ => _.StartAt > dto.StartAfter;
+            if (dto.StartAfter is null)
+                return _ => _.StartAt < dto.StartBefore;
+            return _ => _.StartAt > dto.StartAfter && _.StartAt < dto.StartBefore;
+        }
+        if (dto.EndAfter is not null || dto.EndBefore is not null)
+        {
+            if (dto.EndAfter is null)
+                return _ => _.EndAt > dto.EndAfter;
+            if (dto.EndBefore is null)
+                return _ => _.EndAt < dto.EndBefore;
+            return _ => _.EndAt > dto.EndAfter && _.EndAt < dto.EndBefore;
+        }
+
+        if (dto.MaxParticipants is not null)
+            return _ => _.MaxParticipants < dto.MaxParticipants;
+
+        if (dto.Participants is not null)
+            // Intersect
+            return _ => _.Participants.Select(_ => _.CreatorId).Intersect(dto.Participants).Any();
+
+        return _ => !_.IsDeleted;
+    }
+}

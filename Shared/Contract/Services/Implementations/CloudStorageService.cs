@@ -23,12 +23,12 @@ public sealed class CloudStorageService : IStorageService
     public async Task<List<Multimedia?>> SaveFiles(List<MediaWithStream> medias)
     {
         if (medias.Count == 0)
-            return new List<Multimedia?>();
+            return [];
 
-        List<Task<Multimedia?>> tasks = new();
+        List<Task<Multimedia?>> tasks = [];
         for (var i = 0; i < medias.Count; i++)
             tasks[i] = SaveFile(medias[i]);
-        return (await Task.WhenAll(tasks)).ToList();
+        return [.. (await Task.WhenAll(tasks))];
     }
 
     public async Task<bool[]> DeleteFiles(List<string> identifiers)
@@ -53,7 +53,7 @@ public sealed class CloudStorageService : IStorageService
             if (uploadFileResult != null && uploadFileResult.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var identifier = uploadFileResult.FullyQualifiedPublicId;
-                return new Multimedia(identifier, media.Type, uploadFileResult.SecureUrl.ToString(), media.Title);
+                return new Multimedia(media.SourceId, identifier, media.Type, uploadFileResult.SecureUrl.ToString(), media.Title);
             }
             return null;
         }

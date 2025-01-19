@@ -1,10 +1,11 @@
-﻿using MediatR;
+﻿using Contract.Messaging.ApiClients.Http;
+using Contract.Requests.Notifications;
+using Contract.Requests.Notifications.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gateway.Controllers.Notifications;
 
-/*
 public class NotificationsController : ContractController
 {
     public NotificationsController(IMediator mediator) : base(mediator) { }
@@ -20,7 +21,7 @@ public class NotificationsController : ContractController
 
     [HttpPost("Instructor")]
     [Authorize]
-    public async Task<IActionResult> Create([FromForm] CreateInstructorRequestDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateAdvisorRequestDto dto)
     {
         CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
@@ -44,4 +45,3 @@ public class NotificationsController : ContractController
         return await Send(command);
     }
 }
-*/

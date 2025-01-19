@@ -1,6 +1,6 @@
 ﻿using Contract.Helpers;
 using Contract.Requests.Identity;
-using Contract.Responses.Identity.UserModels;
+using Contract.Responses.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Identity;
@@ -16,7 +16,7 @@ public sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, UserFu
         try
         {
             var result = await _context.Users
-                .Where(_ => _.Id == request.Id)
+                .Where(_ => _.Id == request.Id && !_.IsDeleted)
                 .Select(UserFullModel.MapExpression)
                 .FirstOrDefaultAsync(cancellationToken);
 

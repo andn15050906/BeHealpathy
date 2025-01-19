@@ -9,6 +9,7 @@ using Gateway.Services.Microservices;
 using Infrastructure.Helpers.Monitoring;
 using Contract.Helpers.AppExploration;
 using Infrastructure.Helpers.Email;
+using Contract.Helpers.FeatureFlags;
 
 const string POLICY = "Policy";
 var builder = WebApplication.CreateBuilder(args);
@@ -23,10 +24,11 @@ builder.Services
     .AddMediatR(options => { options.RegisterServicesFromAssembly(typeof(Program).Assembly); })
     .AddDbContextPool<HealpathyContext>(_ => _.UseSqlServer(Configurer.GatewayContextOptions.ConnectionString))
     .AddAuthServices(Configurer.TokenOptions, Configurer.OAuthOptions)
-    .AddMQPublisher(Configurer.IsRunningInContainer)
+    //AddMQPublisher(Configurer.IsRunningInContainer)
     .AddMicroservices()
     .AddCloudStorage<CloudStorageService>(Configurer.CloudStorageConfig)
     .AddEmailService(Configurer.EmailOptions)
+    .AddFeatureFlags(Configurer.FeatureFlags)
     //.AddPaymentService
     .AddHttpContextAccessor()
     //AddRealtimeService()
@@ -34,7 +36,7 @@ builder.Services
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
     app.UseAppExploration();
 
 app

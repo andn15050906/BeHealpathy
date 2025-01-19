@@ -1,5 +1,5 @@
 ﻿using Contract.Domain.Shared.MultimediaBase.Enums;
-using Contract.Requests.Shared.Media;
+using Contract.Requests.Shared.BaseDtos.Media;
 
 namespace Contract.Helpers.Storage;
 
@@ -8,12 +8,13 @@ public sealed class MediaWithStream
     //private static readonly List<string> VideoContentTypes
     //    = new() { "video/mp4", "video/avi", "video/quicktime", "video/x-matroska", "video/x-ms-wmv", "video/x-flv", "video/webm" };
     private static readonly List<string> VideoExtensions
-        = new() { ".mp4", ".avi", ".mov", ".mkv", ".wmv", ".flv", ".webm", ".mpeg", ".ogv" };
+        = [".mp4", ".avi", ".mov", ".mkv", ".wmv", ".flv", ".webm", ".mpeg", ".ogv"];
     private static readonly List<string> DocumentContentTypes
-        = new() { ".apng", ".avif", ".bmp", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".tiff",
-                  ".abw", ".csv", ".doc", ".docx", ".odp", ".ods", ".odt", ".pdf", ".ppt", ".pptx", ".rtf", ".txt", ".xls", ".xlsx" };
+        = [ ".apng", ".avif", ".bmp", ".gif", ".jpeg", ".jpg", ".png", ".svg", ".tiff",
+            ".abw", ".csv", ".doc", ".docx", ".odp", ".ods", ".odt", ".pdf", ".ppt", ".pptx", ".rtf", ".txt", ".xls", ".xlsx" ];
 
     public string Identifier { get; set; }
+    public Guid SourceId { get; set; }
     public MediaType Type { get; set; }
     public string? Url { get; set; }
     public string Title { get; set; }
@@ -28,54 +29,54 @@ public sealed class MediaWithStream
 #pragma warning restore CS8618
 
     public static async Task<List<MediaWithStream?>> FromImageDtos(
-        IEnumerable<CreateMediaDto> dtos, Func<CreateMediaDto, string> identifierFunc)
+        IEnumerable<CreateMediaDto> dtos, Guid sourceId, Func<CreateMediaDto, string> identifierFunc)
     {
-        List<Task<MediaWithStream?>> tasks = new();
+        List<Task<MediaWithStream?>> tasks = [];
         foreach (var dto in dtos)
-            tasks.Add(FromImageDto(dto, identifierFunc));
-        return (await Task.WhenAll(tasks)).ToList();
+            tasks.Add(FromImageDto(dto, sourceId, identifierFunc));
+        return [.. (await Task.WhenAll(tasks))];
     }
 
     public static List<MediaWithStream?> FromDtos(
-        IEnumerable<CreateMediaDto> dtos, Func<CreateMediaDto, string> identifierFunc)
+        IEnumerable<CreateMediaDto?>? dtos, Guid sourceId, Guid id)
     {
-        return dtos.Select(_ => FromDto(_, identifierFunc)).ToList();
+        if (dtos is null)
+            return [];
+        return dtos.Select((dto, index) => FromDto(dto, sourceId, _ => sourceId + "_" + index + "_" + id)).ToList();
     }
 
-    public static async Task<MediaWithStream?> FromImageDto(CreateMediaDto dto, Func<CreateMediaDto, string> identifierFunc)
+    public static async Task<MediaWithStream?> FromImageDto(CreateMediaDto dto, Guid sourceId, Func<CreateMediaDto, string> identifierFunc)
     {
-        if (dto.File is not null)
-        {
-            return new MediaWithStream
-            {
-                Identifier = identifierFunc(dto),
-                Type = MediaType.Image,
-                Url = dto.Url,
-                Title = dto.Title,
-                Stream = await FileConverter.ToJpg(dto.File),
-                //Category = category
-            };
-        }
+        if (dto.File is null)
+            return null;
 
-        return null;
+        return new MediaWithStream
+        {
+            Identifier = identifierFunc(dto),
+            SourceId = sourceId,
+            Type = MediaType.Image,
+            Url = dto.Url,
+            Title = dto.Title,
+            Stream = await FileConverter.ToJpg(dto.File),
+            //Category = category
+        };
     }
 
-    public static MediaWithStream? FromDto(CreateMediaDto dto, Func<CreateMediaDto, string> identifierFunc)
+    public static MediaWithStream? FromDto(CreateMediaDto? dto, Guid sourceId, Func<CreateMediaDto, string> identifierFunc)
     {
-        if (dto.File is not null)
-        {
-            return new MediaWithStream
-            {
-                Identifier = identifierFunc(dto),
-                Type = GetMediaType(dto.File.FileName),
-                Url = dto.Url,
-                Title = dto.Title,
-                Stream = dto.File.OpenReadStream(),
-                //Category = category
-            };
-        }
+        if (dto is null || dto.File is null)
+            return null;
 
-        return null;
+        return new MediaWithStream
+        {
+            Identifier = identifierFunc(dto),
+            SourceId = sourceId,
+            Type = GetMediaType(dto.File.FileName),
+            Url = dto.Url,
+            Title = dto.Title,
+            Stream = dto.File.OpenReadStream(),
+            //Category = category
+        };
     }
 
 

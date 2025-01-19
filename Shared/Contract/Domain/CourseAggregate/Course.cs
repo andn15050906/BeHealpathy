@@ -1,4 +1,5 @@
 ﻿using Contract.Domain.CourseAggregate.Enums;
+using Contract.Domain.UserAggregate;
 using Core.Helpers;
 
 namespace Contract.Domain.CourseAggregate;
@@ -33,6 +34,7 @@ public sealed class Course : AuditedEntity
     public Category LeafCategory { get; set; }
     public List<Lecture> Lectures { get; set; }
     public List<CourseReview> Reviews { get; set; }
+    public User Creator { get; set; }
 
 
 

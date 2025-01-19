@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Gateway.Helpers.AppStart;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Identity.Dtos;
-using Contract.Responses.Identity.TempModels;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Infrastructure.Helpers.Email;
 using Contract.Helpers.AppExploration;
 using Contract.Requests.Identity;
+using Contract.Responses.Identity;
+using Contract.Helpers.FeatureFlags;
 
 namespace Gateway.Controllers.Identity;
 
@@ -81,9 +82,12 @@ public sealed class AuthController : ContractController
 
     [HttpPost("ForgotPassword")]
     public async Task<IActionResult> RequestPasswordResetAsync(
-        [FromBody] string email,
-        [FromServices] EmailService emailService, [FromServices] IOptions<AppInfoOptions> appInfo)
+        [FromBody] string email, [FromServices] EmailService emailService,
+        [FromServices] IOptions<AppInfoOptions> appInfo, [FromServices] IOptions<FeatureFlagOptions> flags)
     {
+        if (!flags.Value.EmailEnabled)
+            return Ok(BusinessMessages.FEATURE_DISABLED);
+
         RequestPasswordResetCommand command = new(email);
 
         var result = await _mediator.Send(command);

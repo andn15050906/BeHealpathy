@@ -9,6 +9,6 @@ public interface INotificationApiService
 {
     Task<Result<PagedResult<NotificationModel>>> GetPagedAsync(QueryNotificationDto dto);
 
-    Task<Result<Guid>> CreateInstructorNotificationAsync(CreateInstructorRequestDto dto);
+    Task<Result<Guid>> CreateInstructorNotificationAsync(CreateAdvisorRequestDto dto);
     Task<Result<Guid>> CreateWithdrawalNotificationAsync(CreateWithdrawalRequestDto dto);
 }

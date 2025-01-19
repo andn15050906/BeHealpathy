@@ -18,6 +18,20 @@ public static class DbSetExtensions
         where T : DomainObject
         => await DbSet.AddAsync(entity);
 
+    public static void SoftDeleteExt<T>(this DbSet<T> DbSet, T entity)
+        where T : Entity
+    {
+        entity.IsDeleted = true;
+    }
+
+    /*public static async Task SoftDeleteExt<T>(this DbSet<T> DbSet, Guid id, CancellationToken cancellationToken = default)
+        where T : Entity
+    {
+        await DbSet
+            .Where(_ => _.Id == id)
+            .ExecuteUpdateAsync(_ => _.SetProperty(_ => _.IsDeleted, true), cancellationToken);
+    }*/
+
     public static void DeleteExt<T>(this DbSet<T> DbSet, T entity)
         where T : DomainObject
         => DbSet.Remove(entity);
@@ -25,4 +39,8 @@ public static class DbSetExtensions
     public static async Task DeleteExt<T>(this DbSet<T> DbSet, Guid id, CancellationToken cancellationToken = default)
         where T : Entity
         => await DbSet.Where(_ => _.Id == id).ExecuteDeleteAsync(cancellationToken);
+
+    public static async Task DeleteExt<T>(this DbSet<T> DbSet, IEnumerable<Guid> ids, CancellationToken cancellationToken = default)
+        where T : Entity
+        => await DbSet.Where(_ => ids.Contains(_.Id)).ExecuteDeleteAsync(cancellationToken);
 }

@@ -1,10 +1,14 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
 using Contract.Helpers.Storage;
+using Contract.Requests.Shared.BaseDtos.Media;
 
 namespace Contract.Services.Contracts;
 
 public interface IFileService
 {
+    Task<List<Multimedia>> SaveMediasAndUpdateDtos(List<(CreateMediaDto, Guid)> dto_sourceIds);
+    Task<Multimedia> SaveImageAndUpdateDto(CreateMediaDto dto, Guid sourceId);
+
     Task<Multimedia?> SaveImage(MediaWithStream? media);
     Task<Multimedia?> ReplaceImage(MediaWithStream? media, string identifier);
     Task<bool> DeleteImage(string identifier);

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Contract.Requests.Progress.SurveyRequests;
 
-namespace Contract.Requests.Progress.SurveyRequests;
-internal class DeleteSurveyCommand
+public sealed class DeleteSurveyCommand : DeleteCommand
 {
+    public DeleteSurveyCommand(Guid id, Guid userId, bool isCompensating = false)
+        : base(id, userId, isCompensating)
+    {
+    }
 }

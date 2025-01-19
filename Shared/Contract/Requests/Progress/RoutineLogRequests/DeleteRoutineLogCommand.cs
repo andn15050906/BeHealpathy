@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Contract.Requests.Progress.RoutineLogRequests;
 
-namespace Contract.Requests.Progress.RoutineLogRequests;
-internal class DeleteRoutineLogCommand
+public sealed class DeleteRoutineLogCommand : DeleteCommand
 {
+    public DeleteRoutineLogCommand(Guid id, Guid userId, bool isCompensating = false)
+        : base(id, userId, isCompensating)
+    {
+    }
 }

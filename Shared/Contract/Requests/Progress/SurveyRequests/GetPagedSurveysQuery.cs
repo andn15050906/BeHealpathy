@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Contract.Requests.Progress.SurveyRequests.Dtos;
+using Contract.Responses.Progress;
 
 namespace Contract.Requests.Progress.SurveyRequests;
-internal class GetPagedSurveysQuery
+
+public sealed class GetPagedSurveysQuery : IRequest<Result<PagedResult<SurveyModel>>>
 {
+    public QuerySurveyDto Rq { get; init; }
+    public Guid UserId { get; init; }
+
+
+
+    public GetPagedSurveysQuery(QuerySurveyDto rq, Guid userId)
+    {
+        Rq = rq;
+        UserId = userId;
+    }
 }

@@ -29,8 +29,10 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Submission> Submissions { get; set; }
     public DbSet<Routine> Routines { get; set; }
     public DbSet<RoutineLog> RoutineLogs { get; set; }
+    public DbSet<DiaryNote> DiaryNotes { get; set; }
 
     public DbSet<Article> Articles { get; set; }
+    public DbSet<ArticleSection> ArticleSections { get; set; }
     public DbSet<ArticleComment> ArticleComments { get; set; }
     public DbSet<ArticleReaction> ArticleReactions { get; set; }
     public DbSet<Tag> Tags { get; set; }
@@ -53,14 +55,14 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<LectureComment> LectureComments { get; set; }
     public DbSet<LectureReaction> LectureReactions { get; set; }
 
-    // Shared Type Entity
-    public DbSet<Dictionary<string, object>> Multimedia => Set<Dictionary<string, object>>(RelationsConfig.MULTIMEDIA);
+    // DbSet instead of Shared Type Entity
+    public DbSet<Multimedia> Multimedia { get; set; }
 
 
 
     struct RelationsConfig
     {
-        internal const string USER = "User";
+        internal const string USER = "Users";
         internal const string SETTING = "Settings";
         internal const string PREFERENCE = "Preferences";
         internal const string NOTIFICATION = "Notifications";
@@ -79,8 +81,10 @@ public sealed class HealpathyContext : BaseContext
         internal const string SUBMISSION = "Submissions";
         internal const string ROUTINE = "Routines";
         internal const string ROUTINE_LOG = "RoutineLogs";
+        internal const string DIARY_NOTE = "DiaryNotes";
 
         internal const string ARTICLE = "Articles";
+        internal const string ARTICLE_SECTION = "ArticleSections";
         internal const string ARTICLE_COMMENT = "ArticleComments";
         internal const string ARTICLE_REACTION = "ArticleReactions";
         internal const string TAG = "Tags";
@@ -141,8 +145,10 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new SubmissionConfig())
             .ApplyConfiguration(new RoutineConfig())
             .ApplyConfiguration(new RoutineLogConfig())
+            .ApplyConfiguration(new DiaryNoteConfig())
 
             .ApplyConfiguration(new ArticleConfig())
+            .ApplyConfiguration(new ArticleSectionConfig())
             .ApplyConfiguration(new ArticleCommentConfig())
             .ApplyConfiguration(new ArticleReactionConfig())
             .ApplyConfiguration(new TagConfig())
@@ -339,6 +345,8 @@ public sealed class HealpathyContext : BaseContext
                 .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
 
             builder.HasOne<User>().WithMany().HasForeignKey(_ => _.CreatorId).OnDelete(DeleteBehavior.NoAction);
+            //...
+            builder.Ignore(_ => _.Attachments);
         }
     }
 
@@ -357,7 +365,7 @@ public sealed class HealpathyContext : BaseContext
                 .SetColumnsTypes(Columns)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
 
-            builder.HasOne<User>().WithMany().HasForeignKey(_ => _.CreatorId).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne<User>().WithMany().OnDelete(DeleteBehavior.NoAction);
         }
     }
 
@@ -441,7 +449,7 @@ public sealed class HealpathyContext : BaseContext
                 .ToTable(RelationsConfig.MCQ_QUESTION)
                 .SetColumnsTypes(Columns);
 
-            builder.HasMany(_ => _.Choices).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(_ => _.Answers).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 
@@ -493,6 +501,7 @@ public sealed class HealpathyContext : BaseContext
                 .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
 
             //builder.HasMany(_ => _.Choices).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(_ => _.Survey).WithMany().OnDelete(DeleteBehavior.NoAction);
         }
     }
 
@@ -500,6 +509,7 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<Routine, object?>>, string> Columns => new()
         {
+            { _ => _.Title, NVARCHAR100 },
             { _ => _.Description, NVARCHAR255 },
             { _ => _.Objective, NVARCHAR255 }
             // Frequency below
@@ -534,6 +544,29 @@ public sealed class HealpathyContext : BaseContext
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
         }
     }
+
+    class DiaryNoteConfig : EntityConfiguration<DiaryNote>
+    {
+        protected override Dictionary<Expression<Func<DiaryNote, object?>>, string> Columns => new()
+        {
+            { _ => _.Title, NVARCHAR255 },
+            { _ => _.Content, NVARCHAR255 },
+            { _ => _.Mood, NVARCHAR255 },
+            { _ => _.Theme, NVARCHAR255 }
+        };
+
+        public override void Configure(EntityTypeBuilder<DiaryNote> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.DIARY_NOTE)
+                .SetColumnsTypes(Columns)
+                .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
+                .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
+
+            //...
+            builder.Ignore(_ => _.Attachments);
+        }
+    }
     #endregion
 
 
@@ -543,7 +576,6 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<Article, object?>>, string> Columns => new()
         {
-            { _ => _.Content, NVARCHAR3000 },
             { _ => _.Title, NVARCHAR255 },
             { _ => _.Status, VARCHAR100 },
             // IsCommentDisabled
@@ -559,9 +591,28 @@ public sealed class HealpathyContext : BaseContext
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
                 .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
 
+            builder.Ignore(_ => _.Thumb);
             builder.HasMany(_ => _.Tags).WithMany().UsingEntity<ArticleTag>();
             builder.HasMany(_ => _.Comments).WithOne().OnDelete(DeleteBehavior.NoAction);
             builder.HasMany(_ => _.Reactions).WithOne().OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+
+    class ArticleSectionConfig : EntityConfiguration<ArticleSection>
+    {
+        protected override Dictionary<Expression<Func<ArticleSection, object?>>, string> Columns => new()
+        {
+            { _ => _.Header, NVARCHAR255 },
+            { _ => _.Content, NVARCHAR3000 }
+        };
+
+        public override void Configure(EntityTypeBuilder<ArticleSection> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.ARTICLE_SECTION)
+                .SetColumnsTypes(Columns);
+
+            builder.Ignore(_ => _.Media);
         }
     }
 
@@ -602,6 +653,8 @@ public sealed class HealpathyContext : BaseContext
                 .ToTable(RelationsConfig.ARTICLE_REACTION)
                 .SetColumnsTypes(Columns)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
+
+            builder.HasOne(_ => _.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
         }
     }
 
@@ -656,8 +709,7 @@ public sealed class HealpathyContext : BaseContext
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
                 .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
 
-            //builder.OwnsMany(_ => _.Medias);
-            builder.Ignore(_ => _.Medias);
+            builder.Ignore(_ => _.Media);
         }
     }
 
@@ -749,6 +801,8 @@ public sealed class HealpathyContext : BaseContext
                 .SetUnique(_ => _.BillId)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
                 .HasKey(_ => new { _.CreatorId, _.CourseId });
+
+            builder.HasOne(_ => _.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
         }
     }
 
@@ -830,7 +884,9 @@ public sealed class HealpathyContext : BaseContext
                 .ToTable(RelationsConfig.LECTURE_REACTION)
                 .SetColumnsTypes(Columns)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
-                //.HasKey(_ => new { _.CreatorId, _.SourceId });
+            //.HasKey(_ => new { _.CreatorId, _.SourceId });
+
+            builder.HasOne(_ => _.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
         }
     }
     #endregion

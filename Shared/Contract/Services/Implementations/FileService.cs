@@ -1,5 +1,7 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Domain.Shared.MultimediaBase.Enums;
 using Contract.Helpers.Storage;
+using Contract.Requests.Shared.BaseDtos.Media;
 using Contract.Services.Contracts;
 
 namespace Contract.Services.Implementations;
@@ -11,6 +13,55 @@ public sealed class FileService : IFileService
     public FileService(IStorageService storageService)
     {
         _storage = storageService;
+    }
+
+
+
+
+
+
+    public async Task<List<Multimedia>> SaveMediasAndUpdateDtos(List<(CreateMediaDto, Guid)> dto_sourceIds)
+    {
+        List<(Multimedia?, MediaWithStream?)> list = [];
+
+        for (var i = 0; i < dto_sourceIds.Count; i++)
+        {
+            var dto = dto_sourceIds[i].Item1;
+            var sourceId = dto_sourceIds[i].Item2;
+
+            if (dto is null)
+                continue;
+
+            list.Add(
+                !string.IsNullOrWhiteSpace(dto.Url)
+                    ? (new Multimedia(sourceId, dto.Url!, MediaType.Other, dto.Url!, dto.Title), null)
+                    : (null, MediaWithStream.FromDto(dto, sourceId, _ => $"{sourceId}_{Guid.NewGuid()}"))
+            );
+        }
+
+        var dtosWithFile = list.Where(_ => _.Item2 is not null).Select(_ => _.Item2).ToList();
+        var medias = await SaveNotNullMedias(dtosWithFile);
+        var j = 0;
+        for (var i = 0; i < list.Count; i++)
+            if (list[i].Item1 is null)
+            {
+                list[i] = (medias[j], null);
+                j++;
+                dto_sourceIds[i].Item1.UpdateAfterSave(list[i].Item1);
+            }
+
+        return list.Select(_ => _.Item1!).ToList();
+    }
+
+    public async Task<Multimedia> SaveImageAndUpdateDto(CreateMediaDto dto, Guid sourceId)
+    {
+        if (!string.IsNullOrWhiteSpace(dto.Url))
+            return new Multimedia(sourceId, dto.Url!, MediaType.Other, dto.Url!, dto.Title);
+
+        var mediaWithFile = MediaWithStream.FromDto(dto, sourceId, _ => $"{sourceId}_{Guid.NewGuid()}");
+        var media = await SaveImage(mediaWithFile)!;
+        dto.UpdateAfterSave(media);
+        return media!;
     }
 
 
@@ -46,7 +97,7 @@ public sealed class FileService : IFileService
 
     public async Task<List<Multimedia?>> SaveMedias(List<MediaWithStream?> medias)
     {
-        List<Task<Multimedia?>> tasks = new();
+        List<Task<Multimedia?>> tasks = [];
         for (var i = 0; i < medias.Count; i++)
         {
             var media = medias[i];
@@ -59,7 +110,7 @@ public sealed class FileService : IFileService
         }
         await Task.WhenAll(tasks);
 
-        List<Multimedia?> result = new();
+        List<Multimedia?> result = [];
         foreach (var task in tasks)
             result.Add(task.Result);
         return result;
@@ -67,7 +118,7 @@ public sealed class FileService : IFileService
 
     public async Task<List<Multimedia>> SaveNotNullMedias(List<MediaWithStream?> medias)
     {
-        List<Task<Multimedia?>> tasks = new();
+        List<Task<Multimedia?>> tasks = [];
         for (var i = 0; i < medias.Count; i++)
         {
             var media = medias[i];
@@ -80,7 +131,7 @@ public sealed class FileService : IFileService
         }
         await Task.WhenAll(tasks);
 
-        List<Multimedia> result = new();
+        List<Multimedia> result = [];
         foreach (var task in tasks)
             if (task.Result is not null)
                 result.Add(task.Result);
@@ -115,6 +166,6 @@ public sealed class FileService : IFileService
     {
         return removedIdentifiers is not null
             ? await _storage.DeleteFiles(removedIdentifiers)
-            : Array.Empty<bool>();
+            : [];
     }
 }

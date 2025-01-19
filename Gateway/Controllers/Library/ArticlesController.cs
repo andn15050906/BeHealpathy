@@ -4,6 +4,7 @@ using Contract.Requests.Library.ArticleRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Contract.Requests.Library.ArticleRequests;
+using Contract.Domain.Shared.MultimediaBase;
 
 namespace Gateway.Controllers.Library;
 
@@ -16,26 +17,50 @@ public sealed class ArticlesController : ContractController
 
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> GetPaged([FromQuery] QueryArticleDto dto)
     {
-        GetPagedArticlesQuery query = new(dto, ClientId);
+        GetPagedArticlesQuery query = new(dto);
         return await Send(query);
     }
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create(CreateArticleDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateArticleDto dto, [FromServices] IFileService fileService)
     {
-        CreateArticleCommand command = new(Guid.NewGuid(), dto, ClientId);
+        var id = Guid.NewGuid();
+        foreach (var section in dto.Sections)
+            section.Id = Guid.NewGuid();
+
+        List<Multimedia> medias = [];
+        if (dto.Thumb is not null)
+            medias.Add(await fileService.SaveImageAndUpdateDto(dto.Thumb, id));
+        var sectionMediaDtos = dto.Sections.Select(_ => (_.Media, _.Id)).ToList();
+        if (sectionMediaDtos is not null)
+            medias.AddRange(await fileService.SaveMediasAndUpdateDtos(sectionMediaDtos));
+
+        CreateArticleCommand command = new(id, dto, ClientId, medias);
         return await Send(command);
     }
 
     [HttpPatch]
     [Authorize]
-    public async Task<IActionResult> Update([FromForm] UpdateArticleDto dto)
+    public async Task<IActionResult> Update([FromForm] UpdateArticleDto dto, [FromServices] IFileService fileService)
     {
-        UpdateArticleCommand command = new(dto, ClientId);
+        List<Multimedia> addedMedias = [];
+        if (dto.Thumb is not null)
+            addedMedias.Add(await fileService.SaveImageAndUpdateDto(dto.Thumb, dto.Id));
+        var sectionMediaDtos = dto.Sections is null
+            ? []
+            : dto.Sections.Where(_ => _.AddedMedia is not null).Select(_ => (_.AddedMedia, _.Id)).ToList();
+        if (sectionMediaDtos is not null && sectionMediaDtos.Count > 0)
+        {
+            var sectionMedias = await fileService.SaveMediasAndUpdateDtos(sectionMediaDtos!);
+            if (sectionMedias is not null)
+                addedMedias.AddRange(sectionMedias!);
+        }
+        List<Guid> removedMedias = dto.Sections?.Select(_ => _.RemovedMedia).ToList() ?? [];
+
+        UpdateArticleCommand command = new(dto, ClientId, addedMedias, removedMedias);
         return await Send(command);
     }
 

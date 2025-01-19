@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Contract.Requests.Progress.SubmissionRequests.Dtos;
 
-namespace Contract.Requests.Progress.SubmissionRequests.Dtos;
-internal class QuerySubmissionDto
+public sealed class QuerySubmissionDto : PagingQueryDto
 {
+    public Guid? CreatorId { get; set; }
+
+    public Guid? SurveyId { get; set; }
 }

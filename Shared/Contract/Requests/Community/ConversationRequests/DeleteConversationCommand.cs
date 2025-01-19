@@ -1,6 +1,4 @@
-﻿using Contract.Requests.Shared.Base;
-
-namespace Contract.Requests.Community.ConversationRequests;
+﻿namespace Contract.Requests.Community.ConversationRequests;
 
 public sealed class DeleteConversationCommand : DeleteCommand
 {

@@ -1,10 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Contract.Requests.Community.MeetingRequests.Dtos;
 
 namespace Contract.Requests.Community.MeetingRequests;
-internal class UpdateMeetingCommand
+
+public sealed class UpdateMeetingCommand : UpdateCommand
 {
+    public UpdateMeetingDto Rq { get; init; }
+    public Guid UserId { get; init; }
+
+
+
+    public UpdateMeetingCommand(UpdateMeetingDto rq, Guid userId, bool isCompensating = false)
+        : base(isCompensating)
+    {
+        Rq = rq;
+        UserId = userId;
+    }
 }
