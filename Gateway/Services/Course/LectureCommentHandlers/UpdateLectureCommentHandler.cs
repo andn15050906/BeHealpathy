@@ -26,9 +26,9 @@ public sealed class UpdateLectureCommentHandler : RequestHandler<UpdateLectureCo
         {
             entity = ApplyChanges(entity, command);
 
-            if (command.AddedMedias is not null)
+            if (command.AddedMedias is not null && command.AddedMedias.Count > 0)
                 _context.Multimedia.AddRange(command.AddedMedias);
-            if (command.RemovedMedias is not null)
+            if (command.RemovedMedias is not null && command.RemovedMedias.Count > 0)
                 await _context.Multimedia.DeleteExt(command.RemovedMedias);
 
             await _context.SaveChangesAsync(cancellationToken);

@@ -1,5 +1,4 @@
-﻿using Contract.Requests.Shared.Base;
-using Contract.Responses.Identity;
+﻿using Contract.Responses.Identity;
 
 namespace Contract.Requests.Identity;
 

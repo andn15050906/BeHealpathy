@@ -20,12 +20,12 @@ public sealed class UpdateMeetingHandler : RequestHandler<UpdateMeetingCommand, 
         if (entity.CreatorId != command.UserId)
             return Unauthorized(string.Empty);
 
-        var addedParticipants = command.Rq.AddedParticipants is not null
+        var addedParticipants = command.Rq.AddedParticipants is not null && command.Rq.AddedParticipants.Count > 0
             ? _context.MeetingParticipants
                 .Where(_ => _.MeetingId == command.Rq.Id && command.Rq.AddedParticipants.Any(item => item.UserId == _.CreatorId))
                 .ToList()
             : null;
-        var removedParticipants = command.Rq.RemovedParticipants is not null
+        var removedParticipants = command.Rq.RemovedParticipants is not null && command.Rq.RemovedParticipants.Count > 0
             ? _context.MeetingParticipants
                 .Where(_ => _.MeetingId == command.Rq.Id && command.Rq.RemovedParticipants.Any(item => item == _.CreatorId))
                 .ToList()

@@ -10,6 +10,10 @@ public sealed class DiaryNoteModel
     public Guid CreatorId { get; set; }
     public DateTime CreationTime { get; set; }
     public DateTime LastModificationTime { get; set; }
+    public string Title { get; set; }
+    public string Content { get; set; }
+    public string Mood { get; set; }
+    public string Theme { get; set; }
     public List<MultimediaModel> Medias { get; set; }
 
 
@@ -21,6 +25,10 @@ public sealed class DiaryNoteModel
             CreatorId = _.CreatorId,
             CreationTime = _.CreationTime,
             LastModificationTime = _.LastModificationTime,
+            Title = _.Title,
+            Content = _.Content,
+            Mood = _.Mood,
+            Theme = _.Theme,
             //Medias
         };
 }

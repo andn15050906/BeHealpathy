@@ -15,13 +15,14 @@ public sealed class UserFullModel
     public Role Role { get; set; }
     public bool IsVerified { get; set; }
     public bool IsApproved { get; set; }
-    public bool IsBanned { get; set; }
     public IEnumerable<string> LoginProviders { get; set; }
     public string Bio { get; set; }
     public DateTime? DateOfBirth { get; set; }
     public int EnrollmentCount { get; set; }
 
     public DateTime CreationTime { get; set; }
+    public IEnumerable<PreferenceModel> Preferences { get; set; }
+    public IEnumerable<SettingModel> Settings { get; set; }
 
 
 
@@ -33,6 +34,7 @@ public sealed class UserFullModel
         return new UserFullModel
         {
             Id = user.Id,
+            CreationTime = user.CreationTime,
 
             UserName = user.UserName,
             Email = user.Email,
@@ -44,9 +46,17 @@ public sealed class UserFullModel
             Bio = user.Bio,
             DateOfBirth = (DateTime)user.DateOfBirth!,
             EnrollmentCount = user.EnrollmentCount,
-            LoginProviders = user.UserLogins.Select(x => x.LoginProvider),
-
-            CreationTime = user.CreationTime
+            LoginProviders = user.UserLogins.Select(_ => _.LoginProvider),
+            Settings = user.Settings.Select(_ => new SettingModel
+            {
+                Title = _.Title,
+                Choice = _.Choice
+            }),
+            Preferences = user.Preferences.Select(_ => new PreferenceModel
+            {
+                SourceId = _.SourceId,
+                Value = _.Value
+            })
         };
     }
 
@@ -63,10 +73,19 @@ public sealed class UserFullModel
             Role = _.Role,
             IsVerified = _.IsVerified,
             IsApproved = _.IsApproved,
-            IsBanned = _.IsBanned,
             Bio = _.Bio,
             DateOfBirth = _.DateOfBirth,
             EnrollmentCount = _.EnrollmentCount,
             LoginProviders = _.UserLogins.Select(x => x.LoginProvider),
+            Settings = _.Settings.Select(_ => new SettingModel
+            {
+                Title = _.Title,
+                Choice = _.Choice
+            }),
+            Preferences = _.Preferences.Select(_ => new PreferenceModel
+            {
+                SourceId = _.SourceId,
+                Value = _.Value
+            })
         };
 }

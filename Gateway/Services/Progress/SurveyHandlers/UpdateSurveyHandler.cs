@@ -1,5 +1,6 @@
 ﻿using Contract.Domain.ProgressAggregates;
 using Contract.Helpers;
+using Contract.Requests.Progress.McqRequests.Dtos;
 using Contract.Requests.Progress.SurveyRequests;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public sealed class UpdateSurveyHandler : RequestHandler<UpdateSurveyCommand, He
         if (entity is null)
             return NotFound(string.Empty);
 
-        if (command.Rq.AddedQuestions is not null)
+        if ((command.Rq.AddedQuestions ??= []).Count > 0)
         {
             List<McqQuestion> questions = [];
             foreach (var question in command.Rq.AddedQuestions)
@@ -29,7 +30,7 @@ public sealed class UpdateSurveyHandler : RequestHandler<UpdateSurveyCommand, He
             }
             entity.Questions.AddRange(questions);
         }
-        if (command.Rq.RemovedQuestions is not null)
+        if ((command.Rq.RemovedQuestions ??= []).Count > 0)
         {
             var questions = await _context.McqQuestions
                 .Where(_ => command.Rq.RemovedQuestions.Contains(_.Id) && _.SurveyId == command.Rq.Id)

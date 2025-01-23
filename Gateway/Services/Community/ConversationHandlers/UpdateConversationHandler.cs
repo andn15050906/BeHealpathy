@@ -20,12 +20,12 @@ public sealed class UpdateConversationHandler : RequestHandler<UpdateConversatio
         if (entity.CreatorId != command.UserId)
             return Unauthorized(string.Empty);
 
-        var addedMembers = command.Rq.AddedMembers is not null
+        var addedMembers = command.Rq.AddedMembers is not null && command.Rq.AddedMembers.Count > 0
             ? _context.ConversationMembers
                 .Where(_ => _.ConversationId == command.Rq.Id && command.Rq.AddedMembers.Any(item => item.UserId == _.CreatorId))
                 .ToList()
             : null;
-        var removedMembers = command.Rq.RemovedMembers is not null
+        var removedMembers = command.Rq.RemovedMembers is not null && command.Rq.RemovedMembers.Count > 0
             ? _context.ConversationMembers
                 .Where(_ => _.ConversationId == command.Rq.Id && command.Rq.RemovedMembers.Any(item => item == _.CreatorId))
                 .ToList()

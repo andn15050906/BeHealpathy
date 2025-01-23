@@ -16,6 +16,7 @@ public sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, UserFu
         try
         {
             var result = await _context.Users
+                .Include(_ => _.Preferences).Include(_ => _.Settings)
                 .Where(_ => _.Id == request.Id && !_.IsDeleted)
                 .Select(UserFullModel.MapExpression)
                 .FirstOrDefaultAsync(cancellationToken);

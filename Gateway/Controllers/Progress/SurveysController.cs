@@ -32,7 +32,7 @@ public sealed class SurveysController : ContractController
 
     [HttpPatch]
     [Authorize]
-    public async Task<IActionResult> Update([FromForm] UpdateSurveyDto dto)
+    public async Task<IActionResult> Update(UpdateSurveyDto dto)
     {
         UpdateSurveyCommand command = new(dto, ClientId);
         return await Send(command);

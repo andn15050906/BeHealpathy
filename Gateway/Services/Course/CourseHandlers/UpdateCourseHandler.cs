@@ -24,9 +24,9 @@ public class UpdateCourseHandler : RequestHandler<UpdateCourseCommand, Healpathy
                 return Unauthorized(string.Empty);
 
             ApplyChanges(entity, request.Rq, request.UserId);
-            if (request.AddedMedias is not null)
+            if (request.AddedMedias is not null && request.AddedMedias.Count > 0)
                 _context.Multimedia.AddRange(request.AddedMedias);
-            if (request.RemovedMedias is not null)
+            if (request.RemovedMedias is not null && request.RemovedMedias.Count > 0)
                 await _context.Multimedia.DeleteExt(request.RemovedMedias);
             await _context.SaveChangesAsync(cancellationToken);
             return Ok();
