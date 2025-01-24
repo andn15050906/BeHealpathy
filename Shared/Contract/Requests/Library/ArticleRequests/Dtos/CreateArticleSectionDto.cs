@@ -9,5 +9,5 @@ public sealed class CreateArticleSectionDto
     public string Header { get; set; }
     public string Content { get; set; }
 
-    public CreateMediaDto Media { get; set; }
+    public CreateMediaDto? Media { get; set; }
 }

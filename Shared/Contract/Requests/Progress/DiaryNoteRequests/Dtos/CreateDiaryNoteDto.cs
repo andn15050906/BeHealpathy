@@ -9,5 +9,5 @@ public sealed class CreateDiaryNoteDto
     public string Mood { get; set; }
     public string Theme { get; set; }
 
-    public List<CreateMediaDto> Medias { get; set; }
+    public List<CreateMediaDto>? Medias { get; set; }
 }

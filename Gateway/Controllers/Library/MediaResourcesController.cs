@@ -28,9 +28,9 @@ public sealed class MediaResourcesController : ContractController
     public async Task<IActionResult> Create([FromForm] CreateMediaResourceDto dto, [FromServices] IFileService fileService)
     {
         var id = Guid.NewGuid();
-        Multimedia media = await fileService.SaveImageAndUpdateDto(dto.Media, id);
+        Multimedia media = (await fileService.SaveMediasAndUpdateDtos([(dto.Media, id)] )).First();
 
-        CreateMediaResourceCommand command = new(Guid.NewGuid(), dto, ClientId, media);
+        CreateMediaResourceCommand command = new(id, dto, ClientId, media);
         return await Send(command);
     }
 
@@ -38,7 +38,7 @@ public sealed class MediaResourcesController : ContractController
     [Authorize]
     public async Task<IActionResult> Update([FromForm] UpdateMediaResourceDto dto, [FromServices] IFileService fileService)
     {
-        Multimedia media = await fileService.SaveImageAndUpdateDto(dto.ReplacedMedia, dto.Id);
+        Multimedia media = (await fileService.SaveMediasAndUpdateDtos([(dto.ReplacedMedia, dto.Id)])).First();
 
         UpdateMediaResourceCommand command = new(dto, ClientId, media);
         return await Send(command);

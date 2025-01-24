@@ -34,7 +34,7 @@ public sealed class ArticlesController : ContractController
         List<Multimedia> medias = [];
         if (dto.Thumb is not null)
             medias.Add(await fileService.SaveImageAndUpdateDto(dto.Thumb, id));
-        var sectionMediaDtos = dto.Sections.Select(_ => (_.Media, _.Id)).ToList();
+        var sectionMediaDtos = dto.Sections.Where(_ => _.Media is not null).Select(_ => (_.Media!, _.Id)).ToList();
         if (sectionMediaDtos is not null)
             medias.AddRange(await fileService.SaveMediasAndUpdateDtos(sectionMediaDtos));
 
