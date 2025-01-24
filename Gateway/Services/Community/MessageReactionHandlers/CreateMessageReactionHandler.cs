@@ -1,17 +1,18 @@
 ﻿using Contract.Domain.CommunityAggregate;
 using Contract.Helpers;
 using Contract.Requests.Community.MessageReactionRequests;
+using Contract.Responses.Shared;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.MessageReactionHandlers;
 
-public sealed class CreateMessageReactionHandler : RequestHandler<CreateMessageReactionCommand, HealpathyContext>
+public sealed class CreateMessageReactionHandler : RequestHandler<CreateMessageReactionCommand, ReactionModel, HealpathyContext>
 {
     public CreateMessageReactionHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result> Handle(CreateMessageReactionCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<ReactionModel>> Handle(CreateMessageReactionCommand command, CancellationToken cancellationToken)
     {
         MessageReaction entity = Adapt(command);
 
@@ -19,7 +20,7 @@ public sealed class CreateMessageReactionHandler : RequestHandler<CreateMessageR
         {
             await _context.MessageReactions.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
-            return Created();
+            return Created(ReactionModel.MapFunc(entity));
         }
         catch (Exception ex)
         {
@@ -28,7 +29,7 @@ public sealed class CreateMessageReactionHandler : RequestHandler<CreateMessageR
         }
     }
 
-    private MessageReaction Adapt(CreateMessageReactionCommand command)
+    private static MessageReaction Adapt(CreateMessageReactionCommand command)
     {
         return new MessageReaction(command.Id, command.UserId, command.Rq.SourceId, command.Rq.Content);
     }

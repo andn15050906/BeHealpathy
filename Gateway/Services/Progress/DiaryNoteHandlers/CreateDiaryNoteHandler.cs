@@ -1,17 +1,19 @@
 ﻿using Contract.Domain.ProgressAggregates;
 using Contract.Helpers;
 using Contract.Requests.Progress.DiaryNoteRequests;
+using Contract.Responses.Progress;
+using Contract.Responses.Shared;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.DiaryNoteHandlers;
 
-public sealed class CreateDiaryNoteHandler : RequestHandler<CreateDiaryNoteCommand, HealpathyContext>
+public sealed class CreateDiaryNoteHandler : RequestHandler<CreateDiaryNoteCommand, DiaryNoteModel, HealpathyContext>
 {
     public CreateDiaryNoteHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result> Handle(CreateDiaryNoteCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<DiaryNoteModel>> Handle(CreateDiaryNoteCommand command, CancellationToken cancellationToken)
     {
         DiaryNote entity = Adapt(command);
 
@@ -23,7 +25,13 @@ public sealed class CreateDiaryNoteHandler : RequestHandler<CreateDiaryNoteComma
                 : Task.CompletedTask;
             await Task.WhenAll(commentTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
-            return Created();
+
+            var model = DiaryNoteModel.MapFunc(entity);
+            if (command.Medias is not null)
+            {
+                model.Medias = command.Medias.Select(_ => MultimediaModel.MapFunc(_));
+            }
+            return Created(model);
         }
         catch (Exception ex)
         {
@@ -32,7 +40,7 @@ public sealed class CreateDiaryNoteHandler : RequestHandler<CreateDiaryNoteComma
         }
     }
 
-    private DiaryNote Adapt(CreateDiaryNoteCommand command)
+    private static DiaryNote Adapt(CreateDiaryNoteCommand command)
     {
         return new DiaryNote(
             command.Id, command.UserId,

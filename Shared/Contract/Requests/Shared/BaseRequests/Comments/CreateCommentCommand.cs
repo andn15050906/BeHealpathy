@@ -1,9 +1,10 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
 using Contract.Requests.Shared.BaseDtos.Comments;
+using Contract.Responses.Shared;
 
 namespace Contract.Requests.Shared.BaseRequests.Comments;
 
-public class CreateCommentCommand : CreateCommand
+public class CreateCommentCommand : CreateCommand<CommentModel>
 {
     public CreateCommentDto Rq { get; init; }
     public Guid UserId { get; init; }

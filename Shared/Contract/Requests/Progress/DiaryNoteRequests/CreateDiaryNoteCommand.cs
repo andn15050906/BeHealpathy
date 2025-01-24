@@ -1,9 +1,10 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
 using Contract.Requests.Progress.DiaryNoteRequests.Dtos;
+using Contract.Responses.Progress;
 
 namespace Contract.Requests.Progress.DiaryNoteRequests;
 
-public sealed class CreateDiaryNoteCommand : CreateCommand
+public sealed class CreateDiaryNoteCommand : CreateCommand<DiaryNoteModel>
 {
     public CreateDiaryNoteDto Rq { get; init; }
     public Guid UserId { get; init; }

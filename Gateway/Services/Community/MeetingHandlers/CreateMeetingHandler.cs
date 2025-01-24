@@ -1,17 +1,18 @@
 ﻿using Contract.Domain.CommunityAggregate;
 using Contract.Helpers;
 using Contract.Requests.Community.MeetingRequests;
+using Contract.Responses.Community;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.MeetingHandlers;
 
-public sealed class CreateMeetingHandler : RequestHandler<CreateMeetingCommand, HealpathyContext>
+public sealed class CreateMeetingHandler : RequestHandler<CreateMeetingCommand, MeetingModel, HealpathyContext>
 {
     public CreateMeetingHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result> Handle(CreateMeetingCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<MeetingModel>> Handle(CreateMeetingCommand command, CancellationToken cancellationToken)
     {
         Meeting entity = Adapt(command);
 
@@ -19,7 +20,7 @@ public sealed class CreateMeetingHandler : RequestHandler<CreateMeetingCommand, 
         {
             await _context.Meetings.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
-            return Created();
+            return Created(MeetingModel.MapFunc(entity));
         }
         catch (Exception ex)
         {

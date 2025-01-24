@@ -20,6 +20,35 @@ public sealed class MeetingModel
 
 
 
+
+
+
+    public static Func<Meeting, MeetingModel> MapFunc
+        = _ => new MeetingModel
+        {
+            Id = _.Id,
+            CreatorId = _.CreatorId,
+            LastModifierId = _.LastModifierId,
+            CreationTime = _.CreationTime,
+            LastModificationTime = _.LastModificationTime,
+
+            Title = _.Title,
+            Description = _.Description,
+            StartAt = _.StartAt,
+            EndAt = _.EndAt,
+            MaxParticipants = _.MaxParticipants,
+
+            Participants = _.Participants.Select(_ => new MeetingParticipantModel
+            {
+                CreatorId = _.CreatorId,
+                CreationTime = _.CreationTime,
+                MeetingId = _.MeetingId,
+                UserId = _.UserId,
+                IsHost = _.IsHost,
+                Status = _.Status
+            }).ToList()
+        };
+
     public static Expression<Func<Meeting, MeetingModel>> MapExpression
         = _ => new MeetingModel
         {

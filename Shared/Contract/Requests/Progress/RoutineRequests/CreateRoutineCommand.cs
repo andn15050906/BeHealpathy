@@ -1,8 +1,9 @@
 ﻿using Contract.Requests.Progress.RoutineRequests.Dtos;
+using Contract.Responses.Progress;
 
 namespace Contract.Requests.Progress.RoutineRequests;
 
-public sealed class CreateRoutineCommand : CreateCommand
+public sealed class CreateRoutineCommand : CreateCommand<RoutineModel>
 {
     public CreateRoutineDto Rq { get; init; }
     public Guid UserId { get; init; }

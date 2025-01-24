@@ -1,9 +1,10 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
 using Contract.Requests.Library.MediaRequests.Dtos;
+using Contract.Responses.Library;
 
 namespace Contract.Requests.Library.MediaRequests;
 
-public sealed class CreateMediaResourceCommand : CreateCommand
+public sealed class CreateMediaResourceCommand : CreateCommand<MediaResourceModel>
 {
     public CreateMediaResourceDto Rq { get; init; }
     public Guid UserId { get; init; }

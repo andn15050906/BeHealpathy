@@ -40,7 +40,7 @@ public sealed class GetPagedMeetingsHandler : RequestHandler<GetPagedMeetingsQue
         if (dto.CreatorId is not null)
             return _ => _.CreatorId == dto.CreatorId;
         if (dto.Title is not null)
-            return _ => _.Title.Contains(dto.Title, StringComparison.OrdinalIgnoreCase) && !_.IsDeleted;
+            return _ => _.Title.Contains(dto.Title) && !_.IsDeleted;
 
         if (dto.StartAfter is not null || dto.StartBefore is not null)
         {

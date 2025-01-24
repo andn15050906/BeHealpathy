@@ -48,11 +48,11 @@ public sealed class GetPagedMediaResourcesHandler : RequestHandler<GetPagedMedia
     private Expression<Func<MediaResource, bool>>? GetPredicate(QueryMediaResourceDto dto)
     {
         if (dto.Description is not null)
-            return _ => _.Description.Contains(dto.Description, StringComparison.OrdinalIgnoreCase) && !_.IsDeleted;
+            return _ => _.Description.Contains(dto.Description) && !_.IsDeleted;
         if (dto.Artist is not null)
             return _ => _.Artist == dto.Artist && !_.IsDeleted;
         if (dto.Title is not null)
-            return _ => _.Title.Contains(dto.Title, StringComparison.OrdinalIgnoreCase) && !_.IsDeleted;
+            return _ => _.Title.Contains(dto.Title) && !_.IsDeleted;
         if (dto.Type is not null)
             return _ => _.Type == dto.Type && !_.IsDeleted;
         return _ => !_.IsDeleted;

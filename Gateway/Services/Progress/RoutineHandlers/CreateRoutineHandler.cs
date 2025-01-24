@@ -1,17 +1,18 @@
 ﻿using Contract.Domain.ProgressAggregates;
 using Contract.Helpers;
 using Contract.Requests.Progress.RoutineRequests;
+using Contract.Responses.Progress;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.RoutineHandlers;
 
-public sealed class CreateRoutineHandler : RequestHandler<CreateRoutineCommand, HealpathyContext>
+public sealed class CreateRoutineHandler : RequestHandler<CreateRoutineCommand, RoutineModel, HealpathyContext>
 {
     public CreateRoutineHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result> Handle(CreateRoutineCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<RoutineModel>> Handle(CreateRoutineCommand command, CancellationToken cancellationToken)
     {
         Routine entity = Adapt(command);
 
@@ -19,7 +20,7 @@ public sealed class CreateRoutineHandler : RequestHandler<CreateRoutineCommand, 
         {
             await _context.Routines.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
-            return Created();
+            return Created(RoutineModel.MapFunc(entity));
         }
         catch (Exception ex)
         {
@@ -28,7 +29,7 @@ public sealed class CreateRoutineHandler : RequestHandler<CreateRoutineCommand, 
         }
     }
 
-    private Routine Adapt(CreateRoutineCommand command)
+    private static Routine Adapt(CreateRoutineCommand command)
     {
         return new Routine(command.Id, command.UserId, command.Rq.Title, command.Rq.Description, command.Rq.Frequency);
     }

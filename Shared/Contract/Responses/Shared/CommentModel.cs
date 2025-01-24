@@ -16,11 +16,11 @@ public class CommentModel
 
     public string Content { get; set; }
     public CommentStatus Status { get; set; }
-    public List<MultimediaModel> Medias { get; set; }
+    public IEnumerable<MultimediaModel> Medias { get; set; }
 
-    //public List<CommentModel> Replies { get; set; }               // FE Load if explicitly called
+    //public IEnumerable<CommentModel> Replies { get; set; }               // FE Load if explicitly called
     //...
-    public List<ReactionModel> Reactions { get; set; }
+    public IEnumerable<ReactionModel> Reactions { get; set; }
 
 
 

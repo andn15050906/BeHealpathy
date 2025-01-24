@@ -39,7 +39,7 @@ public sealed class GetPagedRoutinesHandler : RequestHandler<GetPagedRoutinesQue
         if (dto.CreatorId is not null)
             return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
         if (dto.Title is not null)
-            return _ => _.Title.Contains(_.Title, StringComparison.OrdinalIgnoreCase) && !_.IsDeleted;
+            return _ => _.Title.Contains(_.Title) && !_.IsDeleted;
 
         return _ => !_.IsDeleted;
     }

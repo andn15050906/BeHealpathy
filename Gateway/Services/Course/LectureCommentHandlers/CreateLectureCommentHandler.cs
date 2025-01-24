@@ -1,17 +1,18 @@
 ﻿using Contract.Domain.CourseAggregate;
 using Contract.Helpers;
 using Contract.Requests.Courses.LectureCommentRequests;
+using Contract.Responses.Shared;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Course.LectureCommentHandlers;
 
-public sealed class CreateLectureCommentHandler : RequestHandler<CreateLectureCommentCommand, HealpathyContext>
+public sealed class CreateLectureCommentHandler : RequestHandler<CreateLectureCommentCommand, CommentModel, HealpathyContext>
 {
     public CreateLectureCommentHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result> Handle(CreateLectureCommentCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<CommentModel>> Handle(CreateLectureCommentCommand command, CancellationToken cancellationToken)
     {
         LectureComment entity = Adapt(command);
 
@@ -23,7 +24,13 @@ public sealed class CreateLectureCommentHandler : RequestHandler<CreateLectureCo
                 : Task.CompletedTask;
             await Task.WhenAll(commentTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
-            return Created();
+
+            var model = CommentModel.MapFunc(entity);
+            if (command.Medias is not null)
+            {
+                model.Medias = command.Medias.Select(_ => MultimediaModel.MapFunc(_));
+            }
+            return Created(model);
         }
         catch (Exception ex)
         {
@@ -32,7 +39,7 @@ public sealed class CreateLectureCommentHandler : RequestHandler<CreateLectureCo
         }
     }
 
-    private LectureComment Adapt(CreateLectureCommentCommand command)
+    private static LectureComment Adapt(CreateLectureCommentCommand command)
     {
         return new LectureComment(command.Id, command.UserId, command.Rq.SourceId, command.Rq.Content);
     }

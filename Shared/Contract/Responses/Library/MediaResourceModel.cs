@@ -22,6 +22,26 @@ public sealed class MediaResourceModel
 
 
 
+
+
+
+    public static Func<MediaResource, MediaResourceModel> MapFunc
+        = _ => new MediaResourceModel
+        {
+            Id = _.Id,
+            CreatorId = _.CreatorId,
+            LastModifierId = _.LastModifierId,
+            CreationTime = _.CreationTime,
+            LastModificationTime = _.LastModificationTime,
+
+            Description = _.Description,
+            Artist = _.Artist,
+            Title = _.Title,
+            Type = _.Type,
+
+            //Media
+        };
+
     public static Expression<Func<MediaResource, MediaResourceModel>> MapExpression
         = _ => new MediaResourceModel
         {

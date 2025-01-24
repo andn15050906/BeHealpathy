@@ -1,17 +1,18 @@
 ﻿using Contract.Domain.LibraryAggregate;
 using Contract.Helpers;
 using Contract.Requests.Library.ArticleCommentRequests;
+using Contract.Responses.Shared;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.ArticleCommentHandlers;
 
-public sealed class CreateArticleCommentHandler : RequestHandler<CreateArticleCommentCommand, HealpathyContext>
+public sealed class CreateArticleCommentHandler : RequestHandler<CreateArticleCommentCommand, CommentModel, HealpathyContext>
 {
     public CreateArticleCommentHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result> Handle(CreateArticleCommentCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<CommentModel>> Handle(CreateArticleCommentCommand command, CancellationToken cancellationToken)
     {
         ArticleComment entity = Adapt(command);
 
@@ -23,7 +24,13 @@ public sealed class CreateArticleCommentHandler : RequestHandler<CreateArticleCo
                 : Task.CompletedTask;
             await Task.WhenAll(commentTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
-            return Created();
+
+            var model = CommentModel.MapFunc(entity);
+            if (command.Medias is not null)
+            {
+                model.Medias = command.Medias.Select(_ => MultimediaModel.MapFunc(_));
+            }
+            return Created(model);
         }
         catch (Exception ex)
         {
@@ -32,7 +39,7 @@ public sealed class CreateArticleCommentHandler : RequestHandler<CreateArticleCo
         }
     }
 
-    private ArticleComment Adapt(CreateArticleCommentCommand command)
+    private static ArticleComment Adapt(CreateArticleCommentCommand command)
     {
         return new ArticleComment(command.Id, command.UserId, command.Rq.SourceId, command.Rq.Content);
     }

@@ -13,6 +13,19 @@ public sealed class RoutineLogModel
 
 
 
+
+
+
+    public static Func<RoutineLog, RoutineLogModel> MapFunc
+       = _ => new RoutineLogModel
+       {
+           Id = _.Id,
+           CreatorId = _.CreatorId,
+           CreationTime = _.CreationTime,
+           RoutineId = _.RoutineId,
+           Content = _.Content
+       };
+
     public static Expression<Func<RoutineLog, RoutineLogModel>> MapExpression
        = _ => new RoutineLogModel
        {

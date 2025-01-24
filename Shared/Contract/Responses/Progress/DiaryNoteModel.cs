@@ -14,9 +14,26 @@ public sealed class DiaryNoteModel
     public string Content { get; set; }
     public string Mood { get; set; }
     public string Theme { get; set; }
-    public List<MultimediaModel> Medias { get; set; }
+    public IEnumerable<MultimediaModel> Medias { get; set; }
 
 
+
+
+
+
+    public static Func<DiaryNote, DiaryNoteModel> MapFunc
+        = _ => new DiaryNoteModel
+        {
+            Id = _.Id,
+            CreatorId = _.CreatorId,
+            CreationTime = _.CreationTime,
+            LastModificationTime = _.LastModificationTime,
+            Title = _.Title,
+            Content = _.Content,
+            Mood = _.Mood,
+            Theme = _.Theme,
+            //Medias
+        };
 
     public static Expression<Func<DiaryNote, DiaryNoteModel>> MapExpression
         = _ => new DiaryNoteModel

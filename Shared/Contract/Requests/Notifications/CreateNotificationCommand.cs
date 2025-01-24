@@ -1,8 +1,9 @@
 ﻿using Contract.Requests.Notifications.Dtos;
+using Contract.Responses.Notifications;
 
 namespace Contract.Requests.Notifications;
 
-public sealed class CreateNotificationCommand : CreateCommand
+public sealed class CreateNotificationCommand : CreateCommand<NotificationModel>
 {
     public CreateAdvisorRequestDto? InstructorRequestRq { get; set; }
     public CreateWithdrawalRequestDto? WithdrawalRequestRq { get; set; }

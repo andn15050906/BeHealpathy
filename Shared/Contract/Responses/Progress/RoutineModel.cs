@@ -18,6 +18,22 @@ public sealed class RoutineModel
 
 
 
+
+
+
+    public static Func<Routine, RoutineModel> MapFunc
+        = _ => new RoutineModel
+        {
+            Id = _.Id,
+            CreatorId = _.CreatorId,
+            CreationTime = _.CreationTime,
+            LastModificationTime = _.LastModificationTime,
+            Title = _.Title,
+            Description = _.Description,
+            Objective = _.Objective,
+            Frequency = _.Frequency
+        };
+
     public static Expression<Func<Routine, RoutineModel>> MapExpression
         = _ => new RoutineModel
         {

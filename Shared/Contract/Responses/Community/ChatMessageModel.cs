@@ -16,10 +16,36 @@ public sealed class ChatMessageModel
     public string Content { get; set; }
     public MessageStatus Status { get; set; }
     public Guid ConversationId { get; set; }
-    public List<MultimediaModel> Attachments { get; set; }
-    public List<ReactionModel> Reactions { get; set; }
+    public IEnumerable<MultimediaModel> Attachments { get; set; }
+    public IEnumerable<ReactionModel> Reactions { get; set; }
 
 
+
+
+
+
+    public static Func<ChatMessage, ChatMessageModel> MapFunc
+        = _ => new ChatMessageModel
+        {
+            Id = _.Id,
+            CreatorId = _.CreatorId,
+            LastModifierId = _.LastModifierId,
+            CreationTime = _.CreationTime,
+            LastModificationTime = _.LastModificationTime,
+
+            Content = _.Content,
+            Status = _.Status,
+            ConversationId = _.ConversationId,
+            //Attachments
+            Reactions = _.Reactions.Select(reaction => new ReactionModel
+            {
+                Id = reaction.Id,
+                CreatorId = reaction.CreatorId,
+                CreationTime = reaction.CreationTime,
+                SourceId = reaction.SourceId,
+                Content = reaction.Content
+            }).ToList(),
+        };
 
     public static Expression<Func<ChatMessage, ChatMessageModel>> MapExpression
         = _ => new ChatMessageModel

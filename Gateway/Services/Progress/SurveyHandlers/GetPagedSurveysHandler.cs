@@ -38,7 +38,7 @@ public sealed class GetPagedSurveysHandler : RequestHandler<GetPagedSurveysQuery
     private Expression<Func<Survey, bool>>? GetPredicate(QuerySurveyDto dto)
     {
         if (dto.Name is not null)
-            return _ => _.Name.Contains(dto.Name, StringComparison.OrdinalIgnoreCase) && !_.IsDeleted;
+            return _ => _.Name.Contains(dto.Name) && !_.IsDeleted;
 
         return _ => !_.IsDeleted;
     }
