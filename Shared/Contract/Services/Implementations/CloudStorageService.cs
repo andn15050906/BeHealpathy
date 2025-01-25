@@ -44,7 +44,7 @@ public sealed class CloudStorageService : IStorageService
         try
         {
             var uploadFileResult = await _client.UploadAsync(
-                new CloudinaryDotNet.Actions.ImageUploadParams()
+                new CloudinaryDotNet.Actions.RawUploadParams()
                 {
                     File = new FileDescription(media.Title, media.Stream),
                     DisplayName = media.Title
