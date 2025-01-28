@@ -7,11 +7,11 @@ public sealed class CreateConversationCommand : CreateCommand
 {
     public CreateConversationDto Rq { get; init; }
     public Guid UserId { get; init; }
-    public Multimedia Media { get; init; }
+    public Multimedia? Media { get; init; }
 
 
 
-    public CreateConversationCommand(Guid id, CreateConversationDto rq, Guid userId, Multimedia media, bool isCompensating = false)
+    public CreateConversationCommand(Guid id, CreateConversationDto rq, Guid userId, Multimedia? media, bool isCompensating = false)
         : base(id, isCompensating)
     {
         Rq = rq;

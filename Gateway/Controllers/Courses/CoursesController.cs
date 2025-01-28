@@ -80,7 +80,11 @@ public sealed class CoursesController : ContractController
         var id = Guid.NewGuid();
         List<Multimedia> medias = [];
         if (dto.Thumb is not null)
-            medias.Add(await fileService.SaveImageAndUpdateDto(dto.Thumb, id));
+        {
+            var image = await fileService.SaveImageAndUpdateDto(dto.Thumb, id);
+            if (image is not null)
+                medias.Add(image);
+        }
 
         var command = new CreateCourseCommand(id, dto, ClientId, (Guid)InstructorId, medias);
         return await Send(command);

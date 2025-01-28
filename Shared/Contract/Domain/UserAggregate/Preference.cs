@@ -11,4 +11,16 @@ public sealed class Preference : CreationAuditedEntity
 
     // Navigations
     public User Creator { get; set; }
+
+
+
+#pragma warning disable CS8618
+    public Preference(Guid id, Guid creatorId, Guid sourceId, string value)
+    {
+        Id = id;
+        CreatorId = creatorId;
+        SourceId = sourceId;
+        Value = value;
+    }
+#pragma warning restore CS8618
 }

@@ -33,7 +33,11 @@ public sealed class ArticlesController : ContractController
 
         List<Multimedia> medias = [];
         if (dto.Thumb is not null)
-            medias.Add(await fileService.SaveImageAndUpdateDto(dto.Thumb, id));
+        {
+            var image = await fileService.SaveImageAndUpdateDto(dto.Thumb, id);
+            if (image is not null)
+                medias.Add(image);
+        }
         var sectionMediaDtos = dto.Sections.Where(_ => _.Media is not null).Select(_ => (_.Media!, _.Id)).ToList();
         if (sectionMediaDtos is not null)
             medias.AddRange(await fileService.SaveMediasAndUpdateDtos(sectionMediaDtos));
@@ -48,7 +52,11 @@ public sealed class ArticlesController : ContractController
     {
         List<Multimedia> addedMedias = [];
         if (dto.Thumb is not null)
-            addedMedias.Add(await fileService.SaveImageAndUpdateDto(dto.Thumb, dto.Id));
+        {
+            var image = await fileService.SaveImageAndUpdateDto(dto.Thumb, dto.Id);
+            if (image is not null)
+                addedMedias.Add(image);
+        }
         var sectionMediaDtos = dto.Sections is null
             ? []
             : dto.Sections.Where(_ => _.AddedMedia is not null).Select(_ => (_.AddedMedia, _.Id)).ToList();

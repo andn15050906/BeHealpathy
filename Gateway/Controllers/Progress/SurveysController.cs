@@ -15,10 +15,9 @@ public sealed class SurveysController : ContractController
 
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> GetPaged([FromQuery] QuerySurveyDto dto)
     {
-        GetPagedSurveysQuery query = new(dto, ClientId);
+        GetPagedSurveysQuery query = new(dto);
         return await Send(query);
     }
 

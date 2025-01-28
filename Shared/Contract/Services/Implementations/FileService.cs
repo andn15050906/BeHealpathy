@@ -53,10 +53,13 @@ public sealed class FileService : IFileService
         return list.Select(_ => _.Item1!).ToList();
     }
 
-    public async Task<Multimedia> SaveImageAndUpdateDto(CreateMediaDto dto, Guid sourceId)
+    public async Task<Multimedia?> SaveImageAndUpdateDto(CreateMediaDto dto, Guid sourceId)
     {
+        dto.Url ??= string.Empty;
         if (!string.IsNullOrWhiteSpace(dto.Url))
             return new Multimedia(sourceId, dto.Url!, MediaType.Other, dto.Url!, dto.Title);
+        if (dto.File is null)
+            return null;
 
         var mediaWithFile = MediaWithStream.FromDto(dto, sourceId, _ => $"{sourceId}_{Guid.NewGuid()}");
         var media = await SaveImage(mediaWithFile)!;

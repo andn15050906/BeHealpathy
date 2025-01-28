@@ -28,7 +28,9 @@ public sealed class ConversationsController : ContractController
     public async Task<IActionResult> Create([FromForm] CreateConversationDto dto, [FromServices] IFileService fileService)
     {
         var id = Guid.NewGuid();
-        var thumb = await fileService.SaveImageAndUpdateDto(dto.Thumb, id);
+        Multimedia? thumb = null;
+        if (dto.Thumb is not null)
+            thumb = await fileService.SaveImageAndUpdateDto(dto.Thumb, id);
 
         CreateConversationCommand command = new(id, dto, ClientId, thumb);
         return await Send(command);

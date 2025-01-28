@@ -18,7 +18,9 @@ public sealed class CreateConversationHandler : RequestHandler<CreateConversatio
         try
         {
             var conversationTask = _context.Conversations.InsertExt(entity);
-            var mediaTask = _context.Multimedia.InsertExt(command.Media);
+            var mediaTask = Task.CompletedTask;
+            if (command.Media is not null)
+                mediaTask = _context.Multimedia.InsertExt(command.Media);
             await Task.WhenAll(conversationTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
             return Created();
