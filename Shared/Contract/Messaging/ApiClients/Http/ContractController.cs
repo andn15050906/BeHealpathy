@@ -1,5 +1,4 @@
-﻿using Contract.Messaging.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Contract.Messaging.ApiClients.Http;
 

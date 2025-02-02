@@ -5,10 +5,10 @@ namespace Gateway.Realtime.Core;
 
 public sealed class ConnectionsHandler
 {
-    private static readonly Dictionary<string, Guid?> _connection_user = new();
+    private static readonly Dictionary<string, Guid?> _connection_user = [];
 
-    private static readonly Dictionary<string, Participant> _connection_participant = new();
-    private static readonly List<Room> _rooms = new();
+    private static readonly Dictionary<string, Participant> _connection_participant = [];
+    private static readonly List<Room> _rooms = [];
 
 
 
@@ -17,12 +17,14 @@ public sealed class ConnectionsHandler
 
     public static void Connected(HubCallerContext context)
     {
-        if (context.UserIdentifier == null || !Guid.TryParse(context.UserIdentifier, out Guid clientId))
+        try
         {
-            _connection_user.Add(context.ConnectionId, null);
-            return;
+            _connection_user.Add(
+                context.ConnectionId,
+                (context.UserIdentifier == null || !Guid.TryParse(context.UserIdentifier, out Guid clientId)) ? null : clientId
+            );
         }
-        _connection_user.Add(context.ConnectionId, clientId);
+        catch (Exception) { }
     }
 
     public static void Disconnected(string connection)

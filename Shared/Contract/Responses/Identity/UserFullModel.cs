@@ -8,21 +8,21 @@ public sealed class UserFullModel
 {
     public Guid Id { get; set; }
 
-    public string UserName { get; set; }
-    public string Email { get; set; }
-    public string FullName { get; set; }
-    public string AvatarUrl { get; set; }
+    public string UserName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string AvatarUrl { get; set; } = string.Empty;
     public Role Role { get; set; }
     public bool IsVerified { get; set; }
     public bool IsApproved { get; set; }
-    public IEnumerable<string> LoginProviders { get; set; }
-    public string Bio { get; set; }
+    public IEnumerable<string> LoginProviders { get; set; } = [];
+    public string Bio { get; set; } = string.Empty;
     public DateTime? DateOfBirth { get; set; }
     public int EnrollmentCount { get; set; }
 
     public DateTime CreationTime { get; set; }
-    public IEnumerable<PreferenceModel> Preferences { get; set; }
-    public IEnumerable<SettingModel> Settings { get; set; }
+    public IEnumerable<PreferenceModel> Preferences { get; set; } = [];
+    public IEnumerable<SettingModel> Settings { get; set; } = [];
 
 
 
@@ -44,7 +44,7 @@ public sealed class UserFullModel
             IsVerified = user.IsVerified,
             IsApproved = user.IsApproved,
             Bio = user.Bio,
-            DateOfBirth = (DateTime)user.DateOfBirth!,
+            DateOfBirth = user.DateOfBirth,
             EnrollmentCount = user.EnrollmentCount,
             LoginProviders = user.UserLogins.Select(_ => _.LoginProvider),
             Settings = user.Settings.Select(_ => new SettingModel

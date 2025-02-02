@@ -15,7 +15,7 @@ public static class Realtime
         var serverBuilder = services.AddSignalR(_ => _.MaximumReceiveMessageSize = 128000);
 
         var options = Configurer.RealtimeOptions;
-        if (options.Enabled != "true")
+        if (options is null || options.Enabled != "true")
             return services;
 
         /*serverBuilder.AddAzureSignalR(_ => {

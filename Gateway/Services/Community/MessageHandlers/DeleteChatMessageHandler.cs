@@ -1,16 +1,17 @@
 ﻿using Contract.Helpers;
 using Contract.Requests.Community.ChatMessageRequests;
+using Contract.Responses.Community;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.MessageHandlers;
 
-public sealed class DeleteChatMessageHandler : RequestHandler<DeleteChatMessageCommand, HealpathyContext>
+public sealed class DeleteChatMessageHandler : RequestHandler<DeleteChatMessageCommand, ChatMessageModel, HealpathyContext>
 {
     public DeleteChatMessageHandler(HealpathyContext context, IAppLogger logger) : base(context, logger)
     {
     }
 
-    public override async Task<Result> Handle(DeleteChatMessageCommand request, CancellationToken cancellationToken)
+    public override async Task<Result<ChatMessageModel>> Handle(DeleteChatMessageCommand request, CancellationToken cancellationToken)
     {
         var entity = await _context.ChatMessages.FindExt(request.Id);
         if (entity is null)
@@ -22,7 +23,7 @@ public sealed class DeleteChatMessageHandler : RequestHandler<DeleteChatMessageC
         {
             _context.ChatMessages.SoftDeleteExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
-            return Ok();
+            return Ok(ChatMessageModel.MapFunc(entity));
         }
         catch (Exception ex)
         {

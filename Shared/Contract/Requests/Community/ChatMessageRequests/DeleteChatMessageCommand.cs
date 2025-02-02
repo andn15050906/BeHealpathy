@@ -1,6 +1,8 @@
-﻿namespace Contract.Requests.Community.ChatMessageRequests;
+﻿using Contract.Responses.Community;
 
-public sealed class DeleteChatMessageCommand : DeleteCommand
+namespace Contract.Requests.Community.ChatMessageRequests;
+
+public sealed class DeleteChatMessageCommand : DeleteCommand<ChatMessageModel>
 {
     public DeleteChatMessageCommand(Guid id, Guid userId, bool isCompensating = false)
         : base(id, userId, isCompensating)

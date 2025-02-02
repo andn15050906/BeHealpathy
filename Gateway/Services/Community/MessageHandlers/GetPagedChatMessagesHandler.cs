@@ -23,9 +23,7 @@ public sealed class GetPagedChatMessagesHandler : RequestHandler<GetPagedChatMes
                 ChatMessageModel.MapExpression,
                 GetPredicate(request.Rq),
                 request.Rq.PageIndex,
-                request.Rq.PageSize,
-                false,
-                _ => _.Reactions
+                request.Rq.PageSize
             );
             var result = await query.ExecuteWithOrderBy(_ => _.CreationTime);
 
@@ -38,7 +36,7 @@ public sealed class GetPagedChatMessagesHandler : RequestHandler<GetPagedChatMes
                 entity.Attachments = medias.Where(_ => _.SourceId == entity.Id).ToList() ?? [];
 
             var reactions = await _context.MessageReactions
-                .Where(_ => sourceIds.Contains(_.SourceId) || !_.IsDeleted)
+                .Where(_ => sourceIds.Contains(_.SourceId) && !_.IsDeleted)
                 .Select(ReactionModel.MapExpression)
                 .ToListAsync();
             foreach (var entity in result.Items)

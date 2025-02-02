@@ -1,11 +1,12 @@
 ﻿namespace Gateway.Realtime.Core.Messaging;
 
+// Should not apply DataOperation, following Interface Segregation Principle
 public sealed class Message
 {
-    public Guid? SenderId { get; set; }
-    public Guid? ReceiverId { get; set; }
-    public MessageTypes Type { get; set; }
+    // Send the member list instead of making another DB call
+    public List<Guid> ConversationMembers { get; set; } = [];
+
     public string Callback { get; set; } = null!;
-    public string Data { get; set; } = null!;
-    public DateTime Time { get; set; }
+
+    public string Dto { get; set; } = null!;
 }

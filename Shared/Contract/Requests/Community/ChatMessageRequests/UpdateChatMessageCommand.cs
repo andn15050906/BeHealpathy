@@ -1,9 +1,10 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
 using Contract.Requests.Community.ChatMessageRequests.Dtos;
+using Contract.Responses.Community;
 
 namespace Contract.Requests.Community.ChatMessageRequests;
 
-public sealed class UpdateChatMessageCommand : UpdateCommand
+public sealed class UpdateChatMessageCommand : UpdateCommand<ChatMessageModel>
 {
     public UpdateChatMessageDto Rq { get; init; }
     public Guid UserId { get; init; }

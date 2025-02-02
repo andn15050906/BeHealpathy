@@ -22,6 +22,7 @@ public sealed class Enrollment : AuditedEntity
 
 
 
+#pragma warning disable CS8618
     public Enrollment()
     {
 
@@ -41,4 +42,5 @@ public sealed class Enrollment : AuditedEntity
         CourseId = courseId;
         CreatorId = creatorId;
     }
+#pragma warning restore CS8618
 }

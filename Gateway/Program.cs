@@ -10,6 +10,8 @@ using Infrastructure.Helpers.Monitoring;
 using Contract.Helpers.AppExploration;
 using Infrastructure.Helpers.Email;
 using Contract.Helpers.FeatureFlags;
+using Gateway.Helpers.Dependencies;
+using WisNet.Gateway.Realtime.Interface;
 
 const string POLICY = "Policy";
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 OneTimeRunner.InitConfig(builder);
 builder.Services
     .AddCors(_ => _.AddPolicy(POLICY, builder =>
-        builder.WithOrigins(Configurer.CorsOrigins).AllowCredentials().AllowAnyHeader().AllowAnyMethod())
+        builder.WithOrigins(Configurer.CorsOrigins).AllowCredentials().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("WWW-Authenticate"))
     )
     .AddMonitoring()
     .AddAppExploration(Configurer.AppInfoOptions)
@@ -31,7 +33,7 @@ builder.Services
     .AddFeatureFlags(Configurer.FeatureFlags)
     //.AddPaymentService
     .AddHttpContextAccessor()
-    //AddRealtimeService()
+    .AddRealtimeService()
     .AddControllers();
 
 var app = builder.Build();
@@ -47,7 +49,7 @@ app
     .UseAuthorization();
 
 app.MapControllers();
-//app.MapHub<AppHub>("/hub");
+app.MapHub<AppHub>("/hub");
 
 app.Run();
 

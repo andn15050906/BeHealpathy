@@ -20,7 +20,7 @@ public sealed class CreateChatMessageHandler : RequestHandler<CreateChatMessageC
         try
         {
             var commentTask = _context.ChatMessages.InsertExt(entity);
-            var mediaTask = command.Medias is not null
+            var mediaTask = command.Medias is not null && command.Medias.Count > 0
                 ? _context.Multimedia.AddRangeAsync(command.Medias.Where(_ => _ is not null))
                 : Task.CompletedTask;
             await Task.WhenAll(commentTask, mediaTask);
@@ -42,6 +42,6 @@ public sealed class CreateChatMessageHandler : RequestHandler<CreateChatMessageC
 
     private ChatMessage Adapt(CreateChatMessageCommand command)
     {
-        return new ChatMessage(command.Id, command.UserId, command.Rq.Content, command.Rq.ConversationId);
+        return new ChatMessage(command.Id, command.UserId, command.Rq.Content ?? string.Empty, command.Rq.ConversationId);
     }
 }

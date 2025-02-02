@@ -1,6 +1,8 @@
-﻿namespace Contract.Requests.Shared.BaseRequests.Reactions;
+﻿using Contract.Responses.Shared;
 
-public class DeleteReactionCommand : DeleteCommand
+namespace Contract.Requests.Shared.BaseRequests.Reactions;
+
+public class DeleteReactionCommand : DeleteCommand<ReactionModel>
 {
     public DeleteReactionCommand(Guid id, Guid userId, bool isCompensating = false)
         : base(id, userId, isCompensating)

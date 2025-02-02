@@ -13,11 +13,11 @@ public sealed class ChatMessageModel
     public DateTime CreationTime { get; set; }
     public DateTime LastModificationTime { get; set; }
 
-    public string Content { get; set; }
+    public string Content { get; set; } = string.Empty;
     public MessageStatus Status { get; set; }
     public Guid ConversationId { get; set; }
-    public IEnumerable<MultimediaModel> Attachments { get; set; }
-    public IEnumerable<ReactionModel> Reactions { get; set; }
+    public IEnumerable<MultimediaModel> Attachments { get; set; } = [];
+    public IEnumerable<ReactionModel> Reactions { get; set; } = [];
 
 
 
@@ -37,14 +37,14 @@ public sealed class ChatMessageModel
             Status = _.Status,
             ConversationId = _.ConversationId,
             //Attachments
-            Reactions = _.Reactions.Select(reaction => new ReactionModel
+            Reactions = _.Reactions?.Select(reaction => new ReactionModel
             {
                 Id = reaction.Id,
                 CreatorId = reaction.CreatorId,
                 CreationTime = reaction.CreationTime,
                 SourceId = reaction.SourceId,
                 Content = reaction.Content
-            }).ToList(),
+            }).ToList() ?? []
         };
 
     public static Expression<Func<ChatMessage, ChatMessageModel>> MapExpression

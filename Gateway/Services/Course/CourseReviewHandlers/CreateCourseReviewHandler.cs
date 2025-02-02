@@ -16,9 +16,14 @@ public class CreateCourseReviewHandler : RequestHandler<CreateCourseReviewComman
         try
         {
             var reviewTask = _context.CourseReviews.InsertExt(entity);
-            var mediaTask = command.Medias is not null
-                ? _context.Multimedia.AddRangeAsync(command.Medias.Where(_ => _ is not null))
-                : Task.CompletedTask;
+
+            var mediaTask = Task.CompletedTask;
+            if (command.Medias is not null)
+            {
+                var medias = command.Medias.Where(_ => _ is not null);
+                if (medias.Any())
+                    mediaTask = _context.Multimedia.AddRangeAsync(medias);
+            }
             await Task.WhenAll(reviewTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
 

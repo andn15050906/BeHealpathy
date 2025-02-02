@@ -1,19 +1,21 @@
 ﻿using Contract.Domain.CommunityAggregate;
 using Contract.Helpers;
 using Contract.Requests.Community.ChatMessageRequests;
+using Contract.Responses.Community;
+using Contract.Responses.Shared;
 using Core.Helpers;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Community.MessageHandlers;
 
-public sealed class UpdateChatMessageHandler : RequestHandler<UpdateChatMessageCommand, HealpathyContext>
+public sealed class UpdateChatMessageHandler : RequestHandler<UpdateChatMessageCommand, ChatMessageModel, HealpathyContext>
 {
     public UpdateChatMessageHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result> Handle(UpdateChatMessageCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<ChatMessageModel>> Handle(UpdateChatMessageCommand command, CancellationToken cancellationToken)
     {
         var entity = await _context.ChatMessages.FirstOrDefaultAsync(_ => _.Id == command.Rq.Id);
 
@@ -32,7 +34,10 @@ public sealed class UpdateChatMessageHandler : RequestHandler<UpdateChatMessageC
                 await _context.Multimedia.DeleteExt(command.RemovedMedias);
 
             await _context.SaveChangesAsync(cancellationToken);
-            return Ok();
+
+            var model = ChatMessageModel.MapFunc(entity);
+            model.Attachments = _context.Multimedia.Where(_ => entity.Id == _.SourceId && !_.IsDeleted).Select(MultimediaModel.MapExpression);
+            return Ok(model);
         }
         catch (Exception ex)
         {

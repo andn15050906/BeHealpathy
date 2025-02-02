@@ -355,7 +355,7 @@ public sealed class HealpathyContext : BaseContext
         protected override Dictionary<Expression<Func<MessageReaction, object?>>, string> Columns => new()
         {
             // SourceId
-            { _ => _.Content, VARCHAR45 }
+            { _ => _.Content, NVARCHAR45 }
         };
 
         public override void Configure(EntityTypeBuilder<MessageReaction> builder)
@@ -644,7 +644,8 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<ArticleReaction, object?>>, string> Columns => new()
         {
-            { _ => _.Content, NVARCHAR500 }
+            // SourceId
+            { _ => _.Content, NVARCHAR45 }
         };
 
         public override void Configure(EntityTypeBuilder<ArticleReaction> builder)
@@ -875,7 +876,8 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<LectureReaction, object?>>, string> Columns => new()
         {
-            { _ => _.Content, NVARCHAR500 }
+            // SourceId
+            { _ => _.Content, NVARCHAR45 }
         };
 
         public override void Configure(EntityTypeBuilder<LectureReaction> builder)

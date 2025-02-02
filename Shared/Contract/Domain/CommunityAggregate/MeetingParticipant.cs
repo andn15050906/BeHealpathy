@@ -18,6 +18,7 @@ public sealed class MeetingParticipant : CreationAuditedDomainObject
 
 
 
+#pragma warning disable CS8618
     public MeetingParticipant()
     {
 
@@ -30,4 +31,5 @@ public sealed class MeetingParticipant : CreationAuditedDomainObject
 
         IsHost = isHost;
     }
+#pragma warning restore CS8618
 }
