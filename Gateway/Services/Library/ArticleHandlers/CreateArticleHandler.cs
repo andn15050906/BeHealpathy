@@ -36,7 +36,7 @@ public sealed class CreateArticleHandler : RequestHandler<CreateArticleCommand, 
     private Article Adapt(CreateArticleCommand command, List<Tag> tags)
     {
         var sections = command.Rq.Sections
-            .Select(_ => new ArticleSection(Guid.NewGuid(), command.Id, _.Header, _.Content))
+            .Select(_ => new ArticleSection(_.Id, command.Id, _.Header, _.Content))
             .ToList();
 
         return new Article(
