@@ -38,8 +38,7 @@ builder.Services
 
 var app = builder.Build();
 
-//if (app.Environment.IsDevelopment())
-    app.UseAppExploration();
+app.UseAppExploration();
 
 app
     .UseSerilogRequestLogging()
