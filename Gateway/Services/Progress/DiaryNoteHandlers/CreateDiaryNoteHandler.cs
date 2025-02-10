@@ -44,7 +44,7 @@ public sealed class CreateDiaryNoteHandler : RequestHandler<CreateDiaryNoteComma
     {
         return new DiaryNote(
             command.Id, command.UserId,
-            command.Rq.Title, command.Rq.Content,
+            command.Rq.Title ?? string.Empty, command.Rq.Content ?? string.Empty,
             command.Rq.Mood ?? string.Empty, command.Rq.Theme ?? string.Empty
         );
     }
