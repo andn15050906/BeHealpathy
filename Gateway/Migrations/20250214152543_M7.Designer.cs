@@ -4,6 +4,7 @@ using Gateway.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gateway.Migrations
 {
     [DbContext(typeof(HealpathyContext))]
-    partial class HealpathyContextModelSnapshot : ModelSnapshot
+    [Migration("20250214152543_M7")]
+    partial class M7
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace Gateway.Migrations
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR(MAX)");
+                        .HasColumnType("NVARCHAR(255)");
 
                     b.Property<Guid>("ConversationId")
                         .HasColumnType("uniqueidentifier");

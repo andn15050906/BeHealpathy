@@ -21,6 +21,7 @@ public abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T> where
     public const string NVARCHAR500 = "NVARCHAR(500)";
     public const string NVARCHAR1000 = "NVARCHAR(1000)";
     public const string NVARCHAR3000 = "NVARCHAR(3000)";
+    public const string NVARCHARMAX = "NVARCHAR(MAX)";
 
     public const string DATE = "DATE";
     public const string DATETIME2 = "DATETIME2";            // default for DateTime

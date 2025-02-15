@@ -207,6 +207,9 @@ public sealed class HealpathyContext : BaseContext
                 login.Property(_ => _.LoginProvider).HasColumnType(VARCHAR100);
                 login.Property(_ => _.ProviderKey).HasColumnType(VARCHAR100);
             });
+
+            // System User
+            builder.HasData(new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000001") });
         }
     }
 
@@ -331,7 +334,7 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<ChatMessage, object?>>, string> Columns => new()
         {
-            { _ => _.Content, NVARCHAR255 },
+            { _ => _.Content, NVARCHARMAX },
             // Status below
         };
 

@@ -44,7 +44,15 @@ public sealed class User : TimeAuditedEntity
 #pragma warning disable CS8618
     public User()
     {
-
+        UserName = string.Empty;
+        Password = string.Empty;
+        Email = string.Empty;
+        FullName = string.Empty;
+        MetaFullName = string.Empty;
+        AvatarUrl = string.Empty;
+        Token = string.Empty;
+        RefreshToken = string.Empty;
+        Bio = string.Empty;
     }
 
     /// <summary>

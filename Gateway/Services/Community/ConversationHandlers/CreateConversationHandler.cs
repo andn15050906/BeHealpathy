@@ -11,6 +11,7 @@ public sealed class CreateConversationHandler : RequestHandler<CreateConversatio
 
 
 
+    // See also: CreateChatMessageHandler
     public override async Task<Result> Handle(CreateConversationCommand command, CancellationToken cancellationToken)
     {
         Conversation entity = Adapt(command);
@@ -32,10 +33,10 @@ public sealed class CreateConversationHandler : RequestHandler<CreateConversatio
         }
     }
 
-    private Conversation Adapt(CreateConversationCommand command)
+    private static Conversation Adapt(CreateConversationCommand command)
     {
         var id = Guid.NewGuid();
         var members = command.Rq.Members.Select(_ => new ConversationMember(_.UserId, id, _.IsAdmin)).ToList();
-        return new Conversation(command.Id, command.UserId, command.Rq.Title, command.Rq.IsPrivate, command.Media.Url, members);
+        return new Conversation(command.Id, command.UserId, command.Rq.Title, command.Rq.IsPrivate, command.Media?.Url ?? string.Empty, members);
     }
 }

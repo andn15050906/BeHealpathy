@@ -2,7 +2,7 @@
 
 namespace Gateway.Helpers.AppStart;
 
-public class OneTimeRunner
+public static class OneTimeRunner
 {
     private static bool _initedConfig;
 
@@ -15,5 +15,12 @@ public class OneTimeRunner
         Configurer.Init(builder.Configuration);
 
         _initedConfig = true;
+    }
+
+    public static void RunWarmUpQuery(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<HealpathyContext>();
+        context.Users.Count();
     }
 }

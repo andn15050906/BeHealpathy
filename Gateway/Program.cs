@@ -12,6 +12,7 @@ using Infrastructure.Helpers.Email;
 using Contract.Helpers.FeatureFlags;
 using Gateway.Helpers.Dependencies;
 using WisNet.Gateway.Realtime.Interface;
+using Gateway.Services.AI;
 
 const string POLICY = "Policy";
 var builder = WebApplication.CreateBuilder(args);
@@ -28,10 +29,11 @@ builder.Services
     .AddAuthServices(Configurer.TokenOptions, Configurer.OAuthOptions)
     //AddMQPublisher(Configurer.IsRunningInContainer)
     .AddMicroservices()
-    .AddCloudStorage<CloudStorageService>(Configurer.CloudStorageConfig)
     .AddEmailService(Configurer.EmailOptions)
-    .AddFeatureFlags(Configurer.FeatureFlags)
+    .AddAI(Configurer.GeminiOptions)
     //.AddPaymentService
+    .AddCloudStorage<CloudStorageService>(Configurer.CloudStorageConfig)
+    .AddFeatureFlags(Configurer.FeatureFlags)
     .AddHttpContextAccessor()
     .AddRealtimeService()
     .AddControllers();
@@ -49,6 +51,8 @@ app
 
 app.MapControllers();
 app.MapHub<AppHub>("/hub");
+
+app.RunWarmUpQuery();
 
 app.Run();
 

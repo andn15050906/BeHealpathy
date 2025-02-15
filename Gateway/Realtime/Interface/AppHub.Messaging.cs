@@ -1,9 +1,12 @@
 ﻿using System.Text.Json;
+using Contract.BusinessRules;
 using Contract.Requests.Community.ChatMessageRequests;
 using Contract.Requests.Community.ChatMessageRequests.Dtos;
 using Contract.Requests.Community.MessageReactionRequests;
 using Contract.Requests.Shared.BaseDtos.Reactions;
 using Gateway.Realtime.Core.Messaging;
+using Gateway.Services.AI;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 
@@ -29,6 +32,22 @@ public sealed partial class AppHub
             return;
         var memberIds = message.ConversationMembers.Select(_ => _.ToString());
         await Clients.Users(memberIds).SendAsync(message.Callback, createMessageResult.Data);
+
+        if (memberIds.Contains(PreSet.SystemUserId.ToString()))
+        {
+            var reply = await GeminiClient.Instance.Prompt(dto.Content);
+            if (reply.IsSuccessful)
+            {
+                CreateChatMessageCommand replyCommand = new(Guid.NewGuid(), new CreateChatMessageDto
+                {
+                    Content = reply.Data ?? string.Empty,
+                    ConversationId = dto.ConversationId,            // also ClientId
+                    //Medias
+                }, PreSet.SystemUserId,/**/ []);
+                var replyMessage = await mediator.Send(replyCommand);
+                await Clients.User(clientId.ToString()).SendAsync(message.Callback, replyMessage.Data);
+            }
+        }
     }
 
     public async Task UpdateChatMessage(Message message, [FromServices] IMediator mediator)

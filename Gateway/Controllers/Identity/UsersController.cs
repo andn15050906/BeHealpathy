@@ -1,9 +1,14 @@
-﻿using Contract.Helpers.AppExploration;
+﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Helpers.AppExploration;
 using Contract.Helpers.FeatureFlags;
 using Contract.Messaging.ApiClients.Http;
+using Contract.Requests.Community.ConversationRequests;
+using Contract.Requests.Community.ConversationRequests.Dtos;
 using Contract.Requests.Identity;
 using Contract.Requests.Identity.Dtos;
+using Contract.Services.Implementations;
 using Infrastructure.Helpers.Email;
+using MassTransit.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
@@ -39,20 +44,36 @@ public sealed class UsersController : ContractController
         CreateUserCommand command = new(Guid.NewGuid(), dto);
         var result = await _mediator.Send(command);
 
-        if (result.IsSuccessful && flags.Value.EmailEnabled)
+        if (!result.IsSuccessful)
+            return result.AsResponse();
+
+        if (flags.Value.EmailEnabled)
         {
             string link = $"{appInfo.Value.MainFrontendApp}/sign-in?email={dto.Email}&token={result.Data}";
             try
             {
-#pragma warning disable CS4014
                 await emailService.SendRegistrationEmail(dto.Email, dto.UserName, link);
-#pragma warning restore CS4014
             }
             catch (Exception ex)
             {
                 return new JsonResult(ex.Message) { StatusCode = 500 };
             }
         }
+
+        CreateConversationDto createPartnerDto = new()
+        {
+            Title = "Your Partner",
+            IsPrivate = true,
+            Members =
+            [
+                new CreateConversationMemberDto { UserId = ClientId, IsAdmin = true }
+            ]
+        };
+        CreateConversationCommand createPartnerCommand = new(Guid.NewGuid(), createPartnerDto, ClientId, null);
+#pragma warning disable CS4014
+        Send(createPartnerCommand);
+#pragma warning restore CS4014
+
         return result.AsResponse();
     }
 

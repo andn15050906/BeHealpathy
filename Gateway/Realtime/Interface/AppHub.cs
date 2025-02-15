@@ -9,14 +9,10 @@ namespace WisNet.Gateway.Realtime.Interface;
 
 public sealed partial class AppHub : Hub
 {
-    //private readonly IConversationService _conversationService;
-    //private readonly IChatMessageService _chatMessageService;
     private readonly IAppLogger _logger;
 
-    public AppHub(/*IConversationService conversationService, IChatMessageService chatMessageService,*/ IAppLogger logger)
+    public AppHub(IAppLogger logger)
     {
-        /*_conversationService = conversationService;
-        _chatMessageService = chatMessageService;*/
         _logger = logger;
     }
 

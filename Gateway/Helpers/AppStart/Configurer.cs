@@ -4,6 +4,7 @@ using Contract.Helpers.AppExploration;
 using Contract.Helpers.FeatureFlags;
 using Contract.Helpers.Storage;
 using Core.Helpers;
+using Gateway.Services.AI;
 using Gateway.Services.Microservices;
 using Infrastructure.DataAccess.SQLServer;
 using Infrastructure.Helpers.Email;
@@ -36,6 +37,7 @@ public class Configurer
 
     public static EmailOptions EmailOptions;
     public static OAuthOptions OAuthOptions;
+    public static GeminiOptions GeminiOptions;
     public static FeatureFlagOptions FeatureFlags;
 
     private static CookieConfigOptions _authCookieOptions;
@@ -63,6 +65,7 @@ public class Configurer
 
         EmailOptions = Get<EmailOptions>("External:Gmail", ENV_EMAIL)!;
         OAuthOptions = Get<OAuthOptions>("External:OAuth:Google", ENV_OAUTH)!;
+        GeminiOptions = Get<GeminiOptions>("External:AI:Gemini")!;
         FeatureFlags = Get<FeatureFlagOptions>("FeatureFlags", ENV_FEATURE_FLAG)!;
 
         _authCookieOptions = Get<CookieConfigOptions>("CookieOptions")!;
