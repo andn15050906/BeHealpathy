@@ -46,17 +46,17 @@ public sealed class UserFullModel
             Bio = user.Bio,
             DateOfBirth = user.DateOfBirth,
             EnrollmentCount = user.EnrollmentCount,
-            LoginProviders = user.UserLogins.Select(_ => _.LoginProvider),
-            Settings = user.Settings.Select(_ => new SettingModel
+            LoginProviders = user.UserLogins?.Select(_ => _.LoginProvider) ?? [],
+            Settings = user.Settings?.Select(_ => new SettingModel
             {
                 Title = _.Title,
                 Choice = _.Choice
-            }),
-            Preferences = user.Preferences.Select(_ => new PreferenceModel
+            }) ?? [],
+            Preferences = user.Preferences?.Select(_ => new PreferenceModel
             {
                 SourceId = _.SourceId,
                 Value = _.Value
-            })
+            }) ?? []
         };
     }
 

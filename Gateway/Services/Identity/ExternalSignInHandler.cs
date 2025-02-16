@@ -54,7 +54,7 @@ public class ExternalSignInHandler : RequestHandler<ExternalSignInCommand, AuthM
             else
             {
                 if (existingLogin.ProviderKey != providerIdentifier.Value)
-                    return Unauthorized("400: Invalid sign in");
+                    return Unauthorized(BusinessMessages.User.INVALID_SIGN_IN);
             }
             entity.ResetAccessFailedCount();
         }
