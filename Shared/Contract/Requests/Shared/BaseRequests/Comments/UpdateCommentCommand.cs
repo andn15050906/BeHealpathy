@@ -7,14 +7,14 @@ public class UpdateCommentCommand : UpdateCommand
 {
     public UpdateCommentDto Rq { get; init; }
     public Guid UserId { get; init; }
-    public List<Multimedia> AddedMedias { get; init; }
-    public List<Guid> RemovedMedias { get; init; }
+    public List<Multimedia>? AddedMedias { get; set; }
+    public List<Guid>? RemovedMedias { get; set; }
 
 
 
     public UpdateCommentCommand(
         UpdateCommentDto rq, Guid userId,
-        List<Multimedia> addedMedias, List<Guid> removedMedias, bool isCompensating = false)
+        List<Multimedia>? addedMedias, List<Guid>? removedMedias, bool isCompensating = false)
         : base(isCompensating)
     {
         Rq = rq;

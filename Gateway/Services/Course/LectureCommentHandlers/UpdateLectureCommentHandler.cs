@@ -1,6 +1,6 @@
 ﻿using Contract.Domain.CourseAggregate;
 using Contract.Helpers;
-using Contract.Requests.Library.LectureCommentRequests;
+using Contract.Requests.Courses.LectureCommentRequests;
 using Core.Helpers;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;

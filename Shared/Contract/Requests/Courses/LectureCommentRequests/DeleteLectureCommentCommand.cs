@@ -1,6 +1,6 @@
 ﻿using Contract.Requests.Shared.BaseRequests.Comments;
 
-namespace Contract.Requests.Library.LectureCommentRequests;
+namespace Contract.Requests.Courses.LectureCommentRequests;
 
 public sealed class DeleteLectureCommentCommand : DeleteCommentCommand
 {

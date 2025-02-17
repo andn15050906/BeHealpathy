@@ -1,5 +1,5 @@
 ﻿using Contract.Helpers;
-using Contract.Requests.Library.LectureCommentRequests;
+using Contract.Requests.Courses.LectureCommentRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Course.LectureCommentHandlers;

@@ -23,7 +23,6 @@ public class CommentsController : ContractController
     public async Task<IActionResult> GetPaged([FromQuery] QueryCommentDto dto)
     {
         IRequest<Result<PagedResult<CommentModel>>> request;
-
         switch (dto.TargetEntity)
         {
             case TargetEntity.ArticleComment:
@@ -33,7 +32,7 @@ public class CommentsController : ContractController
                 request = new GetPagedLectureCommentsQuery(dto);
                 return await Send(request);
             default:
-                return BadRequest(nameof(TargetEntity));
+                return BadRequest(BusinessMessages.Comment.INVALID_TARGET_ENTITY);
         }
     }
 
@@ -41,13 +40,25 @@ public class CommentsController : ContractController
     [Authorize]
     public async Task<IActionResult> Create([FromForm] CreateCommentDto dto, [FromServices] IFileService fileService)
     {
+        CreateCommentCommand command;
         var id = Guid.NewGuid();
+        switch (dto.TargetEntity)
+        {
+            case TargetEntity.ArticleComment:
+                command = new CreateArticleCommentCommand(id, dto, ClientId, null);
+                break;
+            case TargetEntity.LectureComment:
+                command = new CreateLectureCommentCommand(id, dto, ClientId, null);
+                break;
+            default:
+                return BadRequest(BusinessMessages.Comment.INVALID_TARGET_ENTITY);
+        }
 
         List<Multimedia> medias = [];
         if (dto.Medias is not null)
             medias.AddRange(await fileService.SaveMediasAndUpdateDtos(dto.Medias.Select(_ => (_, id)).ToList()));
+        command.Medias = medias;
 
-        CreateCommentCommand command = new(id, dto, ClientId, medias);
         return await Send(command);
     }
 
@@ -55,6 +66,19 @@ public class CommentsController : ContractController
     [Authorize]
     public async Task<IActionResult> Update([FromForm] UpdateCommentDto dto, [FromServices] IFileService fileService)
     {
+        UpdateCommentCommand command;
+        switch (dto.TargetEntity)
+        {
+            case TargetEntity.ArticleComment:
+                command = new UpdateArticleCommentCommand(dto, ClientId, null, null);
+                break;
+            case TargetEntity.LectureComment:
+                command = new UpdateLectureCommentCommand(dto, ClientId, null, null);
+                break;
+            default:
+                return BadRequest(BusinessMessages.Comment.INVALID_TARGET_ENTITY);
+        }
+
         List<Multimedia> addedMedias = [];
         var mediaDtos = dto.AddedMedias is null
             ? []
@@ -67,7 +91,9 @@ public class CommentsController : ContractController
         }
         List<Guid> removedMedias = dto.RemovedMedias?.ToList() ?? [];
 
-        UpdateCommentCommand command = new(dto, ClientId, addedMedias, removedMedias);
+        command.AddedMedias = addedMedias;
+        command.RemovedMedias = removedMedias;
+
         return await Send(command);
     }
 
@@ -75,7 +101,20 @@ public class CommentsController : ContractController
     [Authorize]
     public async Task<IActionResult> Delete(Guid id)
     {
-        DeleteCommentCommand command = new(id, ClientId);
-        return await Send(command);
+        try
+        {
+            return await Send(new DeleteArticleCommentCommand(id, ClientId));
+        }
+        catch (Exception)
+        {
+            try
+            {
+                return await Send(new DeleteLectureCommentCommand(id, ClientId));
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+        }
     }
 }

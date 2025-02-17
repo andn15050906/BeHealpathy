@@ -6,7 +6,7 @@ namespace Contract.Requests.Library.ArticleCommentRequests;
 
 public sealed class CreateArticleCommentCommand : CreateCommentCommand
 {
-    public CreateArticleCommentCommand(Guid id, CreateCommentDto rq, Guid userId, List<Multimedia> medias, bool isCompensating = false)
+    public CreateArticleCommentCommand(Guid id, CreateCommentDto rq, Guid userId, List<Multimedia>? medias, bool isCompensating = false)
         : base(id, rq, userId, medias, isCompensating)
     {
     }

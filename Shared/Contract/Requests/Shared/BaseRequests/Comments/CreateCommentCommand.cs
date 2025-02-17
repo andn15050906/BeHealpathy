@@ -8,7 +8,7 @@ public class CreateCommentCommand : CreateCommand<CommentModel>
 {
     public CreateCommentDto Rq { get; init; }
     public Guid UserId { get; init; }
-    public List<Multimedia>? Medias { get; init; }
+    public List<Multimedia>? Medias { get; set; }
 
 
 

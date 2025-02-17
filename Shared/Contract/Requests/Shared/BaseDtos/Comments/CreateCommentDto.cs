@@ -12,4 +12,6 @@ public sealed class CreateCommentDto
     public string Content { get; set; }
 
     public List<CreateMediaDto>? Medias { get; set; }
+
+    public TargetEntity TargetEntity { get; set; }
 }

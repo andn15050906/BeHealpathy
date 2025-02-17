@@ -1,4 +1,4 @@
-﻿using Contract.Domain.Shared.CommentBase;
+﻿using Contract.Domain.LibraryAggregate;
 using Contract.Helpers;
 using Contract.Requests.Library.ArticleCommentRequests;
 using Contract.Requests.Shared.BaseDtos.Comments;
@@ -19,7 +19,7 @@ public sealed class GetPagedArticleCommentsHandler : RequestHandler<GetPagedArti
         try
         {
             var query = _context.GetPagingQuery(
-                CommentModel.MapExpression,
+                CommentModel.ArticleCommentMapExpression,
                 GetPredicate(request.Rq),
                 request.Rq.PageIndex,
                 request.Rq.PageSize,
@@ -51,7 +51,7 @@ public sealed class GetPagedArticleCommentsHandler : RequestHandler<GetPagedArti
         }
     }
 
-    private Expression<Func<Comment, bool>>? GetPredicate(QueryCommentDto dto)
+    private static Expression<Func<ArticleComment, bool>>? GetPredicate(QueryCommentDto dto)
     {
         if (dto.SourceId is not null)
             return _ => _.SourceId == dto.SourceId && !_.IsDeleted;

@@ -8,7 +8,7 @@ public sealed class UpdateArticleCommentCommand : UpdateCommentCommand
 {
     public UpdateArticleCommentCommand(
         UpdateCommentDto rq, Guid userId,
-        List<Multimedia> addedMedias, List<Guid> removedMedias, bool isCompensating = false)
+        List<Multimedia>? addedMedias, List<Guid>? removedMedias, bool isCompensating = false)
         : base(rq, userId, addedMedias, removedMedias, isCompensating)
     {
     }

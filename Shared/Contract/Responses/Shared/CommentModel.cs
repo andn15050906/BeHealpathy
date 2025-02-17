@@ -1,4 +1,6 @@
-﻿using Contract.Domain.Shared.CommentBase;
+﻿using Contract.Domain.CourseAggregate;
+using Contract.Domain.LibraryAggregate;
+using Contract.Domain.Shared.CommentBase;
 using Contract.Domain.Shared.CommentBase.Enums;
 using System.Linq.Expressions;
 
@@ -43,6 +45,37 @@ public class CommentModel
         };
 
     public static Expression<Func<Comment, CommentModel>> MapExpression
+        = _ => new CommentModel
+        {
+            Id = _.Id,
+            CreatorId = _.CreatorId,
+            LastModifierId = _.LastModifierId,
+            CreationTime = _.CreationTime,
+            LastModificationTime = _.LastModificationTime,
+            SourceId = _.SourceId,
+            Content = _.Content,
+            Status = _.Status,
+            //Medias
+            //Reactions
+        };
+
+    //...
+    public static Expression<Func<LectureComment, CommentModel>> LectureCommentMapExpression
+        = _ => new CommentModel
+        {
+            Id = _.Id,
+            CreatorId = _.CreatorId,
+            LastModifierId = _.LastModifierId,
+            CreationTime = _.CreationTime,
+            LastModificationTime = _.LastModificationTime,
+            SourceId = _.SourceId,
+            Content = _.Content,
+            Status = _.Status,
+            //Medias
+            //Reactions
+        };
+
+    public static Expression<Func<ArticleComment, CommentModel>> ArticleCommentMapExpression
         = _ => new CommentModel
         {
             Id = _.Id,

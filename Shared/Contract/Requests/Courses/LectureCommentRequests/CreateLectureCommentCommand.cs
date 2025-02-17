@@ -6,7 +6,7 @@ namespace Contract.Requests.Courses.LectureCommentRequests;
 
 public sealed class CreateLectureCommentCommand : CreateCommentCommand
 {
-    public CreateLectureCommentCommand(Guid id, CreateCommentDto rq, Guid userId, List<Multimedia> medias, bool isCompensating = false)
+    public CreateLectureCommentCommand(Guid id, CreateCommentDto rq, Guid userId, List<Multimedia>? medias, bool isCompensating = false)
         : base(id, rq, userId, medias, isCompensating)
     {
     }

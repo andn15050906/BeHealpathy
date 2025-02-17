@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using Contract.Domain.Shared.CommentBase;
+using Contract.Domain.CourseAggregate;
 using Contract.Helpers;
 using Contract.Requests.Courses.LectureCommentRequests;
 using Contract.Requests.Shared.BaseDtos.Comments;
@@ -18,7 +18,7 @@ public sealed class GetPagedLectureCommentsHandler : RequestHandler<GetPagedLect
         try
         {
             var query = _context.GetPagingQuery(
-                CommentModel.MapExpression,
+                CommentModel.LectureCommentMapExpression,
                 GetPredicate(request.Rq),
                 request.Rq.PageIndex,
                 request.Rq.PageSize,
@@ -50,7 +50,7 @@ public sealed class GetPagedLectureCommentsHandler : RequestHandler<GetPagedLect
         }
     }
 
-    private Expression<Func<Comment, bool>>? GetPredicate(QueryCommentDto dto)
+    private static Expression<Func<LectureComment, bool>>? GetPredicate(QueryCommentDto dto)
     {
         if (dto.SourceId is not null)
             return _ => _.SourceId == dto.SourceId && !_.IsDeleted;
