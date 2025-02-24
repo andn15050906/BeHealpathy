@@ -8,4 +8,5 @@ public sealed class CreateSurveyDto
     public string Description { get; set; }
 
     public List<CreateMcqQuestionDto> Questions { get; set; }
+    public List<CreateSurveyScoreBandDto>? Bands { get; set; }
 }

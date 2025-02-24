@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Contract.Requests.Progress.McqRequests.Dtos;
+using Contract.Requests.Progress.SurveyRequests.Dtos;
+using Microsoft.AspNetCore.Http;
+using OfficeOpenXml;
 using SixLabors.ImageSharp;
 
 namespace Contract.Helpers.Storage;
@@ -30,5 +33,78 @@ public static class FileConverter
         await image.SaveAsJpegAsync(jpgStream);
         jpgStream.Position = 0;
         return jpgStream;
+    }
+
+
+
+    /// <summary>
+    /// Only 1 Survey per file
+    /// If the cell is empty, consider it is not a new record of the type
+    /// </summary>
+    public static CreateSurveyDto ProcessSurveyFromExcelFile(IFormFile file)
+    {
+        CreateSurveyDto dto = new();
+
+        using (var stream = new MemoryStream())
+        {
+            file.CopyTo(stream);
+            using var package = new ExcelPackage(stream);
+
+            // worksheet 1 - Questions
+            var worksheet = package.Workbook.Worksheets[0];
+            int rowCount = worksheet.Dimension.Rows;
+            int startRow = 2;
+
+            dto.Name = worksheet.Cells[startRow, 1].Text;
+            dto.Description = worksheet.Cells[startRow, 2].Text;
+            dto.Questions = [];
+            var currentQuestion = new CreateMcqQuestionDto();
+            for (int row = startRow; row <= rowCount; row++)
+            {
+                var questionContent = worksheet.Cells[row, 3].Text;
+                var questionExplanation = worksheet.Cells[row, 4].Text;
+                if (questionContent != currentQuestion.Content && questionContent != string.Empty)
+                {
+                    currentQuestion = new CreateMcqQuestionDto
+                    {
+                        Content = questionContent,
+                        Explanation = questionExplanation,
+                        Answers = []
+                    };
+                    dto.Questions.Add(currentQuestion);
+                }
+
+                dto.Questions[^1].Answers.Add(new CreateMcqAnswerDto
+                {
+                    Content = worksheet.Cells[row, 5].Text,
+                    Score = int.Parse(worksheet.Cells[row, 6].Text)
+                });
+            }
+
+            // worksheet 2 - Bands
+            worksheet = package.Workbook.Worksheets[1];
+            rowCount = worksheet.Dimension.Rows;
+            startRow = 2;
+
+            dto.Bands = [];
+            var currentBand = new CreateSurveyScoreBandDto();
+            for (int row = startRow; row <= rowCount; row++)
+            {
+                var bandName = worksheet.Cells[row, 1].Text;
+                if (bandName != currentBand.BandName && bandName != string.Empty)
+                    currentBand.BandName = bandName;
+
+                currentBand = new CreateSurveyScoreBandDto
+                {
+                    BandName = currentBand.BandName,
+                    BandRating = worksheet.Cells[row, 2].Text,
+                    MinScore = int.Parse(worksheet.Cells[row, 3].Text),
+                    MaxScore = int.Parse(worksheet.Cells[row, 4].Text)
+                };
+                dto.Bands.Add(currentBand);
+            }
+        }
+
+        return dto;
     }
 }

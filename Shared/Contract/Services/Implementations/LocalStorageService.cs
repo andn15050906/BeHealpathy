@@ -50,9 +50,9 @@ public sealed class LocalStorageService : IStorageService
             media.Stream.Dispose();
             return new Multimedia(media.SourceId, identifier, media.Type, string.Empty, media.Title);
         }
-        catch (Exception ex)
+        catch (Exception /*ex*/)
         {
-            //logger.Warn(e.Message);
+            //_logger.Warn(ex.Message);
             return null;
         }
     }
@@ -66,7 +66,7 @@ public sealed class LocalStorageService : IStorageService
             await Task.Run(() => File.Delete(Path.GetFullPath(identifier)!));
             return true;
         }
-        catch (Exception e)
+        catch (Exception /*e*/)
         {
             //logger.Warn(e.Message);
             return false;

@@ -8,6 +8,7 @@ public sealed class Survey : Entity
 
     // Navigations
     public List<McqQuestion> Questions { get; set; }
+    public List<SurveyScoreBand> Bands { get; set; }
 
 
 
@@ -17,12 +18,13 @@ public sealed class Survey : Entity
 
     }
 
-    public Survey(Guid id, string name, string description, List<McqQuestion> questions)
+    public Survey(Guid id, string name, string description, List<McqQuestion> questions, List<SurveyScoreBand> bands)
     {
         Id = id;
         Name = name;
         Description = description;
         Questions = questions;
+        Bands = bands;
     }
 #pragma warning restore CS8618
 }

@@ -2,7 +2,6 @@
 using Gateway.Realtime.Core;
 using Gateway.Realtime.Core.Messaging;
 using Gateway.Realtime.Core.Streaming;
-using Infrastructure.Helpers.Monitoring;
 using Microsoft.AspNetCore.SignalR;
 
 namespace WisNet.Gateway.Realtime.Interface;
@@ -29,14 +28,14 @@ public sealed partial class AppHub : Hub
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        base.OnDisconnectedAsync(exception);
+        await base.OnDisconnectedAsync(exception);
 
         ConnectionsHandler.Disconnected(Context.ConnectionId);
 
         Participant? participant = ConnectionsHandler.FindParticipant(Context.ConnectionId);
         if (participant != null)
             // Is participant
-            LeaveRoom(participant.RoomId);
+            await LeaveRoom(participant.RoomId ?? string.Empty);
     }
 
 

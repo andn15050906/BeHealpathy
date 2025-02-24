@@ -60,7 +60,7 @@ public sealed class UsersController : ContractController
             }
         }
 
-        CreateConversationDto createPartnerDto = new()
+        /*CreateConversationDto createPartnerDto = new()
         {
             Title = "Your Partner",
             IsPrivate = true,
@@ -72,7 +72,7 @@ public sealed class UsersController : ContractController
         CreateConversationCommand createPartnerCommand = new(Guid.NewGuid(), createPartnerDto, ClientId, null);
 #pragma warning disable CS4014
         Send(createPartnerCommand);
-#pragma warning restore CS4014
+#pragma warning restore CS4014*/
 
         return result.AsResponse();
     }

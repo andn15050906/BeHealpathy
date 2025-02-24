@@ -28,15 +28,18 @@ public sealed class CreateSurveyHandler : RequestHandler<CreateSurveyCommand, He
         }
     }
 
-    private Survey Adapt(CreateSurveyCommand command)
+    private static Survey Adapt(CreateSurveyCommand command)
     {
-        List<McqQuestion> questions = new();
+        List<McqQuestion> questions = [];
         foreach (var question in command.Rq.Questions)
         {
             var id = Guid.NewGuid();
-            var answers = question.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content)).ToList();
-            questions.Add(new McqQuestion(id, question.Content, question.Explanation, command.Id, answers));
+            var answers = question.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content, _.Score ?? 0)).ToList();
+            questions.Add(new McqQuestion(id, question.Content, question.Explanation, questions.Count, command.Id, answers));
         }
-        return new Survey(command.Id, command.Rq.Name, command.Rq.Description, questions);
+
+        var bands = (command.Rq.Bands ?? []).Select(_ => new SurveyScoreBand(_.MinScore, _.MaxScore, _.BandName, _.BandRating)).ToList();
+
+        return new Survey(command.Id, command.Rq.Name, command.Rq.Description, questions, bands);
     }
 }

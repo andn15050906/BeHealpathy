@@ -23,7 +23,7 @@ public sealed class GetPagedSurveysHandler : RequestHandler<GetPagedSurveysQuery
                 request.Rq.PageIndex,
                 request.Rq.PageSize,
                 false,
-                _ => _.Questions
+                _ => _.Questions, _ => _.Bands
             );
             var result = await query.ExecuteWithOrderBy(_ => _.Name);
 

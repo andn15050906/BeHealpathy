@@ -2,7 +2,7 @@
 
 namespace Contract.Requests.Progress.SubmissionRequests;
 
-public sealed class CreateSubmissionCommand : CreateCommand
+public sealed class CreateSubmissionCommand : CreateCommand<Guid>
 {
     public CreateSubmissionDto Rq { get; init; }
     public Guid UserId { get; init; }

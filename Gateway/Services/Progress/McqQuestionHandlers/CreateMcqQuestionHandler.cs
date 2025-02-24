@@ -28,12 +28,11 @@ public sealed class CreateMcqQuestionHandler : RequestHandler<CreateMcqQuestionC
         }
     }
 
-    private McqQuestion Adapt(CreateMcqQuestionCommand command)
+    private static McqQuestion Adapt(CreateMcqQuestionCommand command)
     {
-        List<McqAnswer> answers = command.Rq.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content)).ToList();
+        List<McqAnswer> answers = command.Rq.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content, _.Score ?? 0)).ToList();
 
-        return new McqQuestion(
-            command.Id, command.Rq.Content, command.Rq.Explanation, command.Rq.SurveyId, answers
-        );
+        // 0 as index
+        return new McqQuestion(command.Id, command.Rq.Content, command.Rq.Explanation, 0, command.Rq.SurveyId, answers);
     }
 }

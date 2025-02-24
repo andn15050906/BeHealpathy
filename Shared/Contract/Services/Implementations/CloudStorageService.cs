@@ -57,7 +57,7 @@ public sealed class CloudStorageService : IStorageService
             }
             return null;
         }
-        catch (Exception ex)
+        catch (Exception /*ex*/)
         {
             return null;
         }

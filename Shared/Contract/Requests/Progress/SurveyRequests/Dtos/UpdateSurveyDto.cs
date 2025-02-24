@@ -11,4 +11,7 @@ public sealed class UpdateSurveyDto
 
     public List<CreateMcqQuestionDto>? AddedQuestions { get; set; }
     public List<Guid>? RemovedQuestions { get; set; }
+
+    public List<CreateSurveyScoreBandDto>? AddedScoreBands { get; set; }
+    public List<Guid>? RemovedScoreBands { get; set; }
 }

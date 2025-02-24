@@ -38,6 +38,8 @@ public sealed class GetPagedSubmissionsHandler : RequestHandler<GetPagedSubmissi
 
     private Expression<Func<Submission, bool>>? GetPredicate(QuerySubmissionDto dto)
     {
+        if (dto.Id is not null)
+            return _ => _.Id == dto.Id && !_.IsDeleted;
         if (dto.CreatorId is not null)
             return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
         if (dto.SurveyId is not null)

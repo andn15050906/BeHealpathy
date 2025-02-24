@@ -3,13 +3,18 @@ using Contract.Requests.Progress.SurveyRequests.Dtos;
 using Contract.Requests.Progress.SurveyRequests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Contract.Helpers.Storage;
+using Contract.Helpers;
 
 namespace Gateway.Controllers.Progress;
 
 public sealed class SurveysController : ContractController
 {
-    public SurveysController(IMediator mediator) : base(mediator)
+    private readonly IAppLogger _logger;
+
+    public SurveysController(IMediator mediator, IAppLogger logger) : base(mediator)
     {
+        _logger = logger;
     }
 
 
@@ -27,6 +32,26 @@ public sealed class SurveysController : ContractController
     {
         CreateSurveyCommand command = new(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
+    }
+
+    [HttpPost("import")]
+    [Authorize]
+    public async Task<IActionResult> Create(IFormFile file)
+    {
+        if (file == null || file.Length == 0)
+            return BadRequest(BusinessMessages.Survey.INVALID_FILE_FORMAT);
+
+        try
+        {
+            var dto = FileConverter.ProcessSurveyFromExcelFile(file);
+            CreateSurveyCommand command = new(Guid.NewGuid(), dto, ClientId);
+            return await Send(command);
+        }
+        catch (Exception ex)
+        {
+            _logger.Warn(ex.Message);
+            return BadRequest(BusinessMessages.Survey.INVALID_FILE_FORMAT);
+        }
     }
 
     [HttpPatch]

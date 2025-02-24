@@ -23,6 +23,7 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Bill> Bills { get; set; }
 
     public DbSet<Survey> Surveys { get; set; }
+    public DbSet<SurveyScoreBand> SurveyScoreBands { get; set; }
     public DbSet<McqQuestion> McqQuestions { get; set; }
     public DbSet<McqAnswer> McqAnswers { get; set; }
     public DbSet<McqChoice> McqChoices { get; set; }
@@ -75,6 +76,7 @@ public sealed class HealpathyContext : BaseContext
         internal const string MEETING_PARTICIPANT = "MeetingParticipants";
 
         internal const string SURVEY = "Surveys";
+        internal const string SURVEY_SCORE_BAND = "SurveyScoreBands";
         internal const string MCQ_QUESTION = "McqQuestions";
         internal const string MCQ_ANSWER = "McqAnswers";
         internal const string MCQ_CHOICE = "McqChoices";
@@ -139,6 +141,7 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new MeetingParticipantConfig())
 
             .ApplyConfiguration(new SurveyConfig())
+            .ApplyConfiguration(new SurveyScoreBandConfig())
             .ApplyConfiguration(new McqQuestionConfig())
             .ApplyConfiguration(new McqAnswerConfig())
             .ApplyConfiguration(new McqChoiceConfig())
@@ -434,6 +437,25 @@ public sealed class HealpathyContext : BaseContext
                 .SetColumnsTypes(Columns);
 
             builder.HasMany(_ => _.Questions).WithOne();
+            builder.HasMany(_ => _.Bands).WithOne();
+        }
+    }
+
+    class SurveyScoreBandConfig : EntityConfiguration<SurveyScoreBand>
+    {
+        protected override Dictionary<Expression<Func<SurveyScoreBand, object?>>, string> Columns => new()
+        {
+            // MinScore
+            // MaxScore
+            { _ => _.BandName, NVARCHAR45 },
+            { _ => _.BandRating, NVARCHAR45 }
+        };
+        
+        public override void Configure(EntityTypeBuilder<SurveyScoreBand> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.SURVEY_SCORE_BAND)
+                .SetColumnsTypes(Columns);
         }
     }
 
@@ -461,6 +483,7 @@ public sealed class HealpathyContext : BaseContext
         protected override Dictionary<Expression<Func<McqAnswer, object?>>, string> Columns => new()
         {
             { _ => _.Content, NVARCHAR255 }
+            // Score
         };
 
         public override void Configure(EntityTypeBuilder<McqAnswer> builder)

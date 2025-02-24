@@ -26,7 +26,7 @@ public static class MQExtensions
                 {
                     config.Host(MQConstants.Host, 5671, MQConstants.Vhost, hostConfig);
                 }
-                catch (Exception ex)
+                catch (Exception /*ex*/)
                 {
                     config.Host(MQConstants.FallbackHost, 5671, MQConstants.Vhost, hostConfig);
                 }

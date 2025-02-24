@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Helpers.Monitoring;
+using OfficeOpenXml;
 
 namespace Gateway.Helpers.AppStart;
 
@@ -13,6 +14,7 @@ public static class OneTimeRunner
 
         MonitoringExtensions.ConfigLogger(builder);
         Configurer.Init(builder.Configuration);
+        ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
         _initedConfig = true;
     }

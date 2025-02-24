@@ -9,6 +9,7 @@ public sealed class SurveyModel
     public string Name { get; set; }
     public string Description { get; set; }
     public List<McqQuestionModel> Questions { get; set; }
+    public List<SurveyScoreBandModel> Bands { get; set; }
 
 
 
@@ -23,12 +24,21 @@ public sealed class SurveyModel
                Id = _.Id,
                Content = _.Content,
                Explanation = _.Explanation,
+               Index = _.Index,
                SurveyId = _.SurveyId,
                Answers = _.Answers.Select(_ => new McqAnswerModel
                {
                    Id = _.Id,
-                   Content = _.Content
+                   Content = _.Content,
+                   Score = _.Score
                }).ToList()
+           }).ToList(),
+           Bands = _.Bands.Select(_ => new SurveyScoreBandModel
+           {
+               MinScore = _.MinScore,
+               MaxScore = _.MaxScore,
+               BandName = _.BandName,
+               BandRating = _.BandRating
            }).ToList()
        };
 }

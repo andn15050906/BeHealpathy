@@ -1,6 +1,5 @@
 ﻿using Contract.Domain.ProgressAggregates;
 using Contract.Helpers;
-using Contract.Requests.Progress.McqRequests.Dtos;
 using Contract.Requests.Progress.SurveyRequests;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,8 +24,9 @@ public sealed class UpdateSurveyHandler : RequestHandler<UpdateSurveyCommand, He
             foreach (var question in command.Rq.AddedQuestions)
             {
                 var id = Guid.NewGuid();
-                var answers = question.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content)).ToList();
-                questions.Add(new McqQuestion(id, question.Content, question.Explanation, command.Rq.Id, answers));
+                var answers = question.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content, _.Score ?? 0)).ToList();
+                // questions.Count => Add to last
+                questions.Add(new McqQuestion(id, question.Content, question.Explanation, questions.Count, command.Rq.Id, answers));
             }
             entity.Questions.AddRange(questions);
         }
@@ -37,6 +37,19 @@ public sealed class UpdateSurveyHandler : RequestHandler<UpdateSurveyCommand, He
                 .ToListAsync();
             foreach (var question in questions)
                 entity.Questions.Remove(question);
+        }
+        if ((command.Rq.AddedScoreBands ??= []).Count > 0)
+        {
+            var bands = command.Rq.AddedScoreBands.Select(_ => new SurveyScoreBand(_.MinScore, _.MaxScore, _.BandName, _.BandRating)).ToList();
+            entity.Bands.AddRange(bands);
+        }
+        if ((command.Rq.RemovedScoreBands ??= []).Count > 0)
+        {
+            var bands = await _context.SurveyScoreBands
+                .Where(_ => command.Rq.RemovedScoreBands.Contains(_.Id))
+                .ToListAsync();
+            foreach (var band in bands)
+                entity.Bands.Remove(band);
         }
 
         try
