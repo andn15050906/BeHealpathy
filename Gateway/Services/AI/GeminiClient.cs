@@ -1,4 +1,5 @@
-﻿using GenerativeAI.Methods;
+﻿using Contract.Helpers;
+using GenerativeAI.Methods;
 using GenerativeAI.Models;
 
 namespace Gateway.Services.AI;
@@ -10,17 +11,16 @@ public sealed class GeminiClient : IChatbotClient
 #pragma warning disable CS8618
     public static GeminiClient Instance { get; private set; }
 
-    private static GenerativeModel GenerativeModel;
-
-    // static?
-    private static ChatSession ChatSession;
+    private static GenerativeModel _generativeModel;
+    private static ChatSession ChatSession;                                                     //... static?
+    private static IAppLogger _logger;
 #pragma warning restore CS8618
 
-    public GeminiClient(GeminiOptions options)
+    public GeminiClient(GeminiOptions options, IAppLogger logger)
     {
-        GenerativeModel ??= new GenerativeModel(options.Key);
-        // ?
-        ChatSession ??= GenerativeModel.StartChat(new GenerativeAI.Types.StartChatParams());
+        _generativeModel ??= new Gemini15Flash(options.Key);
+        ChatSession ??= _generativeModel.StartChat(new GenerativeAI.Types.StartChatParams());   //...
+        _logger = logger;
 
         Instance ??= this;
     }
@@ -38,7 +38,15 @@ public sealed class GeminiClient : IChatbotClient
 
     public async Task<Result<string>> Prompt(string message)
     {
-        var response = await ChatSession.SendMessageAsync(message);
-        return new Result<string>(200) { Data = response ?? string.Empty };
+        try
+        {
+            var response = await ChatSession.SendMessageAsync(message);
+            return new Result<string>(200) { Data = response ?? string.Empty };
+        }
+        catch (Exception ex)
+        {
+            _logger.Warn(ex.Message);
+            return new Result<string>(500);
+        }
     }
 }

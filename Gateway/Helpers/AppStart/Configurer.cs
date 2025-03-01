@@ -24,6 +24,7 @@ public class Configurer
     private static ConfigurationManager? _configuration;
     public static bool IsRunningInContainer;
 
+#pragma warning disable CS8618
     public static string[] CorsOrigins;
     public static AppInfoOptions AppInfoOptions;
     public static TokenOptions TokenOptions;
@@ -41,6 +42,7 @@ public class Configurer
     public static FeatureFlagOptions FeatureFlags;
 
     private static CookieConfigOptions _authCookieOptions;
+#pragma warning restore CS8618
 
 
 

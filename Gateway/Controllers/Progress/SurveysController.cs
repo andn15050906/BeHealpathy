@@ -69,18 +69,4 @@ public sealed class SurveysController : ContractController
         DeleteSurveyCommand command = new(id, ClientId);
         return await Send(command);
     }
-
-    [HttpGet("test")]
-    [Authorize]
-    public IActionResult TestDeployment()
-    {
-        return Ok("Test");
-    }
-
-    [HttpPost("testPost")]
-    [Authorize]
-    public IActionResult TestDeploymentPost()
-    {
-        return Ok("TestPost");
-    }
 }
