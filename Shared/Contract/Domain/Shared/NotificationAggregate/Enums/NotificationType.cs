@@ -6,14 +6,14 @@ public enum NotificationType : byte
 
     AdminMessage,
 
-    RequestToBecomeInstructor,
-    InstructorResponse,
+    RequestToBecomeAdvisor,
+    AdvisorResponse,
 
     ReportGroup,
     GroupAdminReportedGroup,
 
     ReportCourse,
-    InstructorReportedCourse,
+    AdvisorReportedCourse,
 
     InviteMember,
 

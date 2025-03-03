@@ -7,7 +7,7 @@ using Contract.Requests.Shared.BaseRequests.Reviews;
 using Contract.Responses.Courses;
 using Contract.Responses.Shared;
 
-namespace Contract.Services.Contracts;
+namespace Contract.Services.Contracts.Domain;
 
 public interface ICourseApiService
 {

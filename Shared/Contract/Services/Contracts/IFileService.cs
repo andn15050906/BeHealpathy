@@ -7,6 +7,7 @@ namespace Contract.Services.Contracts;
 public interface IFileService
 {
     Task<List<Multimedia>> SaveMediasAndUpdateDtos(List<(CreateMediaDto, Guid)> dto_sourceIds);
+    Task<Multimedia?> SaveMediaAndUpdateDto(CreateMediaDto dto, Guid sourceId);
     Task<Multimedia?> SaveImageAndUpdateDto(CreateMediaDto dto, Guid sourceId);
 
     Task<Multimedia?> SaveImage(MediaWithStream? media);

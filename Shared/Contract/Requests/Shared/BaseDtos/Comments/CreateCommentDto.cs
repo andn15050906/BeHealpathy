@@ -13,5 +13,5 @@ public sealed class CreateCommentDto
 
     public List<CreateMediaDto>? Medias { get; set; }
 
-    public TargetEntity TargetEntity { get; set; }
+    public TargetFeedbackEntity TargetEntity { get; set; }
 }

@@ -34,6 +34,7 @@ public sealed class Course : AuditedEntity
     public Category LeafCategory { get; set; }
     public List<Lecture> Lectures { get; set; }
     public List<CourseReview> Reviews { get; set; }
+    public List<Enrollment> Enrollments { get; set; }
     public User Creator { get; set; }
 
 

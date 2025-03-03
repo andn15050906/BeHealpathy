@@ -1,5 +1,4 @@
 ﻿using Contract.Domain.Shared.NotificationAggregate.Enums;
-using Contract.Requests.Shared.Base;
 
 namespace Contract.Requests.Notifications.Dtos;
 

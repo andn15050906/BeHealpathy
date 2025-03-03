@@ -10,5 +10,5 @@ public class BaseController : ControllerBase
     protected Guid ClientId => (Guid)HttpContext.GetClientId()!;
 
     // throw Exception
-    protected Guid? InstructorId => HttpContext.GetInstructorId();
+    protected Guid? AdvisorId => HttpContext.GetAdvisorId();
 }

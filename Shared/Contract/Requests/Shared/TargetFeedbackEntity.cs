@@ -1,6 +1,6 @@
 ﻿namespace Contract.Requests.Shared;
 
-public enum TargetEntity : byte
+public enum TargetFeedbackEntity : byte
 {
     ArticleComment,
     LectureComment,

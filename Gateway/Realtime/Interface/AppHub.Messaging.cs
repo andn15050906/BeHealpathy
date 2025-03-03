@@ -5,7 +5,7 @@ using Contract.Requests.Community.ChatMessageRequests.Dtos;
 using Contract.Requests.Community.MessageReactionRequests;
 using Contract.Requests.Shared.BaseDtos.Reactions;
 using Gateway.Realtime.Core.Messaging;
-using Gateway.Services.AI;
+using Gateway.Services.AI.ChatBot;
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;

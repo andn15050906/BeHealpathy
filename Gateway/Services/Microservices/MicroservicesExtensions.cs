@@ -2,6 +2,7 @@
 using Contract.Services.Implementations;
 using Gateway.Helpers.AppStart;
 using Contract.Services;
+using Contract.Services.Contracts.Domain;
 
 namespace Gateway.Services.Microservices;
 

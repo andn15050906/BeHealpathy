@@ -24,7 +24,7 @@ public sealed class LecturesController : ContractController
     [Authorize]
     public async Task<IActionResult> Create([FromForm] CreateLectureDto dto, [FromServices] IFileService fileService)
     {
-        if (InstructorId is null)
+        if (AdvisorId is null)
             return Forbid();
 
         var id = Guid.NewGuid();
@@ -33,7 +33,7 @@ public sealed class LecturesController : ContractController
         if (dto.Medias is not null)
             medias.AddRange(await fileService.SaveMediasAndUpdateDtos(dto.Medias.Select(_ => (_, id)).ToList()));
 
-        CreateLectureCommand command = new(id, dto, ClientId, (Guid)InstructorId, medias);
+        CreateLectureCommand command = new(id, dto, ClientId, (Guid)AdvisorId, medias);
         return await Send(command);
     }
 
@@ -41,7 +41,7 @@ public sealed class LecturesController : ContractController
     [Authorize]
     public async Task<IActionResult> Update([FromForm] UpdateLectureDto dto, [FromServices] IFileService fileService)
     {
-        if (InstructorId is null)
+        if (AdvisorId is null)
             return Forbid();
 
         List<Multimedia> addedMedias = [];
@@ -56,7 +56,7 @@ public sealed class LecturesController : ContractController
         }
         List<Guid> removedMedias = dto.RemovedMedias?.ToList() ?? [];
 
-        UpdateLectureCommand command = new(dto, ClientId, (Guid)InstructorId, addedMedias, removedMedias);
+        UpdateLectureCommand command = new(dto, ClientId, (Guid)AdvisorId, addedMedias, removedMedias);
         return await Send(command);
     }
 

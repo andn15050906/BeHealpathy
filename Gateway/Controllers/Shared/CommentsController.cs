@@ -25,10 +25,10 @@ public class CommentsController : ContractController
         IRequest<Result<PagedResult<CommentModel>>> request;
         switch (dto.TargetEntity)
         {
-            case TargetEntity.ArticleComment:
+            case TargetFeedbackEntity.ArticleComment:
                 request = new GetPagedArticleCommentsQuery(dto);
                 return await Send(request);
-            case TargetEntity.LectureComment:
+            case TargetFeedbackEntity.LectureComment:
                 request = new GetPagedLectureCommentsQuery(dto);
                 return await Send(request);
             default:
@@ -44,10 +44,10 @@ public class CommentsController : ContractController
         var id = Guid.NewGuid();
         switch (dto.TargetEntity)
         {
-            case TargetEntity.ArticleComment:
+            case TargetFeedbackEntity.ArticleComment:
                 command = new CreateArticleCommentCommand(id, dto, ClientId, null);
                 break;
-            case TargetEntity.LectureComment:
+            case TargetFeedbackEntity.LectureComment:
                 command = new CreateLectureCommentCommand(id, dto, ClientId, null);
                 break;
             default:
@@ -69,10 +69,10 @@ public class CommentsController : ContractController
         UpdateCommentCommand command;
         switch (dto.TargetEntity)
         {
-            case TargetEntity.ArticleComment:
+            case TargetFeedbackEntity.ArticleComment:
                 command = new UpdateArticleCommentCommand(dto, ClientId, null, null);
                 break;
-            case TargetEntity.LectureComment:
+            case TargetFeedbackEntity.LectureComment:
                 command = new UpdateLectureCommentCommand(dto, ClientId, null, null);
                 break;
             default:

@@ -2,7 +2,7 @@
 using GenerativeAI.Methods;
 using GenerativeAI.Models;
 
-namespace Gateway.Services.AI;
+namespace Gateway.Services.AI.ChatBot;
 
 public sealed class GeminiClient : IChatbotClient
 {

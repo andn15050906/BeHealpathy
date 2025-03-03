@@ -14,5 +14,5 @@ public class UpdateCommentDto
     public List<CreateMediaDto>? AddedMedias { get; set; }
     public List<Guid>? RemovedMedias { get; set; }
 
-    public TargetEntity TargetEntity { get; set; }
+    public TargetFeedbackEntity TargetEntity { get; set; }
 }

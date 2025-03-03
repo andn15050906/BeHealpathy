@@ -1,4 +1,5 @@
-﻿using Contract.Messaging.ApiClients.Http;
+﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Notifications;
 using Contract.Requests.Notifications.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -19,11 +20,18 @@ public class NotificationsController : ContractController
         return await Send(query);
     }
 
-    [HttpPost("Instructor")]
+    [HttpPost("Advisor")]
     [Authorize]
-    public async Task<IActionResult> Create([FromForm] CreateAdvisorRequestDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateAdvisorRequestDto dto, [FromServices] IFileService fileService)
     {
-        CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
+        var advisorId = Guid.NewGuid();
+        Task<Multimedia?>? cv = dto.CV is not null ? fileService.SaveMediaAndUpdateDto(dto.CV, advisorId) : null;
+
+        List<Multimedia> certificates = [];
+        if (dto.Certificates is not null)
+            certificates.AddRange(await fileService.SaveMediasAndUpdateDtos(dto.Certificates.Select(_ => (_, advisorId)).ToList()));
+
+        var command = new CreateNotificationCommand(Guid.NewGuid(), advisorId, dto, ClientId, cv is not null ? await cv : null, certificates);
         return await Send(command);
     }
 

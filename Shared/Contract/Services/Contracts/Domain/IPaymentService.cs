@@ -2,7 +2,7 @@
 using Contract.Responses.Payment;
 using Core.Responses;
 
-namespace Contract.Services.Contracts;
+namespace Contract.Services.Contracts.Domain;
 
 public interface IPaymentService
 {

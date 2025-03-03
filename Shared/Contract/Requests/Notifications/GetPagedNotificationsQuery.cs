@@ -1,5 +1,4 @@
-﻿using Contract.Messaging.Models;
-using Contract.Requests.Notifications.Dtos;
+﻿using Contract.Requests.Notifications.Dtos;
 using Contract.Responses.Notifications;
 
 namespace Contract.Requests.Notifications;

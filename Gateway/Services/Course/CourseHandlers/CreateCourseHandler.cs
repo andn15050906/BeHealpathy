@@ -32,7 +32,7 @@ public sealed class CreateCourseHandler : RequestHandler<CreateCourseCommand, He
         }
     }
 
-    private Course Adapt(CreateCourseCommand command)
+    private static Course Adapt(CreateCourseCommand command)
     {
         return new Course(
             command.Id, command.UserId, command.InstructorId, command.Rq.LeafCategoryId,

@@ -1,4 +1,4 @@
-﻿namespace Gateway.Services.AI;
+﻿namespace Gateway.Services.AI.ChatBot;
 
 public interface IChatbotClient
 {

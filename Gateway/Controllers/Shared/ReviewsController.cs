@@ -25,11 +25,11 @@ public class ReviewsController : ContractController
 
         switch (dto.TargetEntity)
         {
-            case TargetEntity.CourseReview:
+            case TargetFeedbackEntity.CourseReview:
                 request = new GetPagedCourseReviewsQuery(dto);
                 return await Send(request);
             default:
-                return BadRequest(nameof(TargetEntity));
+                return BadRequest(nameof(TargetFeedbackEntity));
         }
     }
 

@@ -7,7 +7,7 @@ public static class HttpContextExtensions
 {
     public const string BEARER = "Bearer";
     public const string REFRESH = "Refresh";
-    public const string INSTRUCTOR_CLAIM = "InstructorClaim";
+    public const string ADVISOR_CLAIM = "AdvisorClaim";
 
     public static Guid? GetClientId(this HttpContext httpContext)
     {
@@ -19,10 +19,10 @@ public static class HttpContextExtensions
         return null;
     }
 
-    public static Guid? GetInstructorId(this HttpContext httpContext)
+    public static Guid? GetAdvisorId(this HttpContext httpContext)
     {
         foreach (Claim claim in httpContext.User.Claims)
-            if (claim.Type == INSTRUCTOR_CLAIM)
+            if (claim.Type == ADVISOR_CLAIM)
                 // there might be multiple NameIdentifiers
                 if (Guid.TryParse(claim.Value, out Guid result))
                     return result;

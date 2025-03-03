@@ -74,7 +74,7 @@ public sealed class CoursesController : ContractController
     [Authorize(Roles = RoleConstants.ADVISOR)]
     public async Task<IActionResult> Create([FromForm] CreateCourseDto dto, [FromServices] IFileService fileService)
     {
-        if (InstructorId is null)
+        if (AdvisorId is null)
             return Forbid();
 
         var id = Guid.NewGuid();
@@ -86,7 +86,7 @@ public sealed class CoursesController : ContractController
                 medias.Add(image);
         }
 
-        var command = new CreateCourseCommand(id, dto, ClientId, (Guid)InstructorId, medias);
+        var command = new CreateCourseCommand(id, dto, ClientId, (Guid)AdvisorId, medias);
         return await Send(command);
     }
 
@@ -94,7 +94,7 @@ public sealed class CoursesController : ContractController
     [Authorize(Roles = RoleConstants.ADVISOR)]
     public async Task<IActionResult> Update([FromForm] UpdateCourseDto dto, [FromServices] IFileService fileService)
     {
-        if (InstructorId is null)
+        if (AdvisorId is null)
             return Forbid();
 
         //List<Multimedia> addedMedias = [];
@@ -109,7 +109,7 @@ public sealed class CoursesController : ContractController
         //}
         //List<Guid> removedMedias = dto.RemovedMedias?.ToList() ?? [];
 
-        var command = new UpdateCourseCommand(dto, ClientId, (Guid)InstructorId, null, null);
+        var command = new UpdateCourseCommand(dto, ClientId, (Guid)AdvisorId, null, null);
         return await Send(command);
     }
 

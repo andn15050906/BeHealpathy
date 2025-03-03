@@ -4,7 +4,7 @@ using Contract.Helpers.AppExploration;
 using Contract.Helpers.FeatureFlags;
 using Contract.Helpers.Storage;
 using Core.Helpers;
-using Gateway.Services.AI;
+using Gateway.Services.AI.ChatBot;
 using Gateway.Services.Microservices;
 using Infrastructure.DataAccess.SQLServer;
 using Infrastructure.Helpers.Email;

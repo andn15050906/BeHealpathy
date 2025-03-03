@@ -28,7 +28,7 @@ public sealed class TokenService : ITokenService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
         if (instructorId is not null && instructorId != Guid.Empty)
-            claims.Add(new Claim(HttpContextExtensions.INSTRUCTOR_CLAIM, ((Guid)instructorId).ToString()));
+            claims.Add(new Claim(HttpContextExtensions.ADVISOR_CLAIM, ((Guid)instructorId).ToString()));
 
         SymmetricSecurityKey authSigningKey = new(Encoding.UTF8.GetBytes(_options.Secret));
         JwtSecurityToken token = new(
