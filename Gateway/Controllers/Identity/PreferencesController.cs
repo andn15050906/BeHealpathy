@@ -1,6 +1,6 @@
 ﻿using Contract.Messaging.ApiClients.Http;
-using Contract.Requests.Identity;
-using Contract.Requests.Identity.Dtos;
+using Contract.Requests.Identity.PreferenceRequests;
+using Contract.Requests.Identity.PreferenceRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

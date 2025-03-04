@@ -1,6 +1,6 @@
 ﻿using Contract.Domain.UserAggregate.Enums;
 using Contract.Helpers;
-using Contract.Requests.Identity;
+using Contract.Requests.Identity.UserRequests;
 using Contract.Responses.Identity;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;

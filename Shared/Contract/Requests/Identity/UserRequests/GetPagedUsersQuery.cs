@@ -1,7 +1,7 @@
-﻿using Contract.Requests.Identity.Dtos;
+﻿using Contract.Requests.Identity.UserRequests.Dtos;
 using Contract.Responses.Identity;
 
-namespace Contract.Requests.Identity;
+namespace Contract.Requests.Identity.UserRequests;
 
 public sealed class GetPagedUsersQuery : IRequest<Result<PagedResult<UserOverviewModel>>>
 {

@@ -1,6 +1,6 @@
-﻿using Contract.Requests.Identity.Dtos;
+﻿using Contract.Requests.Identity.PreferenceRequests.Dtos;
 
-namespace Contract.Requests.Identity;
+namespace Contract.Requests.Identity.PreferenceRequests;
 
 public sealed class UpdatePreferenceCommand : UpdateCommand
 {

@@ -13,6 +13,7 @@ using Contract.Helpers.FeatureFlags;
 using Gateway.Helpers.Dependencies;
 using WisNet.Gateway.Realtime.Interface;
 using Gateway.Services.AI;
+using Gateway.Services.Cache;
 
 const string POLICY = "Policy";
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +34,7 @@ builder.Services
     .AddAI(Configurer.GeminiOptions)
     //.AddPaymentService
     .AddCloudStorage<CloudStorageService>(Configurer.CloudStorageConfig)
+    .AddCache(Configurer.CacheOptions)
     .AddFeatureFlags(Configurer.FeatureFlags)
     .AddHttpContextAccessor()
     .AddRealtimeService()

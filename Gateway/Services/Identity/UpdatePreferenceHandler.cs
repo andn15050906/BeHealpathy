@@ -1,6 +1,6 @@
 ﻿using Contract.BusinessRules.PreferenceBiz;
 using Contract.Helpers;
-using Contract.Requests.Identity;
+using Contract.Requests.Identity.PreferenceRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;

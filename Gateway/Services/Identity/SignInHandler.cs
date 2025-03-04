@@ -1,7 +1,7 @@
 ﻿using Contract.Helpers;
-using Contract.Requests.Identity;
 using Microsoft.EntityFrameworkCore;
 using Contract.Responses.Identity;
+using Contract.Requests.Identity.UserRequests;
 
 namespace Gateway.Services.Identity;
 

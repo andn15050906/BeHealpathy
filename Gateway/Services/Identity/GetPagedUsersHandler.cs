@@ -1,6 +1,6 @@
 ﻿using Contract.Helpers;
-using Contract.Requests.Identity;
-using Contract.Requests.Identity.Dtos;
+using Contract.Requests.Identity.UserRequests;
+using Contract.Requests.Identity.UserRequests.Dtos;
 using Contract.Responses.Identity;
 using Core.Helpers;
 using System.Linq.Expressions;

@@ -1,7 +1,7 @@
 ﻿using Contract.Messaging.Models;
 using Contract.Responses.Identity;
 
-namespace Contract.Requests.Identity;
+namespace Contract.Requests.Identity.UserRequests;
 
 public sealed class RefreshCommand : IRequest<Result<AuthModel>>
 {

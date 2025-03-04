@@ -1,6 +1,6 @@
 ﻿using Contract.BusinessRules.PreferenceBiz;
 using Contract.Helpers;
-using Contract.Requests.Identity;
+using Contract.Requests.Identity.PreferenceRequests;
 
 namespace Gateway.Services.Identity;
 

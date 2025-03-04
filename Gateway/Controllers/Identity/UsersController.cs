@@ -1,14 +1,9 @@
-﻿using Contract.Domain.Shared.MultimediaBase;
-using Contract.Helpers.AppExploration;
+﻿using Contract.Helpers.AppExploration;
 using Contract.Helpers.FeatureFlags;
 using Contract.Messaging.ApiClients.Http;
-using Contract.Requests.Community.ConversationRequests;
-using Contract.Requests.Community.ConversationRequests.Dtos;
-using Contract.Requests.Identity;
-using Contract.Requests.Identity.Dtos;
-using Contract.Services.Implementations;
+using Contract.Requests.Identity.UserRequests;
+using Contract.Requests.Identity.UserRequests.Dtos;
 using Infrastructure.Helpers.Email;
-using MassTransit.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 

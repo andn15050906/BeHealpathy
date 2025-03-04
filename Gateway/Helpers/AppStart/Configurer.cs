@@ -5,6 +5,7 @@ using Contract.Helpers.FeatureFlags;
 using Contract.Helpers.Storage;
 using Core.Helpers;
 using Gateway.Services.AI.ChatBot;
+using Gateway.Services.Cache;
 using Gateway.Services.Microservices;
 using Infrastructure.DataAccess.SQLServer;
 using Infrastructure.Helpers.Email;
@@ -19,6 +20,7 @@ public class Configurer
     public const string ENV_GATEWAY = "ENV_GATEWAY";
     public const string ENV_EMAIL = "ENV_EMAIL";
     public const string ENV_OAUTH = "ENV_OAUTH";
+    public const string ENV_CACHE = "ENV_CACHE";
     public const string ENV_FEATURE_FLAG = "ENV_FEATURE_FLAG";
 
     private static ConfigurationManager? _configuration;
@@ -39,6 +41,7 @@ public class Configurer
     public static EmailOptions EmailOptions;
     public static OAuthOptions OAuthOptions;
     public static GeminiOptions GeminiOptions;
+    public static CacheOptions CacheOptions;
     public static FeatureFlagOptions FeatureFlags;
 
     private static CookieConfigOptions _authCookieOptions;
@@ -68,6 +71,7 @@ public class Configurer
         EmailOptions = Get<EmailOptions>("External:Gmail", ENV_EMAIL)!;
         OAuthOptions = Get<OAuthOptions>("External:OAuth:Google", ENV_OAUTH)!;
         GeminiOptions = Get<GeminiOptions>("External:AI:Gemini")!;
+        CacheOptions = Get<CacheOptions>("External:Cache:Redis", ENV_CACHE)!;
         FeatureFlags = Get<FeatureFlagOptions>("FeatureFlags", ENV_FEATURE_FLAG)!;
 
         _authCookieOptions = Get<CookieConfigOptions>("CookieOptions")!;

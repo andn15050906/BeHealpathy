@@ -2,7 +2,7 @@
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Contract.Helpers;
-using Contract.Requests.Identity;
+using Contract.Requests.Identity.UserRequests;
 
 namespace Gateway.Services.Identity;
 

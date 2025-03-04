@@ -1,4 +1,4 @@
-﻿namespace Contract.Requests.Identity.Dtos;
+﻿namespace Contract.Requests.Identity.PreferenceRequests.Dtos;
 
 public sealed class UpdatePreferenceDto
 {

@@ -1,6 +1,6 @@
-﻿using Contract.Requests.Identity.Dtos;
+﻿using Contract.Requests.Identity.UserRequests.Dtos;
 
-namespace Contract.Requests.Identity;
+namespace Contract.Requests.Identity.UserRequests;
 
 public class ResetPasswordCommand : IRequest<Result>
 {

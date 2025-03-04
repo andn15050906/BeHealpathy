@@ -1,5 +1,5 @@
 ﻿using Contract.Helpers;
-using Contract.Requests.Identity;
+using Contract.Requests.Identity.UserRequests;
 using Infrastructure.Helpers.Email;
 using Microsoft.EntityFrameworkCore;
 

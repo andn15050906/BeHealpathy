@@ -1,5 +1,5 @@
 ﻿using Contract.Helpers;
-using Contract.Requests.Identity;
+using Contract.Requests.Identity.UserRequests;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Identity;

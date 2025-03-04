@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Gateway.Helpers.AppStart;
 using Contract.Messaging.ApiClients.Http;
-using Contract.Requests.Identity.Dtos;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 using Infrastructure.Helpers.Email;
 using Contract.Helpers.AppExploration;
-using Contract.Requests.Identity;
 using Contract.Responses.Identity;
 using Contract.Helpers.FeatureFlags;
+using Contract.Requests.Identity.UserRequests.Dtos;
+using Contract.Requests.Identity.UserRequests;
 
 namespace Gateway.Controllers.Identity;
 

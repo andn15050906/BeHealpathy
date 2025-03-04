@@ -1,8 +1,8 @@
 ﻿using Contract.Helpers;
 using Contract.Helpers.Storage;
-using Contract.Requests.Identity.Dtos;
-using Contract.Requests.Identity;
 using Infrastructure.DataAccess.SQLServer.Helpers;
+using Contract.Requests.Identity.UserRequests.Dtos;
+using Contract.Requests.Identity.UserRequests;
 
 namespace Gateway.Services.Identity;
 

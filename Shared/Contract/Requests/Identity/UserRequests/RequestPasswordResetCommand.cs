@@ -1,4 +1,4 @@
-﻿namespace Contract.Requests.Identity;
+﻿namespace Contract.Requests.Identity.UserRequests;
 
 public class RequestPasswordResetCommand : IRequest<Result<string>>
 {

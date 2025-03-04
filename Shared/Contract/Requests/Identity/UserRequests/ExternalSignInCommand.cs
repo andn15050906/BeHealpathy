@@ -2,7 +2,7 @@
 using Contract.Responses.Identity;
 using System.Security.Claims;
 
-namespace Contract.Requests.Identity;
+namespace Contract.Requests.Identity.UserRequests;
 
 public class ExternalSignInCommand : IRequest<Result<AuthModel>>
 {

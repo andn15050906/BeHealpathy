@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Contract.Requests.Shared.BaseDtos.Media;
 
-namespace Contract.Requests.Identity.Dtos;
+namespace Contract.Requests.Identity.UserRequests.Dtos;
 
 public sealed class UpdateUserDto
 {

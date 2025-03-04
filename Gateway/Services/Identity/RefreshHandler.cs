@@ -1,8 +1,8 @@
 ﻿using Contract.Helpers;
-using Contract.Requests.Identity;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using System.Security.Claims;
 using Contract.Responses.Identity;
+using Contract.Requests.Identity.UserRequests;
 
 namespace Gateway.Services.Identity;
 

@@ -1,5 +1,5 @@
 ﻿using Contract.Helpers;
-using Contract.Requests.Identity;
+using Contract.Requests.Identity.UserRequests;
 using Contract.Responses.Identity;
 using Microsoft.EntityFrameworkCore;
 
