@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Contract.Helpers;
 using Contract.Requests.Identity.UserRequests;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public sealed class CreateUserHandler : RequestHandler<CreateUserCommand, string, HealpathyContext>
 {

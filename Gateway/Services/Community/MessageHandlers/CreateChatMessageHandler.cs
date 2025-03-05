@@ -1,6 +1,7 @@
 ﻿using Contract.BusinessRules;
 using Contract.Domain.CommunityAggregate;
 using Contract.Helpers;
+using Contract.IntegrationEvents;
 using Contract.Requests.Community.ChatMessageRequests;
 using Contract.Requests.Community.ConversationRequests;
 using Contract.Requests.Community.ConversationRequests.Dtos;
@@ -10,12 +11,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.MessageHandlers;
 
-public sealed class CreateChatMessageHandler : RequestHandler<CreateChatMessageCommand, ChatMessageModel, HealpathyContext>
+public sealed class CreateChatMessageHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateChatMessageCommand, ChatMessageModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateChatMessageHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<ChatMessageModel>> Handle(CreateChatMessageCommand command, CancellationToken cancellationToken)
     {
         // AI userId ...
@@ -42,6 +40,8 @@ public sealed class CreateChatMessageHandler : RequestHandler<CreateChatMessageC
                 );
                 conversation = Adapt(convCommand);
                 await _context.Conversations.InsertExt(conversation);
+
+                //_cache.Add(IntegrationEventType.Conversation_Created, command.UserId, new Events.Conversation_Created(command.Rq.ConversationId));
             }
         }
 
@@ -61,6 +61,8 @@ public sealed class CreateChatMessageHandler : RequestHandler<CreateChatMessageC
             {
                 model.Attachments = command.Medias.Select(_ => MultimediaModel.MapFunc(_));
             }
+
+            _cache.Add(command.UserId, new Events.ChatMessage_Created(entity.Id));
             return Created(model);
         }
         catch (Exception ex)

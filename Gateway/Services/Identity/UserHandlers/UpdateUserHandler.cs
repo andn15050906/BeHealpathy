@@ -4,7 +4,7 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 using Contract.Requests.Identity.UserRequests.Dtos;
 using Contract.Requests.Identity.UserRequests;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public class UpdateUserHandler : RequestHandler<UpdateUserCommand, HealpathyContext>
 {

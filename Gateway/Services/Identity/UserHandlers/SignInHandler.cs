@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Contract.Responses.Identity;
 using Contract.Requests.Identity.UserRequests;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public class SignInHandler : RequestHandler<SignInCommand, AuthModel, HealpathyContext>
 {

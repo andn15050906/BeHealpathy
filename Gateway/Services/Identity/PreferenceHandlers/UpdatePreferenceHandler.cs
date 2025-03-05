@@ -5,7 +5,7 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 using Newtonsoft.Json.Linq;
 using System.Text.Json;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.PreferenceHandlers;
 
 public sealed class UpdatePreferenceHandler : RequestHandler<UpdatePreferenceCommand, HealpathyContext>
 {

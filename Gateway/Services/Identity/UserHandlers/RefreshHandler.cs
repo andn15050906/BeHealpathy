@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Contract.Responses.Identity;
 using Contract.Requests.Identity.UserRequests;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public sealed class RefreshHandler : RequestHandler<RefreshCommand, AuthModel, /*GatewayContext*/ HealpathyContext>
 {

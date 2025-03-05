@@ -4,6 +4,7 @@ using Gateway.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gateway.Migrations
 {
     [DbContext(typeof(HealpathyContext))]
-    partial class HealpathyContextModelSnapshot : ModelSnapshot
+    [Migration("20250304160831_M12")]
+    partial class M12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1374,12 +1377,17 @@ namespace Gateway.Migrations
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CreatorId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CreatorId");
+
+                    b.HasIndex("CreatorId1");
 
                     b.ToTable("ActivityLogs", (string)null);
                 });
@@ -1970,6 +1978,14 @@ namespace Gateway.Migrations
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
                 });
 
             modelBuilder.Entity("Contract.Domain.UserAggregate.Preference", b =>

@@ -5,7 +5,7 @@ using Contract.Responses.Identity;
 using Core.Helpers;
 using System.Linq.Expressions;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public sealed class GetPagedUsersHandler : RequestHandler<GetPagedUsersQuery, PagedResult<UserOverviewModel>, HealpathyContext>
 {

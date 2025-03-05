@@ -1,6 +1,6 @@
-﻿namespace Gateway.Services.Cache;
+﻿namespace Contract.Services.Contracts;
 
-public interface ICacheService
+public interface ICacheBase
 {
     Task Set(string key, string value);
     Task<string?> Get(string key);

@@ -2,7 +2,7 @@
 using Contract.Requests.Identity.UserRequests;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public sealed class ResetPasswordHandler : RequestHandler<ResetPasswordCommand, HealpathyContext>
 {

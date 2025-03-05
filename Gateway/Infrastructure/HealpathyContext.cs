@@ -255,7 +255,7 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<Notification, object?>>, string> Columns => new()
         {
-            { _ => _.Message, NVARCHAR255 },
+            { _ => _.Message, NVARCHAR1000 },
             // Type below
             // Status below
             // ReceiverId

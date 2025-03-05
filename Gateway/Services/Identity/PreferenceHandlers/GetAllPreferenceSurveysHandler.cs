@@ -2,7 +2,7 @@
 using Contract.Helpers;
 using Contract.Requests.Identity.PreferenceRequests;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.PreferenceHandlers;
 
 public class GetAllPreferenceSurveysHandler : RequestHandler<GetAllPreferenceSurveysQuery, List<PreferenceSurvey>, HealpathyContext>
 {

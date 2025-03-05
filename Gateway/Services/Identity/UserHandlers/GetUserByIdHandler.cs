@@ -3,7 +3,7 @@ using Contract.Requests.Identity.UserRequests;
 using Contract.Responses.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public sealed class GetUserByIdHandler : RequestHandler<GetUserByIdQuery, UserFullModel, HealpathyContext>
 {

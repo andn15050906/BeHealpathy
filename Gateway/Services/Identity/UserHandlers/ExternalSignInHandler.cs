@@ -6,7 +6,7 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
-namespace Gateway.Services.Identity;
+namespace Gateway.Services.Identity.UserHandlers;
 
 public class ExternalSignInHandler : RequestHandler<ExternalSignInCommand, AuthModel, HealpathyContext>
 {

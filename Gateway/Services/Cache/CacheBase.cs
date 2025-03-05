@@ -3,15 +3,15 @@ using StackExchange.Redis;
 
 namespace Gateway.Services.Cache;
 
-public sealed class CacheService : ICacheService
+public sealed class CacheBase : ICacheBase
 {
-    public static CacheService Instance { get; private set; }
+    public static CacheBase? Instance { get; private set; }
     private IDatabase _database;
     private IAppLogger _logger;
 
 
 
-    public CacheService(CacheOptions options, IAppLogger logger)
+    public CacheBase(CacheOptions options, IAppLogger logger)
     {
         ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(
             new ConfigurationOptions

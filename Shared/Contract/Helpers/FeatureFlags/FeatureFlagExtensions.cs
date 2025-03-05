@@ -9,6 +9,7 @@ public static class FeatureFlagExtensions
         services.Configure<FeatureFlagOptions>(options =>
         {
             options.EmailEnabled = flags.EmailEnabled;
+            options.ForceUpdateCache = flags.ForceUpdateCache;
         });
 
         return services;

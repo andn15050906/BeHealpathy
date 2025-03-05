@@ -23,6 +23,7 @@ builder.Services
     .AddCors(_ => _.AddPolicy(POLICY, builder =>
         builder.WithOrigins(Configurer.CorsOrigins).AllowCredentials().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("WWW-Authenticate"))
     )
+    .AddFeatureFlags(Configurer.FeatureFlags)
     .AddMonitoring()
     .AddAppExploration(Configurer.AppInfoOptions)
     .AddMediatR(options => { options.RegisterServicesFromAssembly(typeof(Program).Assembly); })
@@ -35,7 +36,6 @@ builder.Services
     //.AddPaymentService
     .AddCloudStorage<CloudStorageService>(Configurer.CloudStorageConfig)
     .AddCache(Configurer.CacheOptions)
-    .AddFeatureFlags(Configurer.FeatureFlags)
     .AddHttpContextAccessor()
     .AddRealtimeService()
     .AddControllers();

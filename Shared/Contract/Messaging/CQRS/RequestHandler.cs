@@ -1,5 +1,5 @@
 ﻿using Contract.Helpers;
-using Contract.Messaging.Models;
+using Contract.Services.Contracts;
 
 namespace Contract.Messaging.CQRS;
 
@@ -9,11 +9,21 @@ public abstract class RequestHandler<TRequest, TContext> : IRequestHandler<TRequ
 {
     protected readonly TContext _context;
     protected readonly IAppLogger _logger;
+    protected readonly IEventCache _cache;
 
+#pragma warning disable CS8618
     public RequestHandler(TContext context, IAppLogger logger)
     {
         _context = context;
         _logger = logger;
+    }
+#pragma warning restore CS8618
+
+    public RequestHandler(TContext context, IAppLogger logger, IEventCache cache)
+    {
+        _context = context;
+        _logger = logger;
+        _cache = cache;
     }
 
     public abstract Task<Result> Handle(TRequest request, CancellationToken cancellationToken);
