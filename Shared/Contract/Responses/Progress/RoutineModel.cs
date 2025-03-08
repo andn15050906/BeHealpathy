@@ -14,7 +14,13 @@ public sealed class RoutineModel
     public string Title { get; set; }
     public string Description { get; set; }
     public string Objective { get; set; }
-    public Frequency Frequency { get; set; }
+    public Frequency Repeater { get; set; }
+    public Guid? RepeaterSequenceId { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
+    public bool IsCompleted { get; set; }
+    public bool IsClosed { get; set; }
+    public int Tag { get; set; }
 
 
 
@@ -28,10 +34,17 @@ public sealed class RoutineModel
             CreatorId = _.CreatorId,
             CreationTime = _.CreationTime,
             LastModificationTime = _.LastModificationTime,
+
             Title = _.Title,
             Description = _.Description,
             Objective = _.Objective,
-            Frequency = _.Frequency
+            Repeater = _.Repeater,
+            RepeaterSequenceId = _.RepeaterSequenceId,
+            StartDate = _.StartDate,
+            EndDate = _.EndDate,
+            IsCompleted = _.IsCompleted,
+            IsClosed = _.IsClosed,
+            Tag = _.Tag,
         };
 
     public static Expression<Func<Routine, RoutineModel>> MapExpression
@@ -41,9 +54,16 @@ public sealed class RoutineModel
             CreatorId = _.CreatorId,
             CreationTime = _.CreationTime,
             LastModificationTime = _.LastModificationTime,
+
             Title = _.Title,
             Description = _.Description,
             Objective = _.Objective,
-            Frequency = _.Frequency
+            Repeater = _.Repeater,
+            RepeaterSequenceId = _.RepeaterSequenceId,
+            StartDate = _.StartDate,
+            EndDate = _.EndDate,
+            IsCompleted = _.IsCompleted,
+            IsClosed = _.IsClosed,
+            Tag = _.Tag,
         };
 }

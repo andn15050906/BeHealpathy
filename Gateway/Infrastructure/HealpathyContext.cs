@@ -23,6 +23,17 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Bill> Bills { get; set; }
     public DbSet<ActivityLog> ActivityLogs { get; set; }
 
+
+
+    public DbSet<Conversation> Conversations { get; set; }
+    public DbSet<ConversationMember> ConversationMembers { get; set; }
+    public DbSet<ChatMessage> ChatMessages { get; set; }
+    public DbSet<MessageReaction> MessageReactions { get; set; }
+    public DbSet<Meeting> Meetings { get; set; }
+    public DbSet<MeetingParticipant> MeetingParticipants { get; set; }
+
+
+
     public DbSet<Survey> Surveys { get; set; }
     public DbSet<SurveyScoreBand> SurveyScoreBands { get; set; }
     public DbSet<McqQuestion> McqQuestions { get; set; }
@@ -32,6 +43,12 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Routine> Routines { get; set; }
     public DbSet<RoutineLog> RoutineLogs { get; set; }
     public DbSet<DiaryNote> DiaryNotes { get; set; }
+    public DbSet<Roadmap> Roadmaps { get; set; }
+    public DbSet<RoadmapPhase> RoadmapPhases { get; set; }
+    public DbSet<RoadmapMilestone> RoadmapMilestones { get; set; }
+    public DbSet<RoadmapRecommendation> RoadmapRecommendations { get; set; }
+
+
 
     public DbSet<Article> Articles { get; set; }
     public DbSet<ArticleSection> ArticleSections { get; set; }
@@ -41,12 +58,7 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<ArticleTag> ArticleTags { get; set; }
     public DbSet<MediaResource> MediaResources { get; set; }
 
-    public DbSet<Conversation> Conversations { get; set; }
-    public DbSet<ConversationMember> ConversationMembers { get; set; }
-    public DbSet<ChatMessage> ChatMessages { get; set; }
-    public DbSet<MessageReaction> MessageReactions { get; set; }
-    public DbSet<Meeting> Meetings { get; set; }
-    public DbSet<MeetingParticipant> MeetingParticipants { get; set; }
+
 
     public DbSet<Advisor> Advisors { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -56,6 +68,8 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Lecture> Lectures { get; set; }
     public DbSet<LectureComment> LectureComments { get; set; }
     public DbSet<LectureReaction> LectureReactions { get; set; }
+
+
 
     // DbSet instead of Shared Type Entity
     public DbSet<Multimedia> Multimedia { get; set; }
@@ -87,6 +101,10 @@ public sealed class HealpathyContext : BaseContext
         internal const string ROUTINE_LOG = "RoutineLogs";
         internal const string DIARY_NOTE = "DiaryNotes";
 
+        internal const string ROADMAP = "Roadmaps";
+        internal const string ROADMAP_MILESTONE = "RoadmapMilestones";
+        internal const string ROADMAP_PHASE = "RoadmapPhases";
+        internal const string ROADMAP_RECOMMENDATION = "RoadmapRecommendations";
         internal const string ARTICLE = "Articles";
         internal const string ARTICLE_SECTION = "ArticleSections";
         internal const string ARTICLE_COMMENT = "ArticleComments";
@@ -153,6 +171,10 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new RoutineLogConfig())
             .ApplyConfiguration(new DiaryNoteConfig())
 
+            .ApplyConfiguration(new RoadmapConfig())
+            .ApplyConfiguration(new RoadmapPhaseConfig())
+            .ApplyConfiguration(new RoadmapMilestoneConfig())
+            .ApplyConfiguration(new RoadmapRecommendationConfig())
             .ApplyConfiguration(new ArticleConfig())
             .ApplyConfiguration(new ArticleSectionConfig())
             .ApplyConfiguration(new ArticleCommentConfig())
@@ -558,8 +580,14 @@ public sealed class HealpathyContext : BaseContext
         {
             { _ => _.Title, NVARCHAR100 },
             { _ => _.Description, NVARCHAR255 },
-            { _ => _.Objective, NVARCHAR255 }
-            // Frequency below
+            { _ => _.Objective, NVARCHAR255 },
+            // Repeater
+            // RepeaterSequenceId
+            // StartDate
+            // EndDate
+            // IsCompleted
+            // IsClosed
+            // Tag
         };
 
         public override void Configure(EntityTypeBuilder<Routine> builder)
@@ -567,7 +595,7 @@ public sealed class HealpathyContext : BaseContext
             builder
                 .ToTable(RelationsConfig.ROUTINE)
                 .SetColumnsTypes(Columns)
-                .SetEnumParsing(_ => _.Frequency)
+                .SetEnumParsing(_ => _.Repeater)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
                 .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
 
@@ -619,6 +647,77 @@ public sealed class HealpathyContext : BaseContext
 
 
     #region Resource
+    class RoadmapConfig : EntityConfiguration<Roadmap>
+    {
+        protected override Dictionary<Expression<Func<Roadmap, object?>>, string> Columns => new()
+        {
+            { _ => _.Title, NVARCHAR500 },
+            { _ => _.IntroText, NVARCHAR3000 }
+        };
+
+        public override void Configure(EntityTypeBuilder<Roadmap> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.ROADMAP)
+                .SetColumnsTypes(Columns)
+                .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
+                .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
+        }
+    }
+
+    class RoadmapPhaseConfig : EntityConfiguration<RoadmapPhase>
+    {
+        protected override Dictionary<Expression<Func<RoadmapPhase, object?>>, string> Columns => new()
+        {
+            { _ => _.Title, NVARCHAR500 },
+            { _ => _.Description, NVARCHAR3000 },
+        };
+
+        public override void Configure(EntityTypeBuilder<RoadmapPhase> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.ROADMAP_PHASE)
+                .SetColumnsTypes(Columns);
+        }
+    }
+
+    class RoadmapMilestoneConfig : EntityConfiguration<RoadmapMilestone>
+    {
+        protected override Dictionary<Expression<Func<RoadmapMilestone, object?>>, string> Columns => new()
+        {
+            { _ => _.Title, NVARCHAR500 },
+            { _ => _.EventName, VARCHAR255 }
+            // RepeatTimesRequired
+            // TimeSpentRequired
+        };
+
+        public override void Configure(EntityTypeBuilder<RoadmapMilestone> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.ROADMAP_MILESTONE)
+                .SetColumnsTypes(Columns);
+        }
+    }
+
+    class RoadmapRecommendationConfig : EntityConfiguration<RoadmapRecommendation>
+    {
+        protected override Dictionary<Expression<Func<RoadmapRecommendation, object?>>, string> Columns => new()
+        {
+            // TargetEntityId
+            { _ => _.EntityType, VARCHAR255 },
+            // MilestoneId
+            { _ => _.Trait, NVARCHAR255 },
+            { _ => _.TraitDescription, NVARCHAR255 },
+        };
+
+        public override void Configure(EntityTypeBuilder<RoadmapRecommendation> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.ROADMAP_RECOMMENDATION)
+                .SetColumnsTypes(Columns);
+        }
+    }
+
     class ArticleConfig : EntityConfiguration<Article>
     {
         protected override Dictionary<Expression<Func<Article, object?>>, string> Columns => new()

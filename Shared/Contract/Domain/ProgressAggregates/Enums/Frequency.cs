@@ -2,7 +2,10 @@
 
 public enum Frequency : byte
 {
+    None,
     Daily,
+    Weekdays,
+    Weekends,
     EveryMonday,
     EveryTuesday,
     EveryWednesday,

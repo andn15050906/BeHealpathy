@@ -43,8 +43,20 @@ public sealed class UpdateRoutineHandler : RequestHandler<UpdateRoutineCommand, 
             entity.Description = command.Rq.Description;
         if (command.Rq.Objective is not null)
             entity.Objective = command.Rq.Objective;
-        if (command.Rq.Frequency is not null)
-            entity.Frequency = (Frequency)command.Rq.Frequency;
+        if (command.Rq.Repeater is not null)
+            entity.Repeater = (Frequency)command.Rq.Repeater;
+        if (command.Rq.RepeaterSequenceId is not null)
+            entity.RepeaterSequenceId = command.Rq.RepeaterSequenceId;
+        if (command.Rq.StartDate is not null)
+            entity.StartDate = (DateTime)command.Rq.StartDate;
+        if (command.Rq.EndDate is not null)
+            entity.EndDate = (DateTime)command.Rq.EndDate;
+        if (command.Rq.IsCompleted is not null)
+            entity.IsCompleted = (bool)command.Rq.IsCompleted;
+        if (command.Rq.IsClosed is not null)
+            entity.IsCompleted = (bool)command.Rq.IsClosed;
+        if (command.Rq.Tag is not null)
+            entity.Tag = (int)command.Rq.Tag;
         entity.LastModifierId = command.UserId;
         entity.LastModificationTime = TimeHelper.Now;
 

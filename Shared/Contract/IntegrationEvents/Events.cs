@@ -7,6 +7,7 @@ public sealed record Events
     Mood_Updated,
     Yoga_Practiced,
     Course_Completed
+    Media_Viewed
     */
     public record General_Activity_Created(string Content) : BaseIntegrationEvent;
 

@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gateway.Controllers.Library;
 
-public sealed class RoutineLogssController : ContractController
+public sealed class RoutineLogsController : ContractController
 {
-    public RoutineLogssController(IMediator mediator) : base(mediator)
+    public RoutineLogsController(IMediator mediator) : base(mediator)
     {
     }
 

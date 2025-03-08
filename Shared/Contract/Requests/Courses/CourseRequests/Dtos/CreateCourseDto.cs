@@ -22,7 +22,7 @@ public sealed class CreateCourseDto
     public string Requirements { get; set; }
 
     public Guid LeafCategoryId { get; set; }
-    public List<CreateLectureDto> Lectures { get; set; }
+    public List<CreateLectureDto>? Lectures { get; set; }
 }
 
 #pragma warning restore CS8618

@@ -37,7 +37,14 @@ public sealed class GetPagedRoutinesHandler : RequestHandler<GetPagedRoutinesQue
     private Expression<Func<Routine, bool>>? GetPredicate(QueryRoutineDto dto)
     {
         if (dto.CreatorId is not null)
+        {
+            if (dto.From is not null && dto.To is not null)
+                return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted && _.StartDate > dto.From && _.EndDate < dto.To;
             return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
+        }
+
+        if (dto.From is not null && dto.To is not null)
+            return _ => _.StartDate > dto.From && _.EndDate < dto.To && !_.IsDeleted;
         if (dto.Title is not null)
             return _ => _.Title.Contains(_.Title) && !_.IsDeleted;
 
