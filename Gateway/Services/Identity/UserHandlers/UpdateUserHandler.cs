@@ -65,5 +65,7 @@ public class UpdateUserHandler : RequestHandler<UpdateUserCommand, HealpathyCont
 
         if (dto.CurrentPassword is not null && dto.NewPassword is not null)
             entity.SetPassword(dto.NewPassword);
+        if (dto.RoadmapId is not null)
+            entity.RoadmapId = dto.RoadmapId;
     }
 }

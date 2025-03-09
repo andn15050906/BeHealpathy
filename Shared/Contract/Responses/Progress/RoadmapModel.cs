@@ -33,8 +33,10 @@ public sealed class RoadmapModel
             Phases = _.Phases.Select(_ => new RoadmapPhaseModel
             {
                 Id = _.Id,
+                Index = _.Index,
                 Title = _.Title,
                 Description = _.Description,
+                TimeSpan = _.TimeSpan,
                 Milestones = _.Milestones.Select(_ => new RoadmapMilestoneModel
                 {
                     Id = _.Id,

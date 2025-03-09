@@ -18,6 +18,8 @@ public sealed class UserFullModel
     public IEnumerable<string> LoginProviders { get; set; } = [];
     public string Bio { get; set; } = string.Empty;
     public DateTime? DateOfBirth { get; set; }
+
+    public Guid? RoadmapId { get; set; }
     public int EnrollmentCount { get; set; }
 
     public DateTime CreationTime { get; set; }
@@ -45,6 +47,8 @@ public sealed class UserFullModel
             IsApproved = user.IsApproved,
             Bio = user.Bio,
             DateOfBirth = user.DateOfBirth,
+
+            RoadmapId = user.RoadmapId,
             EnrollmentCount = user.EnrollmentCount,
             LoginProviders = user.UserLogins?.Select(_ => _.LoginProvider) ?? [],
             Settings = user.Settings?.Select(_ => new SettingModel
@@ -75,6 +79,8 @@ public sealed class UserFullModel
             IsApproved = _.IsApproved,
             Bio = _.Bio,
             DateOfBirth = _.DateOfBirth,
+
+            RoadmapId = _.RoadmapId,
             EnrollmentCount = _.EnrollmentCount,
             LoginProviders = _.UserLogins.Select(x => x.LoginProvider),
             Settings = _.Settings.Select(_ => new SettingModel
