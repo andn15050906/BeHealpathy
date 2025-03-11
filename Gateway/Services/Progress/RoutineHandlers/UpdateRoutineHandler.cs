@@ -48,13 +48,13 @@ public sealed class UpdateRoutineHandler : RequestHandler<UpdateRoutineCommand, 
         if (command.Rq.RepeaterSequenceId is not null)
             entity.RepeaterSequenceId = command.Rq.RepeaterSequenceId;
         if (command.Rq.StartDate is not null)
-            entity.StartDate = (DateTime)command.Rq.StartDate;
+            entity.StartDate = ((DateTime)command.Rq.StartDate).ToLocalTime();
         if (command.Rq.EndDate is not null)
-            entity.EndDate = (DateTime)command.Rq.EndDate;
+            entity.EndDate = ((DateTime)command.Rq.EndDate).ToLocalTime();
         if (command.Rq.IsCompleted is not null)
             entity.IsCompleted = (bool)command.Rq.IsCompleted;
         if (command.Rq.IsClosed is not null)
-            entity.IsCompleted = (bool)command.Rq.IsClosed;
+            entity.IsClosed = (bool)command.Rq.IsClosed;
         if (command.Rq.Tag is not null)
             entity.Tag = (int)command.Rq.Tag;
         entity.LastModifierId = command.UserId;

@@ -33,6 +33,6 @@ public sealed class CreateRoutineHandler : RequestHandler<CreateRoutineCommand, 
     {
         return new Routine(
             command.Id, command.UserId, command.Rq.Title, command.Rq.Description, command.Rq.Objective, command.Rq.Repeater,
-            command.Rq.RepeaterSequenceId, command.Rq.StartDate, command.Rq.EndDate, command.Rq.IsCompleted, command.Rq.IsClosed, command.Rq.Tag);
+            command.Rq.RepeaterSequenceId, command.Rq.StartDate.ToLocalTime(), command.Rq.EndDate.ToLocalTime(), command.Rq.IsCompleted, command.Rq.IsClosed, command.Rq.Tag);
     }
 }

@@ -32,7 +32,7 @@ public sealed class RoutinesController : ContractController
 
     [HttpPatch]
     [Authorize]
-    public async Task<IActionResult> Update([FromForm] UpdateRoutineDto dto)
+    public async Task<IActionResult> Update(UpdateRoutineDto dto)
     {
         UpdateRoutineCommand command = new(dto, ClientId);
         return await Send(command);
