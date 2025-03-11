@@ -47,6 +47,7 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<RoadmapPhase> RoadmapPhases { get; set; }
     public DbSet<RoadmapMilestone> RoadmapMilestones { get; set; }
     public DbSet<RoadmapRecommendation> RoadmapRecommendations { get; set; }
+    public DbSet<RoadmapProgress> RoadmapProgress { get; set; }
 
 
 
@@ -105,6 +106,7 @@ public sealed class HealpathyContext : BaseContext
         internal const string ROADMAP_MILESTONE = "RoadmapMilestones";
         internal const string ROADMAP_PHASE = "RoadmapPhases";
         internal const string ROADMAP_RECOMMENDATION = "RoadmapRecommendations";
+        internal const string ROADMAP_PROGRESS = "RoadmapProgress";
         internal const string ARTICLE = "Articles";
         internal const string ARTICLE_SECTION = "ArticleSections";
         internal const string ARTICLE_COMMENT = "ArticleComments";
@@ -175,6 +177,7 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new RoadmapPhaseConfig())
             .ApplyConfiguration(new RoadmapMilestoneConfig())
             .ApplyConfiguration(new RoadmapRecommendationConfig())
+            .ApplyConfiguration(new RoadmapProgressConfig())
             .ApplyConfiguration(new ArticleConfig())
             .ApplyConfiguration(new ArticleSectionConfig())
             .ApplyConfiguration(new ArticleCommentConfig())
@@ -715,6 +718,22 @@ public sealed class HealpathyContext : BaseContext
             builder
                 .ToTable(RelationsConfig.ROADMAP_RECOMMENDATION)
                 .SetColumnsTypes(Columns);
+        }
+    }
+
+    class RoadmapProgressConfig : EntityConfiguration<RoadmapProgress>
+    {
+        protected override Dictionary<Expression<Func<RoadmapProgress, object?>>, string> Columns => new()
+        {
+            { _ => _.MilestonesCompleted, VARCHARMAX }
+        };
+
+        public override void Configure(EntityTypeBuilder<RoadmapProgress> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.ROADMAP_PROGRESS)
+                .SetColumnsTypes(Columns)
+                .HasKey(_ => new { _.CreatorId, _.RoadmapPhaseId });
         }
     }
 

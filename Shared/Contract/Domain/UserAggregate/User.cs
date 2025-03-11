@@ -25,6 +25,7 @@ public sealed class User : TimeAuditedEntity
     public DateTime? DateOfBirth { get; set; }
     public string? Phone { get; set; }
 
+    public Guid? RoadmapId { get; set; }
     public int EnrollmentCount { get; set; }
     public long Balance { get; set; }
 

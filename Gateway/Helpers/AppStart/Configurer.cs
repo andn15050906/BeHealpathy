@@ -5,6 +5,7 @@ using Contract.Helpers.FeatureFlags;
 using Contract.Helpers.Storage;
 using Core.Helpers;
 using Gateway.Services.AI.ChatBot;
+using Gateway.Services.Background;
 using Gateway.Services.Cache;
 using Gateway.Services.Microservices;
 using Infrastructure.DataAccess.SQLServer;
@@ -38,6 +39,7 @@ public class Configurer
     public static CloudStorageConfig CloudStorageConfig;
     public static Dependencies.Realtime.Options RealtimeOptions;
 
+    public static BackgroundOptions BackgroundOptions;
     public static EmailOptions EmailOptions;
     public static OAuthOptions OAuthOptions;
     public static GeminiOptions GeminiOptions;
@@ -68,6 +70,7 @@ public class Configurer
         CloudStorageConfig = Get<CloudStorageConfig>("External:Cloudinary")!;
         RealtimeOptions = Get<Dependencies.Realtime.Options>("Azure:SignalR")!;
 
+        BackgroundOptions = Get<BackgroundOptions>("Hangfire:Remote")!;
         EmailOptions = Get<EmailOptions>("External:Gmail", ENV_EMAIL)!;
         OAuthOptions = Get<OAuthOptions>("External:OAuth:Google", ENV_OAUTH)!;
         GeminiOptions = Get<GeminiOptions>("External:AI:Gemini")!;

@@ -1,4 +1,6 @@
-﻿using Infrastructure.Helpers.Monitoring;
+﻿using Gateway.Services.Background;
+using Hangfire;
+using Infrastructure.Helpers.Monitoring;
 using OfficeOpenXml;
 
 namespace Gateway.Helpers.AppStart;
@@ -24,5 +26,16 @@ public static class OneTimeRunner
         using var scope = app.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<HealpathyContext>();
         context.Users.Count();
+    }
+
+    public static void ScheduleJobs(this WebApplication app)
+    {
+#pragma warning disable CS0618
+        RecurringJob.AddOrUpdate<JobRunner.CalculateRoadmapProgress>(
+            nameof(JobRunner.CalculateRoadmapProgress),
+            _ => _.Execute(),
+            Cron.MinuteInterval(5)
+        );
+#pragma warning restore CS0618
     }
 }

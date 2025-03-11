@@ -23,4 +23,8 @@ public sealed class UpdateUserDto
     public string? CurrentPassword { get; set; }
     [PasswordValidation]
     public string? NewPassword { get; set; }
+
+
+
+    public Guid? RoadmapId { get; set; }
 }

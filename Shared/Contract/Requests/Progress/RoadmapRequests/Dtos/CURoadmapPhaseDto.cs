@@ -2,6 +2,7 @@
 
 public sealed class CURoadmapPhaseDto
 {
+    public int Index { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
     public int TimeSpan { get; set; }

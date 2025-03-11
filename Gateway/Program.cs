@@ -14,6 +14,8 @@ using Gateway.Helpers.Dependencies;
 using WisNet.Gateway.Realtime.Interface;
 using Gateway.Services.AI;
 using Gateway.Services.Cache;
+using Gateway.Services.Background;
+using Hangfire;
 
 const string POLICY = "Policy";
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +33,7 @@ builder.Services
     .AddAuthServices(Configurer.TokenOptions, Configurer.OAuthOptions)
     //AddMQPublisher(Configurer.IsRunningInContainer)
     .AddMicroservices()
+    .AddBackgroundServices(Configurer.BackgroundOptions)
     .AddEmailService(Configurer.EmailOptions)
     .AddAI(Configurer.GeminiOptions)
     //.AddPaymentService
@@ -48,13 +51,17 @@ app
     .UseSerilogRequestLogging()
     .UseHttpsRedirection()
     .UseCors(POLICY)
+    .UseRouting()
     .UseAuthentication()
-    .UseAuthorization();
+    .UseAuthorization()
+    .UseHangfireDashboard()
+    .UseEndpoints(_ => _.MapHangfireDashboard());
 
 app.MapControllers();
 app.MapHub<AppHub>("/hub");
 
 app.RunWarmUpQuery();
+app.ScheduleJobs();
 
 app.Run();
 

@@ -29,6 +29,7 @@ public class ActivityLogController : ContractController
             CreatorId = ClientId
         }).ToList();
 
+        dto.PageSize = 100;
         var query = new GetPagedActivityLogsQuery(dto, ClientId);
         var dbQueryResult = await _mediator.Send(query);
 
