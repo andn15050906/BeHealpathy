@@ -9,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gateway.Controllers.Identity;
 
-public class ActivityLogController : ContractController
+public class ActivityLogsController : ContractController
 {
-    public ActivityLogController(IMediator mediator) : base(mediator)
+    public ActivityLogsController(IMediator mediator) : base(mediator)
     {
     }
 

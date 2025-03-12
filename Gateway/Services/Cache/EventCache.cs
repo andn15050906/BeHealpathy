@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Contract.BusinessRules;
 using Contract.Helpers.FeatureFlags;
 using Contract.IntegrationEvents;
 using Contract.Requests.Identity.ActivityLogRequests;
@@ -11,15 +12,15 @@ namespace Gateway.Services.Cache;
 public sealed class EventCache : IEventCache
 {
     private readonly ICacheBase _cache;
-    private readonly IMediator _mediator;
+    private readonly HealpathyContext _context;
     private readonly bool _forceUpdateCache;
 
     private const string JSON_EMPTY_ARRAY = "[]";
 
-    public EventCache(ICacheBase cache, IMediator mediator, IOptions<FeatureFlagOptions> flags)
+    public EventCache(ICacheBase cache, HealpathyContext context, IOptions<FeatureFlagOptions> flags)
     {
         _cache = cache;
-        _mediator = mediator;
+        _context = context;
         _forceUpdateCache = flags.Value.ForceUpdateCache;
     }
 
@@ -57,6 +58,11 @@ public sealed class EventCache : IEventCache
             {
                 var eventType = typeof(T).Name;
                 List<CreateActivityLogDto<T>> batch = GetList<T>(userId).Result ?? [];
+
+                // Commented this out for showing redis entries
+                //batch.Add(new CreateActivityLogDto<T> { Content = JsonSerializer.Serialize(content), CreationTime = TimeHelper.Now });
+                //_cache.Set($"{eventType}", JsonSerializer.Serialize(batch)).Wait();
+
                 SaveAndTrimCache(batch, userId).Wait();
                 batch.Add(new CreateActivityLogDto<T> { Content = JsonSerializer.Serialize(content), CreationTime = TimeHelper.Now });
                 _cache.Set($"{eventType}_{userId}", JsonSerializer.Serialize(batch)).Wait();
@@ -163,22 +169,36 @@ public sealed class EventCache : IEventCache
         if (batch is null || batch.Count == 0)
             return new Result(400);
 
-        var command = new CreateActivityLogCommand(
-            Guid.NewGuid(),
-            batch.Select(_ => new CreateActivityLogDto
-            {
-                Content = _.Content,
-                CreationTime = TimeHelper.Now
-            }).ToList(),
-            userId
-        );
+        var dtos = batch.Select(_ => new CreateActivityLogDto<T>()
+        {
+            Content = _.Content,
+            CreationTime = TimeHelper.Now
+        }).ToList();
         var eventType = batch.First().GenericType;
 
-        var dbTask = _mediator.Send(command);
-        var deleteTask = _cache.Delete(userId is not null ? $"{eventType}_{userId}" : $"{eventType}");
-        await Task.WhenAll(dbTask, deleteTask);
-        batch.Clear();
+        try
+        {
+            await _context.AddRangeAsync(
+                dtos.Select(_ => new ActivityLog(
+                        Guid.NewGuid(),
+                        userId ?? PreSet.SystemUserId,
+                        _.CreationTime ?? TimeHelper.Now,
+                        JsonSerializer.Serialize(new { _.Content, _.GenericType })
+                    )
+                )
+            );
 
-        return await dbTask;
+            var dbTask = _context.SaveChangesAsync();
+            var deleteTask = _cache.Delete(userId is not null ? $"{eventType}_{userId}" : $"{eventType}");
+            await Task.WhenAll(dbTask, deleteTask);
+            batch.Clear();
+
+            return new(201);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine(ex.Message);
+            return new(500);
+        }
     }
 }

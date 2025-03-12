@@ -61,7 +61,7 @@ app.MapControllers();
 app.MapHub<AppHub>("/hub");
 
 app.RunWarmUpQuery();
-app.ScheduleJobs();
+//app.ScheduleJobs();
 
 app.Run();
 

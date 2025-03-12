@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Gateway.Controllers.Analysis.RecommendationsController">
+    <Position X="2.75" Y="3.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Analysis\RecommendationsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Analysis.StatisticsController">
+    <Position X="11.5" Y="3.75" Width="1.75" />
+    <NestedTypes>
+      <Class Name="Gateway.Controllers.Analysis.StatisticsController.QueryStatisticsDto" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Controllers\Analysis\StatisticsController.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAABAAAAAgAAAAAAAAAAAAAAAAAABAAAAA=</HashCode>
+      <FileName>Controllers\Analysis\StatisticsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Community.ChatMessagesController">
+    <Position X="2.75" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Community\ChatMessagesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Community.ConversationsController">
+    <Position X="6.25" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Community\ConversationsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Community.MeetingsController">
+    <Position X="8" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Community\MeetingsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Community.AdvisorsController">
+    <Position X="4.5" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Courses\AdvisorsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Courses.CategoriesController">
+    <Position X="11.5" Y="0.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAgAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Courses\CategoriesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Courses.CoursesController">
+    <Position X="8" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAABAABAAAAAAAAEAAEAAAAAAABAAAQA=</HashCode>
+      <FileName>Controllers\Courses\CoursesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Courses.EnrollmentsController">
+    <Position X="11.5" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAEAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Courses\EnrollmentsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Courses.LecturesController">
+    <Position X="2.75" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAABAAAAAAAAAAAEAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Courses\LecturesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Identity.ActivityLogsController">
+    <Position X="2.75" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Identity\ActivityLogsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Identity.AuthController">
+    <Position X="8" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAACCAQAJAEIAAIAAACAAAAAAABAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\Identity\AuthController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Identity.PreferencesController">
+    <Position X="11.5" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Identity\PreferencesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Identity.UsersController">
+    <Position X="8" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEAAAAIAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Identity\UsersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Library.ArticlesController">
+    <Position X="6.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Library\ArticlesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Library.MediaResourcesController">
+    <Position X="6.25" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Library\MediaResourcesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Library.TagsController">
+    <Position X="6.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Library\TagsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Library.RoutineLogsController">
+    <Position X="8" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Progress\RoutineLogsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Notifications.NotificationsController">
+    <Position X="9.75" Y="2.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAABAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Notifications\NotificationsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Payment.BillsController">
+    <Position X="9.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controllers\Payment\BillsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Progress.DiaryNotesController">
+    <Position X="9.75" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Progress\DiaryNotesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Progress.McqQuestionsController">
+    <Position X="4.5" Y="2.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Progress\McqQuestionsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Progress.RoadmapsController">
+    <Position X="6.25" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Progress\RoadmapsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Progress.RoutinesController">
+    <Position X="9.75" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Progress\RoutinesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Progress.SubmissionsController">
+    <Position X="2.75" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Progress\SubmissionsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Progress.SurveysController">
+    <Position X="4.5" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAIAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Progress\SurveysController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Shared.CommentsController">
+    <Position X="4.5" Y="1.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Shared\CommentsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Gateway.Controllers.Shared.ReviewsController">
+    <Position X="4.5" Y="3.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAQA=</HashCode>
+      <FileName>Controllers\Shared\ReviewsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
