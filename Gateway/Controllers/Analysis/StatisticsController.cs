@@ -4,6 +4,7 @@ using Contract.Messaging.ApiClients.Http;
 using Core.Helpers;
 using Gateway.Services.AI.Recommendation;
 using Gateway.Services.AI.Translator;
+using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,18 @@ public sealed class StatisticsController : ContractController
         public Guid? UserId { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
+    }
+
+    [HttpGet("progress")]
+    [Authorize]
+    public async Task<IActionResult> GetProgress([FromServices] HealpathyContext context)
+    {
+        var currentRoadmap = await context.Users.Where(_ => _.Id == ClientId).Select(_ => _.RoadmapId).FirstOrDefaultAsync();
+        if (currentRoadmap is null)
+            return NotFound();
+
+        var progress = await context.RoadmapProgress.Include(_ => _.RoadmapPhase).Where(_ => _.CreatorId == ClientId).ToListAsync();
+        return Ok(progress);
     }
 
     [HttpGet("data")]
