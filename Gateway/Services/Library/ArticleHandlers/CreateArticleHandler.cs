@@ -5,12 +5,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.ArticleHandlers;
 
-public sealed class CreateArticleHandler : RequestHandler<CreateArticleCommand, HealpathyContext>
+public sealed class CreateArticleHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateArticleCommand, HealpathyContext>(context, logger, cache)
 {
-    public CreateArticleHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result> Handle(CreateArticleCommand command, CancellationToken cancellationToken)
     {
         var tags = _context.Tags.Where(_ => command.Rq.Tags.Contains(_.Id)).ToList();
@@ -24,6 +21,8 @@ public sealed class CreateArticleHandler : RequestHandler<CreateArticleCommand, 
                 : Task.CompletedTask;
             await Task.WhenAll(articleTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Article_Created(entity.Id));
             return Created();
         }
         catch (Exception ex)

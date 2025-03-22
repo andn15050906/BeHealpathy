@@ -52,14 +52,23 @@ public static class FileConverter
 
             // worksheet 1 - Questions
             var worksheet = package.Workbook.Worksheets[0];
-            int rowCount = worksheet.Dimension.Rows;
+            int lastRow = worksheet.Dimension.End.Row;
+            while (lastRow >= 1)
+            {
+                var range = worksheet.Cells[lastRow, 1, lastRow, 6];
+                if (range.Any(c => c.Value != null)) {
+                    break;
+                }
+                lastRow--;
+            }
+            int rowCount = lastRow;
             int startRow = 2;
 
             dto.Name = worksheet.Cells[startRow, 1].Text;
             dto.Description = worksheet.Cells[startRow, 2].Text;
             dto.Questions = [];
             var currentQuestion = new CreateMcqQuestionDto();
-            for (int row = startRow; row <= rowCount; row++)
+            for (int row = startRow; row < rowCount; row++)
             {
                 var questionContent = worksheet.Cells[row, 3].Text;
                 var questionExplanation = worksheet.Cells[row, 4].Text;
@@ -74,11 +83,19 @@ public static class FileConverter
                     dto.Questions.Add(currentQuestion);
                 }
 
-                dto.Questions[^1].Answers.Add(new CreateMcqAnswerDto
+                try
                 {
-                    Content = worksheet.Cells[row, 5].Text,
-                    Score = int.Parse(worksheet.Cells[row, 6].Text)
-                });
+                    dto.Questions[^1].Answers.Add(new CreateMcqAnswerDto
+                    {
+                        Content = worksheet.Cells[row, 5].Text,
+                        Score = int.Parse(worksheet.Cells[row, 6].Text)
+                    });
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    continue;
+                }
             }
 
             // worksheet 2 - Bands

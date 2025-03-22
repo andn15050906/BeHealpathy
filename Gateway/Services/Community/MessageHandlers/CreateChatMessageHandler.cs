@@ -1,7 +1,6 @@
 ﻿using Contract.BusinessRules;
 using Contract.Domain.CommunityAggregate;
 using Contract.Helpers;
-using Contract.IntegrationEvents;
 using Contract.Requests.Community.ChatMessageRequests;
 using Contract.Requests.Community.ConversationRequests;
 using Contract.Requests.Community.ConversationRequests.Dtos;

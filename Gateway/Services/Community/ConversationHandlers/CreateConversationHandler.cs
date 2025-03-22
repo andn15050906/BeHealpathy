@@ -5,9 +5,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.ConversationHandlers;
 
-public sealed class CreateConversationHandler : RequestHandler<CreateConversationCommand, HealpathyContext>
+public sealed class CreateConversationHandler(HealpathyContext context, IAppLogger logger)
+    : RequestHandler<CreateConversationCommand, HealpathyContext>(context, logger)
 {
-    public CreateConversationHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
@@ -24,6 +24,8 @@ public sealed class CreateConversationHandler : RequestHandler<CreateConversatio
                 mediaTask = _context.Multimedia.InsertExt(command.Media);
             await Task.WhenAll(conversationTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Conversation_Created(command.Id));
             return Created();
         }
         catch (Exception ex)

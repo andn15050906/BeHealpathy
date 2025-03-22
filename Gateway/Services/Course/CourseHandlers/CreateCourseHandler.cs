@@ -5,12 +5,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Courses.Services.Courses;
 
-public sealed class CreateCourseHandler : RequestHandler<CreateCourseCommand, HealpathyContext>
+public sealed class CreateCourseHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateCourseCommand, HealpathyContext>(context, logger, cache)
 {
-    public CreateCourseHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result> Handle(CreateCourseCommand command, CancellationToken cancellationToken)
     {
         var category = await _context.Categories.FindExt(command.Rq.LeafCategoryId);
@@ -24,6 +21,8 @@ public sealed class CreateCourseHandler : RequestHandler<CreateCourseCommand, He
             var mediaTask = _context.Multimedia.AddRangeAsync(command.Medias);
             await Task.WhenAll(courseTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Course_Created(entity.Id));
             return Created();
         }
         catch (Exception ex)

@@ -6,12 +6,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.ArticleReactionHandlers;
 
-public sealed class CreateArticleReactionHandler : RequestHandler<CreateArticleReactionCommand, ReactionModel, HealpathyContext>
+public sealed class CreateArticleReactionHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateArticleReactionCommand, ReactionModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateArticleReactionHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<ReactionModel>> Handle(CreateArticleReactionCommand command, CancellationToken cancellationToken)
     {
         ArticleReaction entity = Adapt(command);
@@ -20,6 +17,8 @@ public sealed class CreateArticleReactionHandler : RequestHandler<CreateArticleR
         {
             await _context.ArticleReactions.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.ArticleReaction_Created(entity.Id));
             return Created(ReactionModel.MapFunc(entity));
         }
         catch (Exception ex)

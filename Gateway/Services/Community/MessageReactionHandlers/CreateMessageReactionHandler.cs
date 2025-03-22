@@ -6,12 +6,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.MessageReactionHandlers;
 
-public sealed class CreateMessageReactionHandler : RequestHandler<CreateMessageReactionCommand, ReactionModel, HealpathyContext>
+public sealed class CreateMessageReactionHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateMessageReactionCommand, ReactionModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateMessageReactionHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<ReactionModel>> Handle(CreateMessageReactionCommand command, CancellationToken cancellationToken)
     {
         MessageReaction entity = Adapt(command);
@@ -20,6 +17,8 @@ public sealed class CreateMessageReactionHandler : RequestHandler<CreateMessageR
         {
             await _context.MessageReactions.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.MessageReaction_Created(entity.Id));
             return Created(ReactionModel.MapFunc(entity));
         }
         catch (Exception ex)

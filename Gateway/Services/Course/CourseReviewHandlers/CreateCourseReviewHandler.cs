@@ -6,10 +6,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Course.CourseReviewHandlers;
 
-public class CreateCourseReviewHandler : RequestHandler<CreateCourseReviewCommand, ReviewModel, HealpathyContext>
+public class CreateCourseReviewHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateCourseReviewCommand, ReviewModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateCourseReviewHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
     public override async Task<Result<ReviewModel>> Handle(CreateCourseReviewCommand command, CancellationToken cancellationToken)
     {
         var entity = Adapt(command);
@@ -32,6 +31,8 @@ public class CreateCourseReviewHandler : RequestHandler<CreateCourseReviewComman
             {
                 model.Medias = command.Medias.Select(_ => MultimediaModel.MapFunc(_));
             }
+
+            _cache.Add(command.UserId, new Events.CourseReview_Created(entity.Id));
             return Created(model);
         }
         catch (Exception ex)

@@ -2,7 +2,7 @@
 using Contract.Requests.Progress.DiaryNoteRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
-namespace Gateway.Services.Library.DiaryNoteHandlers;
+namespace Gateway.Services.Progress.DiaryNoteHandlers;
 
 public sealed class DeleteDiaryNoteHandler : RequestHandler<DeleteDiaryNoteCommand, HealpathyContext>
 {

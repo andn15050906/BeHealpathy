@@ -5,14 +5,12 @@ using Contract.Requests.Courses.CourseRequests;
 using Contract.Requests.Courses.CourseRequests.Dtos;
 using Core.Helpers;
 using Infrastructure.DataAccess.SQLServer.Helpers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Courses.Services.Courses;
 
-public class UpdateCourseHandler : RequestHandler<UpdateCourseCommand, HealpathyContext>
+public class UpdateCourseHandler(HealpathyContext context, IAppLogger logger/*, IEventCache cache*/)
+    : RequestHandler<UpdateCourseCommand, HealpathyContext>(context, logger/*, cache*/)
 {
-    public UpdateCourseHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
     public override async Task<Result> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
     {
         try
@@ -29,6 +27,8 @@ public class UpdateCourseHandler : RequestHandler<UpdateCourseCommand, Healpathy
             if (request.RemovedMedias is not null && request.RemovedMedias.Count > 0)
                 await _context.Multimedia.DeleteExt(request.RemovedMedias);
             await _context.SaveChangesAsync(cancellationToken);
+
+            //_cache.Add(request.UserId, new Events.Course_Updated)
             return Ok();
         }
         catch (Exception ex)

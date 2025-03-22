@@ -9,12 +9,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.MediaResourceHandlers;
 
-public class CreateMediaResourceHandler : RequestHandler<CreateMediaResourceCommand, MediaResourceModel, HealpathyContext>
+public class CreateMediaResourceHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateMediaResourceCommand, MediaResourceModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateMediaResourceHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<MediaResourceModel>> Handle(CreateMediaResourceCommand command, CancellationToken cancellationToken)
     {
         MediaResource entity = Adapt(command);
@@ -28,6 +25,7 @@ public class CreateMediaResourceHandler : RequestHandler<CreateMediaResourceComm
 
             var model = MediaResourceModel.MapFunc(entity);
             model.Media = MultimediaModel.MapFunc(command.Media);
+            _cache.Add(command.UserId, new Events.MediaResource_Created(entity.Id));
             return Created(model);
         }
         catch (Exception ex)

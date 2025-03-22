@@ -4,15 +4,13 @@ using Contract.Requests.Progress.DiaryNoteRequests;
 using Core.Helpers;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
-namespace Gateway.Services.Library.DiaryNoteHandlers;
+namespace Gateway.Services.Progress.DiaryNoteHandlers;
 
-public sealed class UpdateDiaryNoteHandler : RequestHandler<UpdateDiaryNoteCommand, HealpathyContext>
+public sealed class UpdateDiaryNoteHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<UpdateDiaryNoteCommand, HealpathyContext>(context, logger, cache)
 {
-    public UpdateDiaryNoteHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result> Handle(UpdateDiaryNoteCommand command, CancellationToken cancellationToken)
     {
         var entity = await _context.DiaryNotes.FirstOrDefaultAsync(_ => _.Id == command.Rq.Id);
@@ -32,6 +30,11 @@ public sealed class UpdateDiaryNoteHandler : RequestHandler<UpdateDiaryNoteComma
                 await _context.Multimedia.DeleteExt(command.RemovedMedias);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (command.Rq.Mood is not null)
+                _cache.Add(command.UserId, new Events.General_Activity_Created(JsonSerializer.Serialize(new { action = "Mood_Updated", content = command.Rq.Mood })));
+            else
+                _cache.Add(command.UserId, new Events.DiaryNote_Updated(entity.Id));
             return Ok();
         }
         catch (Exception ex)

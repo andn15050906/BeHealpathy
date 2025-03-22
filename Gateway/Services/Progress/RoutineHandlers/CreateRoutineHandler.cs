@@ -4,14 +4,11 @@ using Contract.Requests.Progress.RoutineRequests;
 using Contract.Responses.Progress;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
-namespace Gateway.Services.Library.RoutineHandlers;
+namespace Gateway.Services.Progress.RoutineHandlers;
 
-public sealed class CreateRoutineHandler : RequestHandler<CreateRoutineCommand, RoutineModel, HealpathyContext>
+public sealed class CreateRoutineHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateRoutineCommand, RoutineModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateRoutineHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<RoutineModel>> Handle(CreateRoutineCommand command, CancellationToken cancellationToken)
     {
         Routine entity = Adapt(command);
@@ -20,6 +17,8 @@ public sealed class CreateRoutineHandler : RequestHandler<CreateRoutineCommand, 
         {
             await _context.Routines.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Routine_Created(entity.Id));
             return Created(RoutineModel.MapFunc(entity));
         }
         catch (Exception ex)

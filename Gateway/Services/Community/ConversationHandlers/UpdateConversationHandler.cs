@@ -5,12 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Community.ConversationHandlers;
 
-public sealed class UpdateConversationHandler : RequestHandler<UpdateConversationCommand, HealpathyContext>
+public sealed class UpdateConversationHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<UpdateConversationCommand, HealpathyContext>(context, logger, cache)
 {
-    public UpdateConversationHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result> Handle(UpdateConversationCommand command, CancellationToken cancellationToken)
     {
         var entity = await _context.Conversations.FirstOrDefaultAsync(_ => _.Id == command.Rq.Id);
@@ -39,6 +36,17 @@ public sealed class UpdateConversationHandler : RequestHandler<UpdateConversatio
                 await _context.Multimedia.AddAsync(command.Media);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (addedMembers is not null)
+            {
+                foreach (var member in addedMembers)
+                    _cache.Add(member.CreatorId, new Events.Conversation_Joined(entity.Id));
+            }
+            if (removedMembers is not null)
+            {
+                foreach (var member in removedMembers)
+                    _cache.Add(member.CreatorId, new Events.Conversation_Left(entity.Id));
+            }
             return Ok();
         }
         catch (Exception ex)
