@@ -9,21 +9,31 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Courses.Services.Courses;
 
+/// <summary>
+/// Handler xử lý việc cập nhật thông tin khóa học
+/// </summary>
 public class UpdateCourseHandler : RequestHandler<UpdateCourseCommand, HealpathyContext>
 {
     public UpdateCourseHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
+    /// <summary>
+    /// Xử lý yêu cầu cập nhật thông tin khóa học
+    /// </summary>
     public override async Task<Result> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
     {
         try
         {
+            // Kiểm tra khóa học có tồn tại không
             var entity = await _context.Courses.FindExt(request.Rq.Id);
             if (entity is null)
                 return NotFound(string.Empty);
+            // Kiểm tra quyền cập nhật
             if (entity.CreatorId != request.UserId)
                 return Unauthorized(string.Empty);
 
+            // Áp dụng các thay đổi
             ApplyChanges(entity, request.Rq, request.UserId);
+            // Xử lý thêm/xóa media
             if (request.AddedMedias is not null && request.AddedMedias.Count > 0)
                 _context.Multimedia.AddRange(request.AddedMedias);
             if (request.RemovedMedias is not null && request.RemovedMedias.Count > 0)
@@ -46,8 +56,12 @@ public class UpdateCourseHandler : RequestHandler<UpdateCourseCommand, Healpathy
         //);
     }
 
+    /// <summary>
+    /// Áp dụng các thay đổi từ DTO vào entity
+    /// </summary>
     private void ApplyChanges(Course entity, UpdateCourseDto dto, Guid userId)
     {
+        // Cập nhật các thông tin cơ bản
         if (dto.Intro is not null)
             entity.Intro = dto.Intro;
         if (dto.Description is not null)
@@ -67,6 +81,7 @@ public class UpdateCourseHandler : RequestHandler<UpdateCourseCommand, Healpathy
 
         entity.LastModificationTime = TimeHelper.Now;
 
+        // Cập nhật các thông tin đặc biệt
         if (dto.Title is not null)
             entity.SetTitle(dto.Title);
         if (dto.Discount is not null && dto.DiscountExpiry is not null)

@@ -9,21 +9,30 @@ using System.Linq.Expressions;
 
 namespace Courses.Services.Courses;
 
+/// <summary>
+/// Handler xử lý việc lấy danh sách khóa học có phân trang
+/// </summary>
 public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery, PagedResult<CourseOverviewModel>, HealpathyContext>
 {
+    /// <summary>
+    /// Số tháng để tính xu hướng khóa học
+    /// </summary>
     private const int TREND_MONTHS = 6;
 
     public GetPagedCoursesHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
-
-
+    /// <summary>
+    /// Xử lý yêu cầu lấy danh sách khóa học có phân trang
+    /// </summary>
     public override async Task<Result<PagedResult<CourseOverviewModel>>> Handle(GetPagedCoursesQuery request, CancellationToken cancellationToken)
     {
         try
         {
+            // Nếu yêu cầu lấy theo xu hướng
             if (request.Rq.ByTrend)
                 return await HandleTrendingQuery(request);
 
+            // Tạo query với phân trang
             var query = _context.GetPagingQuery(
                 CourseOverviewModel.MapExpression,
                 GetPredicate(request.Rq),
@@ -31,6 +40,7 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
                 request.Rq.PageSize
             );
 
+            // Thực hiện sắp xếp theo các tiêu chí khác nhau
             PagedResult<CourseOverviewModel> result;
             if (request.Rq.ByPrice is true)
                 result = await query.ExecuteWithOrderBy(_ => _.Price);
@@ -51,6 +61,9 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
         }
     }
 
+    /// <summary>
+    /// Tạo điều kiện lọc cho query dựa trên các tham số
+    /// </summary>
     private Expression<Func<Course, bool>>? GetPredicate(QueryCourseDto dto)
     {
         if (dto.Title is not null)
@@ -66,6 +79,9 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
         return null;
     }
 
+    /// <summary>
+    /// Lấy danh sách các thuộc tính cần include trong query
+    /// </summary>
     private Expression<Func<Course, object?>>[]? GetIncludedProperties(QueryCourseDto dto)
     {
         //if (dto.CategoryId is not null)
@@ -73,12 +89,17 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
         return null;
     }
 
+    /// <summary>
+    /// Xử lý query lấy khóa học theo xu hướng (dựa trên số lượng đăng ký trong thời gian gần đây)
+    /// </summary>
     private async Task<Result<PagedResult<CourseOverviewModel>>> HandleTrendingQuery(GetPagedCoursesQuery request)
     {
+        // Lấy danh sách đăng ký trong khoảng thời gian
         var unorderedQuery = _context.Enrollments
             .Where(_ => _.CreationTime >= TimeHelper.Now.AddMonths(-TREND_MONTHS));
         var total = await unorderedQuery.CountAsync();
 
+        // Join với bảng Courses và lấy thông tin chi tiết
         var items = await unorderedQuery
             .OrderByDescending(_ => _.CreationTime)
             .Join(_context.Courses, enrollment => enrollment.CourseId, course => course.Id, (enrollment, _) =>
