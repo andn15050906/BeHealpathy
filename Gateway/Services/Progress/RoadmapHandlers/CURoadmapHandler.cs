@@ -46,7 +46,8 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         {
             Title = command.Rq.Title,
             IntroText = command.Rq.IntroText,
-            Phases = []
+            Phases = [],
+            CreatorId = command.UserId
         };
         
         //...
@@ -110,6 +111,7 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         if (!string.IsNullOrEmpty(dto.IntroText) && dto.IntroText != entity.IntroText)
             entity.IntroText = dto.IntroText;
 
+        entity.Phases.RemoveAll(phase => !dto.Phases.Any(_ => _.Id == phase.Id));
         foreach (var child in dto.Phases)
         {
             var existingChild = child.Id is not null ? entity.Phases.FirstOrDefault(_ => _.Id == child.Id) : null;
@@ -118,7 +120,6 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             else if (existingChild is not null)
                 UpdatePhase(existingChild, child);
         }
-        entity.Phases.RemoveAll(phase => !dto.Phases.Any(_ => _.Id == phase.Id));
     }
 
     private static void UpdatePhase(RoadmapPhase entity, CURoadmapPhaseDto dto)
@@ -130,6 +131,7 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             entity.Description = dto.Description;
         entity.TimeSpan = dto.TimeSpan;
 
+        entity.Milestones.RemoveAll(milestone => !dto.Milestones.Any(_ => _.Id == milestone.Id));
         foreach (var child in dto.Milestones)
         {
             var existingChild = child.Id is not null ? entity.Milestones.FirstOrDefault(_ => _.Id == child.Id) : null;
@@ -138,7 +140,6 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             else if (existingChild is not null)
                 UpdateMilestone(existingChild, child);
         }
-        entity.Milestones.RemoveAll(milestone => !dto.Milestones.Any(_ => _.Id == milestone.Id));
     }
 
     private static void UpdateMilestone(RoadmapMilestone entity, CURoadmapMilestoneDto dto)
@@ -150,6 +151,7 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         entity.RepeatTimesRequired = dto.RepeatTimesRequired;
         entity.TimeSpentRequired = dto.TimeSpentRequired;
 
+        entity.Recommendations.RemoveAll(recommendation => !dto.Recommendations.Any(_ => _.Id == recommendation.Id));
         foreach (var child in dto.Recommendations)
         {
             var existingChild = child.Id is not null ? entity.Recommendations.FirstOrDefault(_ => _.Id == child.Id) : null;
@@ -158,7 +160,6 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             else if (existingChild is not null)
                 UpdateRecommendation(existingChild, child, entity);
         }
-        entity.Recommendations.RemoveAll(milestone => !dto.Recommendations.Any(_ => _.Id == milestone.Id));
     }
 
     private static void UpdateRecommendation(RoadmapRecommendation entity, CURoadmapRecommendationDto dto, RoadmapMilestone parent)
