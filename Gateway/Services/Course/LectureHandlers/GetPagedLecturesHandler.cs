@@ -4,6 +4,8 @@ using Contract.Helpers;
 using Contract.Requests.Courses.LectureRequests;
 using Contract.Requests.Courses.LectureRequests.Dtos;
 using Contract.Responses.Courses;
+using Contract.Responses.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Course.LectureHandlers;
 
@@ -19,10 +21,19 @@ public sealed class GetPagedLecturesHandler : RequestHandler<GetPagedLecturesQue
                 LectureModel.MapExpression,
                 GetPredicate(request.Rq),
                 request.Rq.PageIndex,
-                request.Rq.PageSize
+                request.Rq.PageSize,
+                false,
+                _ => _.Comments
             );
-
             var result = await query.ExecuteWithOrderBy(_ => _.LastModificationTime, ascending: false);
+
+            List<Guid> sourceIds = result.Items.Select(_ => _.Id).ToList();
+            var medias = await _context.Multimedia
+                .Where(_ => sourceIds.Contains(_.SourceId) && !_.IsDeleted)
+                .Select(MultimediaModel.MapExpression)
+                .ToListAsync(cancellationToken);
+            foreach (var entity in result.Items)
+                entity.Materials = medias.Where(_ => _.SourceId == entity.Id).ToList() ?? [];
 
             return ToQueryResult(result);
         }
