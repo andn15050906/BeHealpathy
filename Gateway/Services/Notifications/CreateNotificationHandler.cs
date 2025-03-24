@@ -7,6 +7,7 @@ using Contract.Helpers;
 using Contract.Requests.Notifications;
 using Contract.Responses.Notifications;
 using Infrastructure.DataAccess.SQLServer.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Notifications;
 
@@ -18,9 +19,11 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
 
     public override async Task<Result<NotificationModel>> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
     {
-        if (request.AdvisorRequestRq is not null)
+        try
         {
-            try
+            Notification notification;
+
+            if (request.AdvisorRequestRq is not null)
             {
                 var entity = AdaptAdvisorRequest(request);
                 var notificationTask = _context.Notifications.InsertExt(entity);
@@ -34,14 +37,34 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
 
                 await Task.WhenAll(notificationTask, mediaTask);
                 await _context.SaveChangesAsync(cancellationToken);
-                return Created();
+
+                notification = entity;
             }
-            catch (Exception ex)
+            else
             {
-                return ServerError(ex.Message);
+                var receiverExists = await _context.Users.AnyAsync(u => u.Id == request.ReceiverId, cancellationToken);
+                if (!receiverExists)
+                {
+                    return BadRequest("ReceiverId not found.");
+                }
+
+                notification = Adapt(request);
+                await _context.Notifications.InsertExt(notification);
+                await _context.SaveChangesAsync(cancellationToken);
             }
+
+            var notificationModel = new NotificationModel
+            {
+                Id = notification.Id,
+                Message = notification.Message,
+                Type = notification.Type,
+                ReceiverId = notification.ReceiverId,
+                CreationTime = notification.CreationTime
+            };
+
+            return Created(notificationModel);
         }
-        else
+        catch (Exception ex)
         {
             return ServerError(string.Empty);
         }
@@ -51,13 +74,29 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
     {
         var json = new
         {
-            //...
-            CV = command.CV is not null ? /*command.CV.Identifier*/ command.CV.Url : string.Empty,
+            CV = command.CV?.Url ?? string.Empty,
             Introduction = command.AdvisorRequestRq!.Introduction ?? string.Empty,
             Experience = command.AdvisorRequestRq!.Experience ?? string.Empty,
-            Certificates = command.Certificates is not null ? command.Certificates.Select(_ => _.Identifier) : []
+            Certificates = command.Certificates?.Select(c => c.Identifier) ?? Enumerable.Empty<string>()
         };
 
-        return new Notification(command.Id, command.UserId, JsonSerializer.Serialize(json), NotificationType.RequestToBecomeAdvisor, PreSet.SystemUserId);
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(json),
+            NotificationType.RequestToBecomeAdvisor,
+            PreSet.SystemUserId
+        );
+    }
+
+    private Notification Adapt(CreateNotificationCommand command)
+    {
+        return new Notification(
+            command.Id,
+            command.UserId,
+            command.Message ?? string.Empty,
+            command.Type,
+            command.ReceiverId ?? Guid.Empty
+        );
     }
 }

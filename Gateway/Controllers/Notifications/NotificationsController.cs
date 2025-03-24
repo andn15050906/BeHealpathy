@@ -1,4 +1,5 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Domain.Shared.NotificationAggregate.Enums;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Notifications;
 using Contract.Requests.Notifications.Dtos;
@@ -35,15 +36,97 @@ public class NotificationsController : ContractController
         return await Send(command);
     }
 
+    //[HttpPost("Withdrawal")]
+    //[Authorize]
+    //public async Task<IActionResult> Create([FromForm] CreateWithdrawalRequestDto dto)
+    //{
+    //    CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
+    //    return await Send(command);
+    //}
+
     [HttpPost("Withdrawal")]
     [Authorize]
-    public async Task<IActionResult> Create([FromForm] CreateWithdrawalRequestDto dto)
+    public async Task<IActionResult> CreateWithdrawal([FromBody] CreateNotificationDto dto)
     {
-        CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
+        var command = new CreateNotificationCommand(
+            Guid.NewGuid(),
+            dto.Message,
+            dto.ReceiverId,
+            NotificationType.RequestWithdrawal,
+            ClientId
+        );
         return await Send(command);
     }
 
-    //[HttpPost("MultiReceiver")]
+    [HttpPost("AdminMessage")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateAdminMessage([FromBody] CreateNotificationDto dto)
+    {
+        var command = new CreateNotificationCommand(
+            Guid.NewGuid(),
+            dto.Message,
+            dto.ReceiverId,
+            dto.Type,
+            ClientId
+        );
+        return await Send(command);
+    }
+
+    [HttpPost("InviteMember")]
+    [Authorize]
+    public async Task<IActionResult> CreateInviteMember([FromBody] CreateNotificationDto dto)
+    {
+        var command = new CreateNotificationCommand(
+            Guid.NewGuid(),
+            dto.Message,
+            dto.ReceiverId,
+            NotificationType.InviteMember,
+            ClientId
+        );
+        return await Send(command);
+    }
+
+    [HttpPost("ReportUser")]
+    [Authorize]
+    public async Task<IActionResult> CreateReportUser([FromBody] CreateNotificationDto dto)
+    {
+        var command = new CreateNotificationCommand(
+            Guid.NewGuid(),
+            dto.Message,
+            dto.ReceiverId,
+            NotificationType.ReportUser,
+            ClientId
+        );
+        return await Send(command);
+    }
+
+    [HttpPost("UserBanned")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateUserBanned([FromBody] CreateNotificationDto dto)
+    {
+        var command = new CreateNotificationCommand(
+            Guid.NewGuid(),
+            dto.Message,
+            dto.ReceiverId,
+            NotificationType.UserBanned,
+            ClientId
+        );
+        return await Send(command);
+    }
+
+    [HttpPost("ContentDisapproved")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateContentDisapproved([FromBody] CreateNotificationDto dto)
+    {
+        var command = new CreateNotificationCommand(
+            Guid.NewGuid(),
+            dto.Message,
+            dto.ReceiverId,
+            NotificationType.ContentDisapproved,
+            ClientId
+        );
+        return await Send(command);
+    }
 
     [HttpPatch]
     [Authorize]
