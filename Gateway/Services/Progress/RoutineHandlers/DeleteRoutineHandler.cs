@@ -2,7 +2,7 @@
 using Contract.Requests.Progress.RoutineRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
-namespace Gateway.Services.Library.RoutineHandlers;
+namespace Gateway.Services.Progress.RoutineHandlers;
 
 public sealed class DeleteRoutineHandler : RequestHandler<DeleteRoutineCommand, HealpathyContext>
 {

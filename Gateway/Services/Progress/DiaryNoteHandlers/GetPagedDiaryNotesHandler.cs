@@ -7,7 +7,7 @@ using Contract.Responses.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace Gateway.Services.Library.DiaryNoteHandlers;
+namespace Gateway.Services.Progress.DiaryNoteHandlers;
 
 public sealed class GetPagedDiaryNotesHandler : RequestHandler<GetPagedDiaryNotesQuery, PagedResult<DiaryNoteModel>, HealpathyContext>
 {

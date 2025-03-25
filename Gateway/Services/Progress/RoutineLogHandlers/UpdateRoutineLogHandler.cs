@@ -3,14 +3,11 @@ using Contract.Helpers;
 using Contract.Requests.Progress.RoutineLogRequests;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gateway.Services.Library.RoutineLogHandlers;
+namespace Gateway.Services.Progress.RoutineLogHandlers;
 
-public sealed class UpdateRoutineLogHandler : RequestHandler<UpdateRoutineLogCommand, HealpathyContext>
+public sealed class UpdateRoutineLogHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<UpdateRoutineLogCommand, HealpathyContext>(context, logger, cache)
 {
-    public UpdateRoutineLogHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result> Handle(UpdateRoutineLogCommand command, CancellationToken cancellationToken)
     {
         var entity = await _context.RoutineLogs.FirstOrDefaultAsync(_ => _.Id == command.Rq.Id);
@@ -24,6 +21,8 @@ public sealed class UpdateRoutineLogHandler : RequestHandler<UpdateRoutineLogCom
         {
             entity = ApplyChanges(entity, command);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.RoutineLog_Updated(entity.Id));
             return Ok();
         }
         catch (Exception ex)

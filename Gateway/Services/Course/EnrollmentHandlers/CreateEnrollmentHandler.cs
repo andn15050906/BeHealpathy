@@ -5,12 +5,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Course.EnrollmentHandlers;
 
-public class CreateEnrollmentHandler : RequestHandler<CreateEnrollmentCommand, HealpathyContext>
+public class CreateEnrollmentHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateEnrollmentCommand, HealpathyContext>(context, logger, cache)
 {
-    public CreateEnrollmentHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result> Handle(CreateEnrollmentCommand command, CancellationToken cancellationToken)
     {
         try
@@ -21,6 +18,8 @@ public class CreateEnrollmentHandler : RequestHandler<CreateEnrollmentCommand, H
             var entity = Adapt(command);
             await _context.Enrollments.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Course_Enrolled(command.Id));
             return Created();
         }
         catch (Exception ex)

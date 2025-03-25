@@ -6,12 +6,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Course.LectureCommentHandlers;
 
-public sealed class CreateLectureCommentHandler : RequestHandler<CreateLectureCommentCommand, CommentModel, HealpathyContext>
+public sealed class CreateLectureCommentHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateLectureCommentCommand, CommentModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateLectureCommentHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<CommentModel>> Handle(CreateLectureCommentCommand command, CancellationToken cancellationToken)
     {
         LectureComment entity = Adapt(command);
@@ -34,6 +31,8 @@ public sealed class CreateLectureCommentHandler : RequestHandler<CreateLectureCo
             {
                 model.Medias = command.Medias.Select(_ => MultimediaModel.MapFunc(_));
             }
+
+            _cache.Add(command.UserId, new Events.LectureComment_Created(entity.Id));
             return Created(model);
         }
         catch (Exception ex)

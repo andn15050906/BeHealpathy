@@ -4,14 +4,11 @@ using Contract.Requests.Progress.RoutineLogRequests;
 using Contract.Responses.Progress;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
-namespace Gateway.Services.Library.RoutineLogHandlers;
+namespace Gateway.Services.Progress.RoutineLogHandlers;
 
-public sealed class CreateRoutineLogHandler : RequestHandler<CreateRoutineLogCommand, RoutineLogModel, HealpathyContext>
+public sealed class CreateRoutineLogHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateRoutineLogCommand, RoutineLogModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateRoutineLogHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<RoutineLogModel>> Handle(CreateRoutineLogCommand command, CancellationToken cancellationToken)
     {
         RoutineLog entity = Adapt(command);
@@ -20,6 +17,8 @@ public sealed class CreateRoutineLogHandler : RequestHandler<CreateRoutineLogCom
         {
             await _context.RoutineLogs.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.RoutineLog_Created(entity.Id));
             return Created(RoutineLogModel.MapFunc(entity));
         }
         catch (Exception ex)

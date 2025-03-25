@@ -35,6 +35,12 @@ public sealed class UpdateMeetingHandler : RequestHandler<UpdateMeetingCommand, 
         {
             entity = ApplyChanges(entity, command, addedParticipants, removedParticipants);
             await _context.SaveChangesAsync(cancellationToken);
+
+            if (addedParticipants is not null)
+            {
+                foreach (var participant in addedParticipants)
+                    _cache.Add(participant.UserId, new Events.Meeting_Joined(entity.Id));
+            }
             return Ok();
         }
         catch (Exception ex)

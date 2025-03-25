@@ -4,7 +4,6 @@ using Contract.Messaging.ApiClients.Http;
 using Core.Helpers;
 using Gateway.Services.AI.Recommendation;
 using Gateway.Services.AI.Translator;
-using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
