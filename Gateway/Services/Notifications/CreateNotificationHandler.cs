@@ -7,7 +7,6 @@ using Contract.Helpers;
 using Contract.Requests.Notifications;
 using Contract.Responses.Notifications;
 using Infrastructure.DataAccess.SQLServer.Helpers;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Notifications;
 
@@ -21,8 +20,6 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
     {
         try
         {
-            Notification notification;
-
             if (request.AdvisorRequestRq is not null)
             {
                 var entity = AdaptAdvisorRequest(request);
@@ -36,67 +33,136 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
                 var mediaTask = _context.Multimedia.AddRangeAsync(medias);
 
                 await Task.WhenAll(notificationTask, mediaTask);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                notification = entity;
             }
-            else
+            else if (request.WithdrawalRequestRq is not null)
             {
-                var receiverExists = await _context.Users.AnyAsync(u => u.Id == request.ReceiverId, cancellationToken);
-                if (!receiverExists)
-                {
-                    return BadRequest("ReceiverId not found.");
-                }
-
-                notification = Adapt(request);
-                await _context.Notifications.InsertExt(notification);
-                await _context.SaveChangesAsync(cancellationToken);
+                var entity = AdaptWithdrawalRequest(request);
+                await _context.Notifications.InsertExt(entity);
             }
-
-            var notificationModel = new NotificationModel
+            else if (request.AdminMessageRq is not null)
             {
-                Id = notification.Id,
-                Message = notification.Message,
-                Type = notification.Type,
-                ReceiverId = notification.ReceiverId,
-                CreationTime = notification.CreationTime
-            };
+                var entity = AdaptAdminMessageRequest(request);
+                await _context.Notifications.InsertExt(entity);
+            }
+            else if (request.ConversationInvitationRq is not null)
+            {
+                var entities = AdaptInviteMemberRequest(request);
+                await _context.Notifications.AddRangeAsync(entities);
+            }
+            else if (request.UserReportRq is not null)
+            {
+                var entity = AdaptUserReportRequest(request);
+                await _context.Notifications.InsertExt(entity);
+            }
+            else if (request.UserBannedRq is not null)
+            {
+                var entity = AdaptUserBannedRequest(request);
+                await _context.Notifications.InsertExt(entity);
+            }
+            /*else if (request.ContentDisapprovedRq is not null)
+            {
 
-            return Created(notificationModel);
+            }*/
+            
+            await _context.SaveChangesAsync();
+            return Created();
         }
         catch (Exception ex)
         {
-            return ServerError(string.Empty);
+            return ServerError(ex.Message);
         }
     }
 
-    private Notification AdaptAdvisorRequest(CreateNotificationCommand command)
+    private static Notification AdaptAdvisorRequest(CreateNotificationCommand command)
     {
-        var json = new
+        var dto = command.AdvisorRequestRq!;
+        var message = new
         {
             CV = command.CV?.Url ?? string.Empty,
-            Introduction = command.AdvisorRequestRq!.Introduction ?? string.Empty,
-            Experience = command.AdvisorRequestRq!.Experience ?? string.Empty,
-            Certificates = command.Certificates?.Select(c => c.Identifier) ?? Enumerable.Empty<string>()
+            Introduction = dto.Introduction ?? string.Empty,
+            Experience = dto.Experience ?? string.Empty,
+            Certificates = command.Certificates?.Select(c => c.Identifier) ?? []
         };
 
         return new Notification(
             command.Id,
             command.UserId,
-            JsonSerializer.Serialize(json),
+            JsonSerializer.Serialize(message),
             NotificationType.RequestToBecomeAdvisor,
             PreSet.SystemUserId
         );
     }
 
-    private Notification Adapt(CreateNotificationCommand command)
+    private static Notification AdaptWithdrawalRequest(CreateNotificationCommand command)
     {
+        var dto = command.WithdrawalRequestRq!;
         return new Notification(
             command.Id,
             command.UserId,
-            command.Message ?? string.Empty,
-            command.Type,
-            command.ReceiverId ?? Guid.Empty
+            JsonSerializer.Serialize(dto),
+            NotificationType.RequestWithdrawal,
+            PreSet.SystemUserId
         );
     }
+
+    private static Notification AdaptAdminMessageRequest(CreateNotificationCommand command)
+    {
+        var dto = command.AdminMessageRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto.Message),
+            NotificationType.AdminMessage,
+            dto.ReceiverId
+        );
+    }
+
+    private static IEnumerable<Notification> AdaptInviteMemberRequest(CreateNotificationCommand command)
+    {
+        var dto = command.ConversationInvitationRq!;
+        return dto.UserIds.Select(_ => new Notification(
+            Guid.NewGuid(),
+            command.UserId,
+            JsonSerializer.Serialize(dto.ConversationId),
+            NotificationType.InviteMember,
+            _
+        ));
+    }
+
+    private static Notification AdaptUserReportRequest(CreateNotificationCommand command)
+    {
+        var dto = command.UserReportRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto),
+            NotificationType.ReportUser,
+            PreSet.SystemUserId
+        );
+    }
+
+    private static Notification AdaptUserBannedRequest(CreateNotificationCommand command)
+    {
+        var dto = command.UserBannedRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto),
+            NotificationType.UserBanned,
+            PreSet.SystemUserId
+        );
+    }
+
+    // Should be sent to content creator
+    /*private static Notification AdaptContentDisapprovedRequest(CreateNotificationCommand command)
+    {
+        var dto = command.ContentDisapprovedRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto),
+            NotificationType.ContentDisapproved,
+            PreSet.SystemUserId
+        );
+    }*/
 }

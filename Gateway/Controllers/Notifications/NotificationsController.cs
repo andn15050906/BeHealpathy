@@ -1,5 +1,5 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
-using Contract.Domain.Shared.NotificationAggregate.Enums;
+using Contract.Domain.UserAggregate.Constants;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Notifications;
 using Contract.Requests.Notifications.Dtos;
@@ -36,95 +36,51 @@ public class NotificationsController : ContractController
         return await Send(command);
     }
 
-    //[HttpPost("Withdrawal")]
-    //[Authorize]
-    //public async Task<IActionResult> Create([FromForm] CreateWithdrawalRequestDto dto)
-    //{
-    //    CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
-    //    return await Send(command);
-    //}
-
     [HttpPost("Withdrawal")]
     [Authorize]
-    public async Task<IActionResult> CreateWithdrawal([FromBody] CreateNotificationDto dto)
+    public async Task<IActionResult> Create([FromForm] CreateWithdrawalRequestDto dto)
     {
-        var command = new CreateNotificationCommand(
-            Guid.NewGuid(),
-            dto.Message,
-            dto.ReceiverId,
-            NotificationType.RequestWithdrawal,
-            ClientId
-        );
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
     }
 
     [HttpPost("AdminMessage")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateAdminMessage([FromBody] CreateNotificationDto dto)
+    [Authorize(Roles = RoleConstants.ADMIN)]
+    public async Task<IActionResult> Create([FromBody] CreateAdminMessageDto dto)
     {
-        var command = new CreateNotificationCommand(
-            Guid.NewGuid(),
-            dto.Message,
-            dto.ReceiverId,
-            dto.Type,
-            ClientId
-        );
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
     }
 
     [HttpPost("InviteMember")]
     [Authorize]
-    public async Task<IActionResult> CreateInviteMember([FromBody] CreateNotificationDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateConversationInvitationDto dto)
     {
-        var command = new CreateNotificationCommand(
-            Guid.NewGuid(),
-            dto.Message,
-            dto.ReceiverId,
-            NotificationType.InviteMember,
-            ClientId
-        );
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
     }
 
     [HttpPost("ReportUser")]
     [Authorize]
-    public async Task<IActionResult> CreateReportUser([FromBody] CreateNotificationDto dto)
+    public async Task<IActionResult> Create([FromBody] CreateUserReportDto dto)
     {
-        var command = new CreateNotificationCommand(
-            Guid.NewGuid(),
-            dto.Message,
-            dto.ReceiverId,
-            NotificationType.ReportUser,
-            ClientId
-        );
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
     }
 
     [HttpPost("UserBanned")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateUserBanned([FromBody] CreateNotificationDto dto)
+    [Authorize(Roles = RoleConstants.ADMIN)]
+    public async Task<IActionResult> Create([FromBody] CreateUserBannedDto dto)
     {
-        var command = new CreateNotificationCommand(
-            Guid.NewGuid(),
-            dto.Message,
-            dto.ReceiverId,
-            NotificationType.UserBanned,
-            ClientId
-        );
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
     }
 
     [HttpPost("ContentDisapproved")]
-    [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateContentDisapproved([FromBody] CreateNotificationDto dto)
+    [Authorize(Roles = RoleConstants.ADMIN)]
+    public async Task<IActionResult> Create([FromBody] CreateContentDisapprovedDto dto)
     {
-        var command = new CreateNotificationCommand(
-            Guid.NewGuid(),
-            dto.Message,
-            dto.ReceiverId,
-            NotificationType.ContentDisapproved,
-            ClientId
-        );
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
     }
 
