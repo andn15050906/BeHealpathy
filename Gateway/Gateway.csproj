@@ -18,11 +18,16 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="payOS" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="logs\" />
     <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="PayOSConfig.cs" />
   </ItemGroup>
 
   <ItemGroup>

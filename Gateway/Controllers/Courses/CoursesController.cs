@@ -1,10 +1,13 @@
-﻿using Contract.Domain.Shared.MultimediaBase;
+﻿using Algolia.Search.Models.Search;
+using Contract.Domain.Shared.MultimediaBase;
 using Contract.Domain.UserAggregate.Constants;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Courses.CourseRequests;
 using Contract.Requests.Courses.CourseRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Net.payOS.Types;
+using Net.payOS;
 
 namespace Gateway.Controllers.Courses;
 
@@ -13,10 +16,13 @@ namespace Gateway.Controllers.Courses;
 /// </summary>
 public sealed class CoursesController : ContractController
 {
-    public CoursesController(IMediator mediator) : base(mediator)
+    private readonly PayOS _payOS;
+    
+    public CoursesController(IMediator mediator, PayOS payOS) : base(mediator)
     {
+        _payOS = payOS;
     }
-
+    
     /// <summary>
     /// Lấy danh sách khóa học có phân trang
     /// </summary>
@@ -136,4 +142,28 @@ public sealed class CoursesController : ContractController
         var command = new DeleteCourseCommand(id, ClientId);
         return await Send(command);
     }
+
+    [HttpPost("{id}/purchase")]
+    //[Authorize]
+    public async Task<IActionResult> PurchaseCourse(Guid id)
+    {
+        long orderCode = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        int price = 100000;
+
+        var item = new ItemData("Course Purchase", 1, price);
+        var paymentData = new PaymentData(
+            orderCode,
+            price,
+            "TT Khoa hoc",
+            new List<ItemData> { item },
+            cancelUrl: $"https://localhost:5173/courses/{id}?status=cancelled",
+            returnUrl: $"https://localhost:5173/courses/{id}?status=success"
+        );
+        
+        var result = await _payOS.createPaymentLink(paymentData);
+
+        return Ok(new { url = result.checkoutUrl });
+    }
+
 }
