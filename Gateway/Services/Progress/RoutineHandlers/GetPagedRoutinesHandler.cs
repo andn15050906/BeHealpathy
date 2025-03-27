@@ -5,7 +5,7 @@ using Contract.Requests.Progress.RoutineRequests.Dtos;
 using Contract.Responses.Progress;
 using System.Linq.Expressions;
 
-namespace Gateway.Services.Library.RoutineHandlers;
+namespace Gateway.Services.Progress.RoutineHandlers;
 
 public sealed class GetPagedRoutinesHandler : RequestHandler<GetPagedRoutinesQuery, PagedResult<RoutineModel>, HealpathyContext>
 {

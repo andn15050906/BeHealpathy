@@ -6,12 +6,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.ArticleCommentHandlers;
 
-public sealed class CreateArticleCommentHandler : RequestHandler<CreateArticleCommentCommand, CommentModel, HealpathyContext>
+public sealed class CreateArticleCommentHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateArticleCommentCommand, CommentModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateArticleCommentHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<CommentModel>> Handle(CreateArticleCommentCommand command, CancellationToken cancellationToken)
     {
         ArticleComment entity = Adapt(command);
@@ -34,6 +31,8 @@ public sealed class CreateArticleCommentHandler : RequestHandler<CreateArticleCo
             {
                 model.Medias = command.Medias.Select(_ => MultimediaModel.MapFunc(_));
             }
+
+            _cache.Add(command.UserId, new Events.ArticleComment_Created(entity.Id));
             return Created(model);
         }
         catch (Exception ex)

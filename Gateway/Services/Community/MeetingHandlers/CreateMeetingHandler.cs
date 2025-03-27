@@ -6,12 +6,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.MeetingHandlers;
 
-public sealed class CreateMeetingHandler : RequestHandler<CreateMeetingCommand, MeetingModel, HealpathyContext>
+public sealed class CreateMeetingHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateMeetingCommand, MeetingModel, HealpathyContext>(context, logger, cache)
 {
-    public CreateMeetingHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<MeetingModel>> Handle(CreateMeetingCommand command, CancellationToken cancellationToken)
     {
         Meeting entity = Adapt(command);
@@ -20,6 +17,8 @@ public sealed class CreateMeetingHandler : RequestHandler<CreateMeetingCommand, 
         {
             await _context.Meetings.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Meeting_Created(entity.Id));
             return Created(MeetingModel.MapFunc(entity));
         }
         catch (Exception ex)

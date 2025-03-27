@@ -21,7 +21,7 @@ public sealed class RecommendationsController : ContractController
 
         var roadmaps = await context.Roadmaps.ToListAsync();
         var strictRoadmap = roadmaps.FirstOrDefault(_ => _.Title.ToLower().Contains("Strict".ToLower()));
-        var lightRoadmap = roadmaps.FirstOrDefault(_ => !_.Title.ToLower().Contains("Strict".ToLower()));
+        var lightRoadmap = roadmaps.FirstOrDefault(_ => _.Title.ToLower() == "mental roadmap");
 
         var dassEvel = submissions.FirstOrDefault(_ => _.SurveyName.Contains("DASS"));
         if (dassEvel is not null)

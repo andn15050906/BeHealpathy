@@ -5,12 +5,9 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Library.SubmissionHandlers;
 
-public sealed class CreateSubmissionHandler : RequestHandler<CreateSubmissionCommand, Guid, HealpathyContext>
+public sealed class CreateSubmissionHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateSubmissionCommand, Guid, HealpathyContext>(context, logger, cache)
 {
-    public CreateSubmissionHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result<Guid>> Handle(CreateSubmissionCommand command, CancellationToken cancellationToken)
     {
         Submission entity = Adapt(command);
@@ -19,6 +16,8 @@ public sealed class CreateSubmissionHandler : RequestHandler<CreateSubmissionCom
         {
             await _context.Submissions.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Submission_Created(entity.Id));
             return Created(entity.Id);
         }
         catch (Exception ex)

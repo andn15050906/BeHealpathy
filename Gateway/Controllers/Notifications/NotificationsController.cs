@@ -1,4 +1,5 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
+using Contract.Domain.UserAggregate.Constants;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Notifications;
 using Contract.Requests.Notifications.Dtos;
@@ -39,11 +40,49 @@ public class NotificationsController : ContractController
     [Authorize]
     public async Task<IActionResult> Create([FromForm] CreateWithdrawalRequestDto dto)
     {
-        CreateNotificationCommand command = new(Guid.NewGuid(), dto, ClientId);
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
     }
 
-    //[HttpPost("MultiReceiver")]
+    [HttpPost("AdminMessage")]
+    [Authorize(Roles = RoleConstants.ADMIN)]
+    public async Task<IActionResult> Create([FromBody] CreateAdminMessageDto dto)
+    {
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
+        return await Send(command);
+    }
+
+    [HttpPost("InviteMember")]
+    [Authorize]
+    public async Task<IActionResult> Create([FromBody] CreateConversationInvitationDto dto)
+    {
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
+        return await Send(command);
+    }
+
+    [HttpPost("ReportUser")]
+    [Authorize]
+    public async Task<IActionResult> Create([FromBody] CreateUserReportDto dto)
+    {
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
+        return await Send(command);
+    }
+
+    [HttpPost("UserBanned")]
+    [Authorize(Roles = RoleConstants.ADMIN)]
+    public async Task<IActionResult> Create([FromBody] CreateUserBannedDto dto)
+    {
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
+        return await Send(command);
+    }
+
+    [HttpPost("ContentDisapproved")]
+    [Authorize(Roles = RoleConstants.ADMIN)]
+    public async Task<IActionResult> Create([FromBody] CreateContentDisapprovedDto dto)
+    {
+        var command = new CreateNotificationCommand(Guid.NewGuid(), dto, ClientId);
+        return await Send(command);
+    }
 
     [HttpPatch]
     [Authorize]

@@ -8,10 +8,9 @@ namespace Courses.Services.Courses;
 /// <summary>
 /// Handler xử lý việc tạo mới khóa học
 /// </summary>
-public sealed class CreateCourseHandler : RequestHandler<CreateCourseCommand, HealpathyContext>
+public sealed class CreateCourseHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateCourseCommand, HealpathyContext>(context, logger, cache)
 {
-    public CreateCourseHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
     /// <summary>
     /// Xử lý yêu cầu tạo mới khóa học
     /// </summary>
@@ -30,6 +29,8 @@ public sealed class CreateCourseHandler : RequestHandler<CreateCourseCommand, He
             var mediaTask = _context.Multimedia.AddRangeAsync(command.Medias);
             await Task.WhenAll(courseTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Course_Created(entity.Id));
             return Created();
         }
         catch (Exception ex)

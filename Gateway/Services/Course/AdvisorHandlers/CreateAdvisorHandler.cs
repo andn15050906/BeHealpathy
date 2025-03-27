@@ -5,18 +5,19 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Course.AdvisorHandlers;
 
-public class CreateAdvisorHandler : RequestHandler<CreateAdvisorCommand, HealpathyContext>
+public class CreateAdvisorHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateAdvisorCommand, HealpathyContext>(context, logger, cache)
 {
-    public CreateAdvisorHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-    public override async Task<Result> Handle(CreateAdvisorCommand request, CancellationToken cancellationToken)
+    public override async Task<Result> Handle(CreateAdvisorCommand command, CancellationToken cancellationToken)
     {
         try
         {
-            var entity = Adapt(request);
+            var entity = Adapt(command);
             await _context.Advisors.InsertExt(entity);
             await _context.Multimedia.AddRangeAsync(entity.Medias);
             await _context.SaveChangesAsync(cancellationToken);
+
+            _cache.Add(command.UserId, new Events.Advisor_Created(entity.Id));
             return Created();
         }
         catch (Exception ex)

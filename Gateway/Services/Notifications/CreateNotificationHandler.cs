@@ -18,9 +18,9 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
 
     public override async Task<Result<NotificationModel>> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
     {
-        if (request.AdvisorRequestRq is not null)
+        try
         {
-            try
+            if (request.AdvisorRequestRq is not null)
             {
                 var entity = AdaptAdvisorRequest(request);
                 var notificationTask = _context.Notifications.InsertExt(entity);
@@ -33,31 +33,136 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
                 var mediaTask = _context.Multimedia.AddRangeAsync(medias);
 
                 await Task.WhenAll(notificationTask, mediaTask);
-                await _context.SaveChangesAsync(cancellationToken);
-                return Created();
             }
-            catch (Exception ex)
+            else if (request.WithdrawalRequestRq is not null)
             {
-                return ServerError(ex.Message);
+                var entity = AdaptWithdrawalRequest(request);
+                await _context.Notifications.InsertExt(entity);
             }
+            else if (request.AdminMessageRq is not null)
+            {
+                var entity = AdaptAdminMessageRequest(request);
+                await _context.Notifications.InsertExt(entity);
+            }
+            else if (request.ConversationInvitationRq is not null)
+            {
+                var entities = AdaptInviteMemberRequest(request);
+                await _context.Notifications.AddRangeAsync(entities);
+            }
+            else if (request.UserReportRq is not null)
+            {
+                var entity = AdaptUserReportRequest(request);
+                await _context.Notifications.InsertExt(entity);
+            }
+            else if (request.UserBannedRq is not null)
+            {
+                var entity = AdaptUserBannedRequest(request);
+                await _context.Notifications.InsertExt(entity);
+            }
+            /*else if (request.ContentDisapprovedRq is not null)
+            {
+
+            }*/
+            
+            await _context.SaveChangesAsync();
+            return Created();
         }
-        else
+        catch (Exception ex)
         {
-            return ServerError(string.Empty);
+            return ServerError(ex.Message);
         }
     }
 
-    private Notification AdaptAdvisorRequest(CreateNotificationCommand command)
+    private static Notification AdaptAdvisorRequest(CreateNotificationCommand command)
     {
-        var json = new
+        var dto = command.AdvisorRequestRq!;
+        var message = new
         {
-            //...
-            CV = command.CV is not null ? /*command.CV.Identifier*/ command.CV.Url : string.Empty,
-            Introduction = command.AdvisorRequestRq!.Introduction ?? string.Empty,
-            Experience = command.AdvisorRequestRq!.Experience ?? string.Empty,
-            Certificates = command.Certificates is not null ? command.Certificates.Select(_ => _.Identifier) : []
+            CV = command.CV?.Url ?? string.Empty,
+            Introduction = dto.Introduction ?? string.Empty,
+            Experience = dto.Experience ?? string.Empty,
+            Certificates = command.Certificates?.Select(c => c.Identifier) ?? []
         };
 
-        return new Notification(command.Id, command.UserId, JsonSerializer.Serialize(json), NotificationType.RequestToBecomeAdvisor, PreSet.SystemUserId);
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(message),
+            NotificationType.RequestToBecomeAdvisor,
+            PreSet.SystemUserId
+        );
     }
+
+    private static Notification AdaptWithdrawalRequest(CreateNotificationCommand command)
+    {
+        var dto = command.WithdrawalRequestRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto),
+            NotificationType.RequestWithdrawal,
+            PreSet.SystemUserId
+        );
+    }
+
+    private static Notification AdaptAdminMessageRequest(CreateNotificationCommand command)
+    {
+        var dto = command.AdminMessageRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto.Message),
+            NotificationType.AdminMessage,
+            dto.ReceiverId
+        );
+    }
+
+    private static IEnumerable<Notification> AdaptInviteMemberRequest(CreateNotificationCommand command)
+    {
+        var dto = command.ConversationInvitationRq!;
+        return dto.UserIds.Select(_ => new Notification(
+            Guid.NewGuid(),
+            command.UserId,
+            JsonSerializer.Serialize(dto.ConversationId),
+            NotificationType.InviteMember,
+            _
+        ));
+    }
+
+    private static Notification AdaptUserReportRequest(CreateNotificationCommand command)
+    {
+        var dto = command.UserReportRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto),
+            NotificationType.ReportUser,
+            PreSet.SystemUserId
+        );
+    }
+
+    private static Notification AdaptUserBannedRequest(CreateNotificationCommand command)
+    {
+        var dto = command.UserBannedRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto),
+            NotificationType.UserBanned,
+            PreSet.SystemUserId
+        );
+    }
+
+    // Should be sent to content creator
+    /*private static Notification AdaptContentDisapprovedRequest(CreateNotificationCommand command)
+    {
+        var dto = command.ContentDisapprovedRq!;
+        return new Notification(
+            command.Id,
+            command.UserId,
+            JsonSerializer.Serialize(dto),
+            NotificationType.ContentDisapproved,
+            PreSet.SystemUserId
+        );
+    }*/
 }
