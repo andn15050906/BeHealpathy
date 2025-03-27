@@ -5,17 +5,25 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Courses.Services.Courses;
 
+/// <summary>
+/// Handler xử lý việc tạo mới khóa học
+/// </summary>
 public sealed class CreateCourseHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
     : RequestHandler<CreateCourseCommand, HealpathyContext>(context, logger, cache)
 {
+    /// <summary>
+    /// Xử lý yêu cầu tạo mới khóa học
+    /// </summary>
     public override async Task<Result> Handle(CreateCourseCommand command, CancellationToken cancellationToken)
     {
+        // Kiểm tra danh mục khóa học có tồn tại không
         var category = await _context.Categories.FindExt(command.Rq.LeafCategoryId);
         if (category is null)
             return BadRequest(BusinessMessages.Course.INVALID_CATEGORY);
 
         try
         {
+            // Chuyển đổi dữ liệu và lưu vào database
             var entity = Adapt(command);
             var courseTask = _context.Courses.InsertExt(entity);
             var mediaTask = _context.Multimedia.AddRangeAsync(command.Medias);
@@ -31,6 +39,9 @@ public sealed class CreateCourseHandler(HealpathyContext context, IAppLogger log
         }
     }
 
+    /// <summary>
+    /// Chuyển đổi dữ liệu từ command sang entity Course
+    /// </summary>
     private static Course Adapt(CreateCourseCommand command)
     {
         return new Course(
