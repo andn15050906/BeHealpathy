@@ -212,7 +212,7 @@ public sealed class HealpathyContext : BaseContext
             { _ => _.Token, VARCHAR100 },
             { _ => _.RefreshToken, VARCHAR100 },
             // IsVerified
-            // IsApproved
+            // IsPremium
             // IsBanned
             // AccessFailedCount
             // UnbanDate

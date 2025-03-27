@@ -17,7 +17,8 @@ public sealed class User : TimeAuditedEntity
     public string Token { get; set; }
     public string RefreshToken { get; set; }
     public bool IsVerified { get; set; }
-    public bool IsApproved { get; private set; }
+    public bool IsPremium { get; set; }
+    public DateTime? PremiumExpiry { get; set; }
     public bool IsBanned { get; private set; }
     public byte AccessFailedCount { get; private set; }
     public DateTime? UnbanDate { get; set; }
@@ -71,8 +72,8 @@ public sealed class User : TimeAuditedEntity
         AvatarUrl = string.Empty;
         Bio = string.Empty;
 
-        if (Role == Role.Admin)
-            IsApproved = true;
+        if (Role == Role.Admin || Role == Role.Advisor)
+            IsPremium = true;
         DateOfBirth = TimeHelper.DefaultDateOfBirth;
     }
 
@@ -90,7 +91,6 @@ public sealed class User : TimeAuditedEntity
         Bio = string.Empty;
 
         IsVerified = true;
-        // IsApproved
         UserLogins =
         [
             new UserLogin(loginProvider, providerKey)
@@ -163,11 +163,13 @@ public sealed class User : TimeAuditedEntity
 
 
 
-    public const int BLOCKED_ACCESS_FAILED_COUNT = 100;
+    public const int BLOCKED_ACCESS_FAILED_COUNT = 10;
 
-    public bool IsNotApproved()
+    public bool IsPremiumUser()
     {
-        return Role == Role.Admin ? !IsApproved : !IsVerified;
+        return Role == Role.Advisor
+            || Role == Role.Admin
+            || (IsPremium && PremiumExpiry != null && (DateTime)PremiumExpiry > TimeHelper.Now);
     }
 
     public bool IsBlocked()

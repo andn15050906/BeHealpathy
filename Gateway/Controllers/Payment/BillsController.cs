@@ -4,13 +4,26 @@ using Contract.Requests.Payment;
 using Contract.Requests.Payment.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Net.payOS.Types;
+using Net.payOS;
+using Contract.Helpers.AppExploration;
+using Microsoft.Extensions.Options;
 
 namespace Gateway.Controllers.Payment;
 
 public sealed class BillsController : ContractController
 {
-    public BillsController(IMediator mediator) : base(mediator)
+    private readonly PayOS _payOS;
+
+    public BillsController(IMediator mediator, PayOS payOS) : base(mediator)
     {
+        _payOS = payOS;
+    }
+
+    public enum PaymentOptions : byte
+    {
+        Yearly,
+        Monthly
     }
 
 
@@ -21,6 +34,57 @@ public sealed class BillsController : ContractController
     {
         GetPagedBillsQuery query = new(dto);
         return await Send(query);
+    }
+
+    [HttpPost("purchase/premium/{option}")]
+    [Authorize]
+    public async Task<IActionResult> PurchasePremium(PaymentOptions option, [FromServices] IOptions<AppInfoOptions> appInfo)
+    {
+        long orderCode = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        var canceledUrl = $"{appInfo.Value.MainFrontendApp}/profile?status=cancelled";
+        var callbackUrl = $"{appInfo.Value.MainFrontendApp}/profile?status=success";
+
+        var subscriptions = new List<ItemData>
+        {
+            new("Yearly Premium", 1, 240000),
+            new("Monthly Premium", 1, 25000)
+        };
+        var selectedSubscription = subscriptions[(int)option];
+
+        var paymentData = new PaymentData(
+            orderCode,
+            selectedSubscription.price,
+            $"Nâng cấp Premium - {option}",
+            [selectedSubscription],
+            cancelUrl: canceledUrl,
+            returnUrl: callbackUrl
+        );
+        var result = await _payOS.createPaymentLink(paymentData);
+
+        return Ok(new { url = result.checkoutUrl });
+    }
+
+    [HttpPost("purchase/course/{courseId}")]
+    [Authorize]
+    public async Task<IActionResult> PurchaseCourse(Guid courseId, [FromServices] IOptions<AppInfoOptions> appInfo)
+    {
+        long orderCode = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        int price = 100000;
+
+        var item = new ItemData("Course Purchase", 1, price);
+        var paymentData = new PaymentData(
+            orderCode,
+            price,
+            "TT Khoa hoc",
+            new List<ItemData> { item },
+            cancelUrl: $"{appInfo.Value.MainFrontendApp}/courses/{courseId}?status=cancelled",
+            returnUrl: $"{appInfo.Value.MainFrontendApp}/courses/{courseId}?status=success"
+        );
+
+        var result = await _payOS.createPaymentLink(paymentData);
+
+        return Ok(new { url = result.checkoutUrl });
     }
 
     /*[HttpGet]

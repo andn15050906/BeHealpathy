@@ -59,7 +59,8 @@ namespace Gateway.Infrastructure;
             { _ => _.Token, VARCHAR100 },
             { _ => _.RefreshToken, VARCHAR100 },
             // IsVerified
-            // IsApproved
+            // IsPremium
+            // PremiumExpiry
             // IsBanned
             // AccessFailedCount
             // UnbanDate

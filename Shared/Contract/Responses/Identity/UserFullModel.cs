@@ -14,7 +14,7 @@ public sealed class UserFullModel
     public string AvatarUrl { get; set; } = string.Empty;
     public Role Role { get; set; }
     public bool IsVerified { get; set; }
-    public bool IsApproved { get; set; }
+    public bool IsPremium { get; set; }
     public IEnumerable<string> LoginProviders { get; set; } = [];
     public string Bio { get; set; } = string.Empty;
     public DateTime? DateOfBirth { get; set; }
@@ -44,7 +44,7 @@ public sealed class UserFullModel
             AvatarUrl = user.AvatarUrl,
             Role = user.Role,
             IsVerified = user.IsVerified,
-            IsApproved = user.IsApproved,
+            IsPremium = user.IsPremiumUser(),
             Bio = user.Bio,
             DateOfBirth = user.DateOfBirth,
 
@@ -76,7 +76,8 @@ public sealed class UserFullModel
             AvatarUrl = _.AvatarUrl,
             Role = _.Role,
             IsVerified = _.IsVerified,
-            IsApproved = _.IsApproved,
+            //...
+            IsPremium = _.IsPremium,
             Bio = _.Bio,
             DateOfBirth = _.DateOfBirth,
 

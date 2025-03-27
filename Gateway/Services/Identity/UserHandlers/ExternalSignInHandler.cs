@@ -69,10 +69,6 @@ public class ExternalSignInHandler : RequestHandler<ExternalSignInCommand, AuthM
             return ServerError(ex.Message);
         }
 
-        // SignIn
-        if (entity.IsNotApproved())
-            return Forbidden(BusinessMessages.User.FORBIDDEN_NOT_APPROVED);
-
         var customClaims = identity.Claims.ToList();
         customClaims.Add(new Claim(ClaimTypes.NameIdentifier, entity.Id.ToString()));
         customClaims.Add(new Claim(ClaimTypes.Role, entity.Role.ToString()));

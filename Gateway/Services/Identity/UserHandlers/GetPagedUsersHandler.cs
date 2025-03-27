@@ -1,4 +1,5 @@
-﻿using Contract.Helpers;
+﻿using Contract.Domain.UserAggregate.Enums;
+using Contract.Helpers;
 using Contract.Requests.Identity.UserRequests;
 using Contract.Requests.Identity.UserRequests.Dtos;
 using Contract.Responses.Identity;
@@ -53,8 +54,14 @@ public sealed class GetPagedUsersHandler : RequestHandler<GetPagedUsersQuery, Pa
             return _ => _.Role == dto.Role && !_.IsDeleted;
         if (dto.IsVerified is not null)
             return _ => _.IsVerified == dto.IsVerified && !_.IsDeleted;
-        if (dto.IsApproved is not null)
-            return _ => _.IsApproved == dto.IsApproved && !_.IsDeleted;
+        if (dto.IsPremium is not null)
+        {
+            return _ => (
+                _.Role == Role.Advisor
+                || _.Role == Role.Admin
+                || (_.IsPremium && _.PremiumExpiry != null && (DateTime)_.PremiumExpiry > TimeHelper.Now)
+            ) && !_.IsDeleted;
+        }
         if (dto.IsBanned is not null)
             return _ => _.IsBanned == dto.IsBanned && !_.IsDeleted;
 

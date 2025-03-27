@@ -11,6 +11,6 @@ public sealed class QueryUserDto : PagingQueryDto
     public string? Email { get; set; }
     public Role? Role { get; set; }
     public bool? IsVerified { get; set; }
-    public bool? IsApproved { get; set; }
+    public bool? IsPremium { get; set; }
     public bool? IsBanned { get; set; }
 }
