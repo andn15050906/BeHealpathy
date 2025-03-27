@@ -38,9 +38,18 @@ public sealed class MediaResourcesController : ContractController
     [Authorize]
     public async Task<IActionResult> Update([FromForm] UpdateMediaResourceDto dto, [FromServices] IFileService fileService)
     {
-        Multimedia media = (await fileService.SaveMediasAndUpdateDtos([(dto.ReplacedMedia, dto.Id)])).First();
+        Multimedia? media = null;
 
-        UpdateMediaResourceCommand command = new(dto, ClientId, media);
+        if (dto.ReplacedMedia != null &&
+            (dto.ReplacedMedia.File != null || !string.IsNullOrWhiteSpace(dto.ReplacedMedia.Url)))
+        {
+            var mediaList = await fileService.SaveMediasAndUpdateDtos([(dto.ReplacedMedia, dto.Id)]);
+            media = mediaList.FirstOrDefault();
+            if (media == null)
+                return StatusCode(500, "Media processing failed.");
+        }
+
+        var command = new UpdateMediaResourceCommand(dto, ClientId, media);
         return await Send(command);
     }
 
