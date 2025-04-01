@@ -14,9 +14,9 @@ public sealed class RecommendationsController : ContractController
 
     [HttpGet("roadmap")]
     [Authorize]
-    public async Task<IActionResult> GetRecommendedRoadmap([FromServices] HealpathyContext context, [FromServices] IChatbotClient chatbot)
+    public async Task<IActionResult> GetRecommendedRoadmap([FromServices] HealpathyContext context)
     {
-        var submissions = await StatisticsController.GetUserSubmissions(context, ClientId, ["DASS", "First"]);
+        var submissions = await StatisticsController.GetUserSubmissions(context, ClientId, null, null, ["DASS", "First"]);
         var preferences = await StatisticsController.GetUserPreferences(context, ClientId);
 
         var roadmaps = await context.Roadmaps.ToListAsync();

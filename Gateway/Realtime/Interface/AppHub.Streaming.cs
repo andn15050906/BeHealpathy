@@ -31,9 +31,9 @@ public sealed partial class AppHub
 
     public async Task JoinRoom(string roomId, ParticipantExtraInfo info)
     {
-        Room? room = ConnectionsHandler.FindRoom(roomId);
-        Guid? clientId = ConnectionsHandler.GetUserId(Context);
-        Participant participant = new(clientId, Context.ConnectionId, info);
+        var room = ConnectionsHandler.FindRoom(roomId);
+        var clientId = ConnectionsHandler.GetUserId(Context);
+        var participant = new Participant(clientId, Context.ConnectionId, info);
 
         if (room == null)
         {
@@ -46,8 +46,8 @@ public sealed partial class AppHub
             return;
         }
 
-        bool addSucceed = ConnectionsHandler.TryAddRoomParticipant(participant, room);
-        if (addSucceed)
+        bool isSuccess = ConnectionsHandler.TryAddRoomParticipant(participant, room);
+        if (isSuccess)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 #pragma warning disable CS4014
@@ -58,9 +58,18 @@ public sealed partial class AppHub
         }
     }
 
-    /*public async Task SendRoom(string roomId, StreamMessage message, [FromServices] ChatService chatService)
+    public async Task SendRoom(string roomId, StreamMessage message/*, [FromServices] ChatService chatService*/)
     {
-    }*/
+        var room = ConnectionsHandler.FindRoom(roomId);
+        var participant = ConnectionsHandler.FindParticipant(Context.ConnectionId);
+
+        if (room is null || participant is null)
+            return;
+        if (message.Event == StreamEvents.VideoOff.ToString())
+        {
+            await Clients.OthersInGroup(roomId).SendAsync(StreamEvents.RoomMessageReceived.ToString(), roomId, Context.ConnectionId, message);
+        }
+    }
 
     public async Task LeaveRoom(string roomId)
     {

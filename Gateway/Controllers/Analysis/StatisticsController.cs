@@ -1,13 +1,18 @@
 ﻿using Contract.BusinessRules.PreferenceBiz;
 using Contract.Domain.ProgressAggregates;
+using Contract.Domain.UserAggregate.Constants;
 using Contract.Messaging.ApiClients.Http;
+using Contract.Responses.Identity;
 using Core.Helpers;
+using Gateway.Services.AI.ChatBot;
 using Gateway.Services.AI.Recommendation;
 using Gateway.Services.AI.Translator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MLService;
 using System.Linq.Expressions;
+using System.Text;
 
 namespace Gateway.Controllers.Analysis;
 
@@ -26,7 +31,7 @@ public sealed class StatisticsController : ContractController
 
     [HttpGet("progress")]
     [Authorize]
-    public async Task<IActionResult> GetProgress([FromServices] HealpathyContext context)
+    public async Task<IActionResult> GetPersonalProgressStatistics([FromServices] HealpathyContext context)
     {
         var currentRoadmap = await context.Users.Where(_ => _.Id == ClientId).Select(_ => _.RoadmapId).FirstOrDefaultAsync();
         if (currentRoadmap is null)
@@ -36,24 +41,42 @@ public sealed class StatisticsController : ContractController
         return Ok(progress);
     }
 
-    [HttpGet("data")]
+    [HttpGet("mood")]
     [Authorize]
-    public async Task<IActionResult> GetStatisticsData([FromQuery] QueryStatisticsDto dto, [FromServices] HealpathyContext context)
+    public async Task<IActionResult> GetPersonalMoodStatistics([FromServices] HealpathyContext context)
     {
-        var userId = dto.UserId ?? ClientId;
-        DateTime startTime = TimeHelper.Now;
-        DateTime endTime = startTime.AddDays(1);
+        var moods = await context.ActivityLogs.Where(_ => _.Id == ClientId && _.Content.Contains("Mood_Updated")).Select(ActivityLogModel.MapExpression).ToListAsync();
+        return Ok(moods);
+    }
+
+    [HttpGet("sentiment")]
+    [Authorize]
+    [ResponseCache(Duration = 180)]
+    public async Task<IActionResult> GetSentimentAnalysis([FromQuery] QueryStatisticsDto dto, [FromServices] HealpathyContext context, [FromServices] IChatbotClient chatbotClient)
+    {
+        var userId = ClientId;
+        if (dto.UserId is not null && User.IsInRole(RoleConstants.ADMIN))
+            userId = (Guid)dto.UserId;
+
+        DateTime endTime = TimeHelper.Now;
+        DateTime startTime = endTime.AddDays(-30);
         if (dto.StartTime is not null && dto.EndTime is not null)
         {
             startTime = (DateTime)dto.StartTime;
             endTime = (DateTime)dto.EndTime;
         }
 
-        // ChatInputs
-        var messages = await context.ChatMessages
+        // MessageInputs
+        var chats = await context.ChatMessages
             .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
             .Select(_ => new Input.Message(_.CreationTime, _.Content))
             .ToListAsync();
+        var diaryNotes = await context.DiaryNotes
+            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
+            .Select(_ => new Input.Message(_.CreationTime, _.Content))
+            .ToListAsync();
+        var messages = new List<Input.Message>();
+        messages = [..chats, ..diaryNotes];
 
         // Input.Reactions
         var articleReactions = await context.ArticleReactions
@@ -83,24 +106,55 @@ public sealed class StatisticsController : ContractController
 
         // RoutineInputs
 
-        var analysis = new Input.Analysis
+
+
+        var groupedInput = new Input.DataCollection
         {
             UserId = userId,
-            ChatInputs = messages,
+            MessageInputs = messages,
             ReactionInputs = [.. articleReactions, .. lectureReactions, .. messageReactions],
             CourseInputs = courses,
-            //ArticleInputs = 
-            //MediaInputs =
-            //RoutineInputs =
-            SubmissionInputs = await GetUserSubmissions(context, userId),
+            SubmissionInputs = await GetUserSubmissions(context, userId, startTime, endTime),
             PreferenceInputs = await GetUserPreferences(context, userId)
         };
 
-        return Ok(analysis);
+        Dictionary<DateTime, Input.GroupedData> inputs = [];
+        var start = startTime.Date;
+        var end = endTime.Date;
+        for (var i = start; i < end; i = i.AddDays(1))
+            inputs.TryAdd(i, new Input.GroupedData());
+
+        foreach (var messageInput in groupedInput.MessageInputs)
+            inputs[messageInput.CreatedAt.Date].Messages.Add(messageInput.Content);
+        //...
+        //foreach (var reactionInput in groupedInput.ReactionInputs)
+        //foreach (var courseInput in groupedInput.CourseInputs)
+        foreach (var submissionInput in groupedInput.SubmissionInputs)
+            foreach (var band in submissionInput.SurveyBandInputs)
+                inputs[submissionInput.StartedAt.Date].Metrics_Rating.Add(band.Metrics, band.Rating);
+
+
+
+        var dataPath = Path.Combine(Directory.GetCurrentDirectory(), "ML", "wikiDetoxAnnotated40kRows.tsv");
+        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "ML", "SentimentModel.zip");
+        Dictionary<DateTime, Output.Analysis> outputs = [];
+        foreach (var input in inputs)
+        {
+            var analysis = new Output.Analysis();
+            //var message = await GeminiClient.Instance.Prompt(dto.Content);
+
+            if (input.Value.Messages is not null && input.Value.Messages.Count > 0)
+            {
+                var messageInput = string.Join("\n", input.Value.Messages);
+                var prediction = new BertExecutor(dataPath, modelPath).Predict(messageInput);
+                analysis.Prediction = prediction;
+            }
+            outputs.Add(input.Key, analysis);
+        }
+        return Ok(outputs);
     }
 
-
-    [HttpGet("result")]
+    /*[HttpGet("result")]
     [Authorize]
     public async Task<IActionResult> GetStatisticsResult([FromServices] ITranslateClient translateClient)
     {
@@ -139,14 +193,15 @@ public sealed class StatisticsController : ContractController
         };
 
         return Ok(output1);
-    }
+    }*/
 
 
 
 
 
 
-    public static async Task<List<Input.Submission>> GetUserSubmissions(HealpathyContext context, Guid userId, List<string>? latestSurveyNames = null)
+    public static async Task<List<Input.Submission>> GetUserSubmissions(
+        HealpathyContext context, Guid userId, DateTime? startTime = null, DateTime? endTime = null, List<string>? latestSurveyNames = null)
     {
         Expression<Func<Survey, bool>> surveyPredicate = latestSurveyNames is not null
             ? _ => !_.IsDeleted && latestSurveyNames.Any(s => _.Name.Contains(s))
@@ -160,19 +215,41 @@ public sealed class StatisticsController : ContractController
             .ToListAsync();
 
         List<Submission>? submissions = [];
-        if (latestSurveyNames is null) {
-            submissions = await context.Submissions
-                .Include(_ => _.Choices)
-                .Where(_ => !_.IsDeleted && _.CreatorId == userId)
-                .ToListAsync();
+        if (latestSurveyNames is null)
+        {
+            if (startTime is not null && endTime is not null)
+            {
+                submissions = await context.Submissions
+                    .Include(_ => _.Choices)
+                    .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
+                    .ToListAsync();
+            }
+            else
+            {
+                submissions = await context.Submissions
+                    .Include(_ => _.Choices)
+                    .Where(_ => !_.IsDeleted && _.CreatorId == userId)
+                    .ToListAsync();
+            }
         }
         else
         {
-            submissions = await context.Submissions
-                .Include(_ => _.Choices).Include(_ => _.Survey)
-                .AsSplitQuery()
-                .Where(_ => !_.IsDeleted && _.CreatorId == userId)
-                .ToListAsync();
+            if (startTime is not null && endTime is not null)
+            {
+                submissions = await context.Submissions
+                    .Include(_ => _.Choices).Include(_ => _.Survey)
+                    .AsSplitQuery()
+                    .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
+                    .ToListAsync();
+            }
+            else
+            {
+                submissions = await context.Submissions
+                    .Include(_ => _.Choices).Include(_ => _.Survey)
+                    .AsSplitQuery()
+                    .Where(_ => !_.IsDeleted && _.CreatorId == userId)
+                    .ToListAsync();
+            }
 
             var tempList = submissions;
             submissions = [];
@@ -245,4 +322,14 @@ public sealed class StatisticsController : ContractController
 
         return result;
     }
+
+    /*private static Input.GroupedData? GetInputOfDay(Dictionary<DateTime, Input.GroupedData> inputs, DateTime date)
+    {
+        if (inputs.TryGetValue(date.Date, out Input.GroupedData? value))
+            return value;
+
+        value = new Input.GroupedData();
+        inputs.Add(date.Date, value);
+        return null;
+    }*/
 }

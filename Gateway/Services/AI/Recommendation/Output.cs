@@ -1,10 +1,13 @@
-﻿namespace Gateway.Services.AI.Recommendation;
+﻿using MLService.DataStructures;
+
+namespace Gateway.Services.AI.Recommendation;
 
 public class Output
 {
     public class Analysis
     {
-        public string Sentiment { get; set; } = string.Empty;
+        public SentimentPrediction Prediction { get; set; }
+
         public List<string> Emotions { get; set; } = [];
         public List<string> Keywords { get; set; } = [];
         public List<string> Topics { get; set; } = [];
