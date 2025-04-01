@@ -69,6 +69,7 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Lecture> Lectures { get; set; }
     public DbSet<LectureComment> LectureComments { get; set; }
     public DbSet<LectureReaction> LectureReactions { get; set; }
+    public DbSet<YogaPose> YogaPoses { get; set; }  
 
 
 
@@ -122,6 +123,7 @@ public sealed class HealpathyContext : BaseContext
         internal const string LECTURE = "Lectures";
         internal const string LECTURE_COMMENT = "LectureComments";
         internal const string LECTURE_REACTION = "LectureReactions";
+        internal const string YOGA_POSES = "YogaPoses";
 
         internal const string MULTIMEDIA = "Multimedias";
     }
@@ -192,7 +194,8 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new CourseReviewConfig())
             .ApplyConfiguration(new LectureConfig())
             .ApplyConfiguration(new LectureCommentConfig())
-            .ApplyConfiguration(new LectureReactionConfig());
+            .ApplyConfiguration(new LectureReactionConfig())
+            .ApplyConfiguration(new YogaPoseConfig());
     }
 
 
@@ -1052,6 +1055,29 @@ public sealed class HealpathyContext : BaseContext
                 .SetColumnsTypes(Columns)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
             //.HasKey(_ => new { _.CreatorId, _.SourceId });
+
+            builder.HasOne(_ => _.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+    class YogaPoseConfig : EntityConfiguration<YogaPose>
+    {
+        protected override Dictionary<Expression<Func<YogaPose, object?>>, string> Columns => new()
+        {
+            { _ => _.Name, NVARCHAR100 },
+            { _ => _.Description, NVARCHAR255 },
+            { _ => _.EquipmentRequirement, NVARCHAR255 },
+            { _ => _.Level, NVARCHAR255 },
+            { _ => _.EmbeddedUrl, NVARCHARMAX },
+            { _ => _.Level, NVARCHARMAX },
+            { _ => _.VideoUrl, NVARCHARMAX }
+        };
+
+        public override void Configure(EntityTypeBuilder<YogaPose> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.YOGA_POSES)
+                .SetColumnsTypes(Columns)
+                .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
 
             builder.HasOne(_ => _.Creator).WithMany().OnDelete(DeleteBehavior.NoAction);
         }
