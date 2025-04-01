@@ -55,12 +55,12 @@ public sealed class GetPagedConversationsHandler : RequestHandler<GetPagedConver
 
 
         if (dto.CreatorId is not null)
-            return _ => _.CreatorId == dto.CreatorId;
+            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
         if (dto.Title is not null)
             return _ => _.Title.Contains(dto.Title) && !_.IsDeleted;
         if (dto.Members is not null)
             // Intersect
-            return _ => _.Members.Select(_ => _.CreatorId).Intersect(dto.Members).Any();
+            return _ => _.Members.Select(_ => _.CreatorId).Intersect(dto.Members).Any() && !_.IsDeleted;
         return _ => !_.IsDeleted;
     }
 }

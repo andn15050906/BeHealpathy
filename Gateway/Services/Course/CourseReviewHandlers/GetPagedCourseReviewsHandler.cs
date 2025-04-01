@@ -35,9 +35,9 @@ public sealed class GetPagedCourseReviewsHandler : RequestHandler<GetPagedCourse
     private Expression<Func<Review, bool>>? GetPredicate(QueryReviewDto dto)
     {
         if (dto.SourceId is not null)
-            return _ => _.SourceId == dto.SourceId && !_.IsDeleted; ;
+            return _ => _.SourceId == dto.SourceId && !_.IsDeleted;
         if (dto.CreatorId is not null)
-            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;;
+            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
         return _ => !_.IsDeleted;
     }
 }
