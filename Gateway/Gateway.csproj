@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="PayOSConfig.cs" />
+    <None Include="Services\Payment\PayOSConfig.cs" />
   </ItemGroup>
 
   <ItemGroup>

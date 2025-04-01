@@ -1,0 +1,2 @@
+[config]
+WEBSITE_DISABLE_SCM_SEPARATION=true
