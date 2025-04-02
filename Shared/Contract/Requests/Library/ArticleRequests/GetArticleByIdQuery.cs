@@ -1,7 +1,10 @@
-﻿namespace Contract.Requests.Library.ArticleRequests;
+﻿using Contract.Responses.Library;
 
-/*
-internal class GetArticleByIdQuery
+namespace Contract.Requests.Library.ArticleRequests;
+
+public sealed class GetArticleByIdQuery : GetByIdQuery<ArticleModel>
 {
+    public GetArticleByIdQuery(Guid id) : base(id)
+    {
+    }
 }
-*/
