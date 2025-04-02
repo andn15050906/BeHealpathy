@@ -36,13 +36,13 @@ public sealed class GetPagedNotificationsHandler : RequestHandler<GetPagedNotifi
     private Expression<Func<Notification, bool>>? GetPredicate(QueryNotificationDto dto)
     {
         if (dto.CreatorId is not null)
-            return _ => _.CreatorId == dto.CreatorId;
+            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
         if (dto.ReceiverId is not null)
-            return _ => _.ReceiverId == dto.ReceiverId;
+            return _ => _.ReceiverId == dto.ReceiverId && !_.IsDeleted;
         if (dto.Type is not null)
-            return _ => _.Type == dto.Type;
+            return _ => _.Type == dto.Type && !_.IsDeleted;
         if (dto.Status is not null)
-            return _ => _.Status == dto.Status;
-        return null;
+            return _ => _.Status == dto.Status && !_.IsDeleted;
+        return _ => !_.IsDeleted;
     }
 }

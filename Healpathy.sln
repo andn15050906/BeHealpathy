@@ -15,6 +15,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{C5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gateway", "Gateway\Gateway.csproj", "{2B117229-916D-4860-A3E3-A6DB2C3D1338}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MLService", "Services\MLService\MLService.csproj", "{ACE27FA6-6405-4FAD-A98E-6687274C7137}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2D2B04DB-E91A-4770-9141-8FC2903C7352}"
+	ProjectSection(SolutionItems) = preProject
+		.deployment = .deployment
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +44,10 @@ Global
 		{2B117229-916D-4860-A3E3-A6DB2C3D1338}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B117229-916D-4860-A3E3-A6DB2C3D1338}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B117229-916D-4860-A3E3-A6DB2C3D1338}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACE27FA6-6405-4FAD-A98E-6687274C7137}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACE27FA6-6405-4FAD-A98E-6687274C7137}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACE27FA6-6405-4FAD-A98E-6687274C7137}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACE27FA6-6405-4FAD-A98E-6687274C7137}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +56,7 @@ Global
 		{F4D9EAF4-35B3-45E4-8BB9-3F40FA111D4E} = {8D774E36-A5ED-4075-8A87-0C85C5B2A95B}
 		{4D746737-9CF2-4D49-BAA2-84BA261D16DF} = {8D774E36-A5ED-4075-8A87-0C85C5B2A95B}
 		{5D74FE21-5EDD-4D2B-8BC6-83329D95E6B5} = {8D774E36-A5ED-4075-8A87-0C85C5B2A95B}
+		{ACE27FA6-6405-4FAD-A98E-6687274C7137} = {C53E7E02-4D08-4460-A00E-8848CA951830}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CA6D1B40-577C-4A13-A00C-3304C908D5DA}

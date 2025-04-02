@@ -684,6 +684,60 @@ namespace Gateway.Migrations
                     b.ToTable("LectureReactions", (string)null);
                 });
 
+            modelBuilder.Entity("Contract.Domain.CourseAggregate.YogaPose", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("EmbeddedUrl")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<string>("EquipmentRequirement")
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(100)");
+
+                    b.Property<string>("ThumpUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VideoUrl")
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("YogaPoses", (string)null);
+                });
+
             modelBuilder.Entity("Contract.Domain.LibraryAggregate.Article", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1935,6 +1989,17 @@ namespace Gateway.Migrations
                     b.HasOne("Contract.Domain.CourseAggregate.LectureComment", null)
                         .WithMany("Reactions")
                         .HasForeignKey("LectureCommentId");
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.CourseAggregate.YogaPose", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Creator");
                 });

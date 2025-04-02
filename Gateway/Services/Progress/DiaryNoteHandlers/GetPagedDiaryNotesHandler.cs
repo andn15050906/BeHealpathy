@@ -57,18 +57,18 @@ public sealed class GetPagedDiaryNotesHandler : RequestHandler<GetPagedDiaryNote
         if (dto.StartAfter is not null || dto.StartBefore is not null)
         {
             if (dto.StartBefore is null)
-                return _ => _.CreationTime > dto.StartAfter;
+                return _ => _.CreationTime > dto.StartAfter && !_.IsDeleted;
             if (dto.StartAfter is null)
-                return _ => _.CreationTime < dto.StartBefore;
-            return _ => _.CreationTime > dto.StartAfter && _.CreationTime < dto.StartBefore;
+                return _ => _.CreationTime < dto.StartBefore && !_.IsDeleted;
+            return _ => _.CreationTime > dto.StartAfter && _.CreationTime < dto.StartBefore && !_.IsDeleted;
         }
         if (dto.EndAfter is not null || dto.EndBefore is not null)
         {
             if (dto.EndAfter is null)
-                return _ => _.CreationTime > dto.EndAfter;
+                return _ => _.CreationTime > dto.EndAfter && !_.IsDeleted;
             if (dto.EndBefore is null)
-                return _ => _.CreationTime < dto.EndBefore;
-            return _ => _.CreationTime > dto.EndAfter && _.CreationTime < dto.EndBefore;
+                return _ => _.CreationTime < dto.EndBefore && !_.IsDeleted;
+            return _ => _.CreationTime > dto.EndAfter && _.CreationTime < dto.EndBefore && !_.IsDeleted;
         }
 
         return _ => !_.IsDeleted;

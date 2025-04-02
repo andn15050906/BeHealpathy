@@ -1,4 +1,6 @@
-﻿namespace Gateway.Services.AI.Recommendation;
+﻿using System.Text;
+
+namespace Gateway.Services.AI.Recommendation;
 
 public class Input
 {
@@ -90,10 +92,10 @@ public class Input
 
 
 
-    public class Analysis
+    public class DataCollection
     {
         public Guid UserId { get; set; }
-        public List<Message> ChatInputs { get; set; } = [];
+        public List<Message> MessageInputs { get; set; } = [];
         public List<Reaction> ReactionInputs { get; set; } = [];
         public List<Course> CourseInputs { get; set; } = [];
         public List<Article> ArticleInputs { get; set; } = [];
@@ -101,5 +103,15 @@ public class Input
         public List<Routine> RoutineInputs { get; set; } = [];
         public List<Submission> SubmissionInputs { get; set; } = [];
         public List<Preference> PreferenceInputs { get; set; } = [];
+    }
+
+    public class GroupedData
+    {
+        public List<string> Messages { get; set; } = [];
+        public Dictionary<string, string> Content_Reactions { get; set; } = [];
+        public List<string> Interests_Category = [];
+        public List<string> Interests_Title = [];
+        public List<string> Interests_Description = [];
+        public Dictionary<string, string> Metrics_Rating = [];
     }
 }

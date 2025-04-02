@@ -61,6 +61,8 @@ public sealed class GetPagedArticlesHandler : RequestHandler<GetPagedArticlesQue
 
     private Expression<Func<Article, bool>>? GetPredicate(QueryArticleDto dto)
     {
+        if (dto.CreatorId is not null)
+            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
         if (dto.Title is not null)
             return _ => _.Title.Contains(dto.Title) && !_.IsDeleted;
         if (dto.Status is not null)
