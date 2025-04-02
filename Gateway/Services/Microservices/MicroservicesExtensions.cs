@@ -2,7 +2,6 @@
 using Contract.Services.Implementations;
 using Gateway.Helpers.AppStart;
 using Contract.Services;
-using Contract.Services.Contracts.Domain;
 
 namespace Gateway.Services.Microservices;
 
@@ -14,11 +13,7 @@ public static class MicroservicesExtensions
 
         services
             .AddScoped<HttpClientAuthorizationDelegatingHandler>()
-            .AddHttpService<ICourseApiService, CourseHttpService>(Configurer.ApiClientOptions.CoursesPath);
-
-        /*services
-            .AddMQService<ICourseApiService, CourseMQService>()
-        */
+            .AddHttpService<ICalculationApiService, CalculationHttpService>(Configurer.ApiClientOptions.CalculationPath);
 
         return services;
     }
