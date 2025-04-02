@@ -3,14 +3,14 @@ name: Build and deploy ASP.Net Core app to Azure Web App - Healpathy
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
@@ -39,8 +39,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
+      id-token: write
+      contents: read
 
     steps:
       - name: Download artifact from build job

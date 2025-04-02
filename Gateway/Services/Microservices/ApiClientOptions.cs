@@ -2,7 +2,5 @@
 
 public class ApiClientOptions
 {
-    public string CoursesPath { get; set; }
-    public string EnrollingPath { get; set; }
-    public string AssessmentPath { get; set; }
+    public string CalculationPath { get; set; }
 }
