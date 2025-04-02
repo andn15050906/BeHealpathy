@@ -137,7 +137,7 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
             command.UserId,
             JsonSerializer.Serialize(dto),
             NotificationType.ReportUser,
-            PreSet.SystemUserId
+            dto.UserId
         );
     }
 
@@ -149,7 +149,7 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
             command.UserId,
             JsonSerializer.Serialize(dto),
             NotificationType.UserBanned,
-            PreSet.SystemUserId
+            dto.UserId
         );
     }
 
