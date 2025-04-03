@@ -76,6 +76,8 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
             return _ => _.LeafCategoryId == dto.CategoryId;
         if (dto.InstructorId is not null)
             return _ => _.InstructorId == dto.InstructorId;
+        if (dto.CreatorId is not null)
+            return _ => _.CreatorId == dto.CreatorId;
         return null;
     }
 

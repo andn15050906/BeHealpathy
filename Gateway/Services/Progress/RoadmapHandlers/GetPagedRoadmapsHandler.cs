@@ -4,6 +4,8 @@ using Contract.Helpers;
 using Contract.Requests.Progress.RoadmapRequests;
 using Contract.Requests.Progress.RoadmapRequests.Dtos;
 using Contract.Responses.Progress;
+using Contract.Responses.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Progress.RoadmapHandlers;
 
@@ -20,6 +22,7 @@ public class GetPagedRoadmapsHandler(HealpathyContext context, IAppLogger logger
                 request.Rq.PageIndex,
                 request.Rq.PageSize,
                 false
+
             );
             var result = await query.ExecuteWithOrderBy(_ => _.LastModificationTime);
 
@@ -33,6 +36,9 @@ public class GetPagedRoadmapsHandler(HealpathyContext context, IAppLogger logger
 
     private Expression<Func<Roadmap, bool>>? GetPredicate(QueryRoadmapDto dto)
     {
+        if (dto.CreatorId is not null)
+            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
+
         return _ => !_.IsDeleted;
     }
 }

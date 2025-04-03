@@ -10,6 +10,7 @@ public sealed class QueryCourseDto : PagingQueryDto
     public CourseLevel? Level { get; set; }
     public Guid? CategoryId { get; set; }
     public Guid? InstructorId { get; set; }
+    public Guid? CreatorId { get; set; }
 
     // Single
     //public Guid SectionId { get; set; }
