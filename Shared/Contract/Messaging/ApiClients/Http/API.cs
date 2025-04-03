@@ -2,12 +2,35 @@
 using Contract.Requests.Courses.LectureRequests;
 using Contract.Requests.Shared.BaseRequests.Comments;
 using Contract.Requests.Shared.BaseRequests.Reviews;
+using Contract.Requests.Statistics;
 using Core.Helpers;
 
 namespace Contract.Messaging.ApiClients.Http;
 
 public static class API
 {
+    public static class Calculation
+    {
+        public const string MLBaseUri = "api/ml";
+
+        public static string PredictUri(GetSentimentPredictionQuery query)
+            =>  $"{MLBaseUri}?{QueryBuilder.BuildQuery(query)}";
+
+
+
+
+
+
+        public const string RecommendationBaseUri = "api/recommendation";
+
+        public static string GetRecommendationCourses()
+            => $"{RecommendationBaseUri}/courses";
+
+        public static string GetRecommendationArticles()
+            => $"{RecommendationBaseUri}/articles";
+    }
+
+
     public static class Courses
     {
         public const string CategoryBaseUri = "api/categories";

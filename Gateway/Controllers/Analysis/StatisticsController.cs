@@ -2,17 +2,16 @@
 using Contract.Domain.ProgressAggregates;
 using Contract.Domain.UserAggregate.Constants;
 using Contract.Messaging.ApiClients.Http;
+using Contract.Requests.Statistics;
 using Contract.Responses.Identity;
+using Contract.Responses.Statistics;
 using Core.Helpers;
 using Gateway.Services.AI.ChatBot;
-using Gateway.Services.AI.Recommendation;
 using Gateway.Services.AI.Translator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MLService;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Gateway.Controllers.Analysis;
 
@@ -52,7 +51,10 @@ public sealed class StatisticsController : ContractController
     [HttpGet("sentiment")]
     [Authorize]
     [ResponseCache(Duration = 180)]
-    public async Task<IActionResult> GetSentimentAnalysis([FromQuery] QueryStatisticsDto dto, [FromServices] HealpathyContext context, [FromServices] IChatbotClient chatbotClient)
+    public async Task<IActionResult> GetSentimentAnalysis(
+        [FromQuery] QueryStatisticsDto dto, [FromServices] HealpathyContext context,
+        [FromServices] IChatbotClient chatbotClient, [FromServices] ICalculationApiService calculationApiService
+        )
     {
         var userId = ClientId;
         if (dto.UserId is not null && User.IsInRole(RoleConstants.ADMIN))
@@ -135,8 +137,6 @@ public sealed class StatisticsController : ContractController
 
 
 
-        var dataPath = Path.Combine(Directory.GetCurrentDirectory(), "ML", "wikiDetoxAnnotated40kRows.tsv");
-        var modelPath = Path.Combine(Directory.GetCurrentDirectory(), "ML", "SentimentModel.zip");
         Dictionary<DateTime, Output.Analysis> outputs = [];
         foreach (var input in inputs)
         {
@@ -146,8 +146,10 @@ public sealed class StatisticsController : ContractController
             if (input.Value.Messages is not null && input.Value.Messages.Count > 0)
             {
                 var messageInput = string.Join("\n", input.Value.Messages);
-                var prediction = new BertExecutor(dataPath, modelPath).Predict(messageInput);
-                analysis.Prediction = prediction;
+                var query = new GetSentimentPredictionQuery(messageInput);
+                var prediction = await calculationApiService.PredictSentiment(query);
+                if (prediction.IsSuccessful)
+                    analysis = prediction.Data!;
             }
             outputs.Add(input.Key, analysis);
         }
