@@ -22,6 +22,12 @@ public sealed class ArticlesController : ContractController
         GetPagedArticlesQuery query = new(dto);
         return await Send(query);
     }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        GetArticleByIdQuery query = new(id);
+        return await Send(query);
+    }
 
     [HttpPost]
     [Authorize]
