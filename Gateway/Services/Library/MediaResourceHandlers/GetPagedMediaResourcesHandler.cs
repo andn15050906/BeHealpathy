@@ -47,6 +47,8 @@ public sealed class GetPagedMediaResourcesHandler : RequestHandler<GetPagedMedia
 
     private Expression<Func<MediaResource, bool>>? GetPredicate(QueryMediaResourceDto dto)
     {
+        if (dto.CreatorId is not null)
+            return _ => _.CreatorId == dto.CreatorId && !_.IsDeleted;
         if (dto.Description is not null)
             return _ => _.Description.Contains(dto.Description) && !_.IsDeleted;
         if (dto.Artist is not null)
