@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Calculation.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/you-may-like")]
 public class RecommendationController : ControllerBase
 {
     private readonly RecommendClient _recommendClient;
@@ -13,6 +13,7 @@ public class RecommendationController : ControllerBase
     private readonly string _recommendationKey = "935eb67488f0490049bd08c39c2912a9";
     private readonly string _indexCourse = "courses";
     private readonly string _indexArticles = "articles";
+    private readonly string _indexPoses = "poses";
 
     public RecommendationController()
     {
@@ -40,7 +41,6 @@ public class RecommendationController : ControllerBase
 
         var hits = response.Results.SelectMany(r => r.Hits).ToList();
         return Ok(hits);
-
     }
 
     [HttpGet("articles")]
@@ -55,6 +55,29 @@ public class RecommendationController : ControllerBase
                         new TrendingItemsQuery
                         {
                             IndexName = _indexArticles,
+                            Model = TrendingItemsModel.TrendingItems
+                        }
+                    )
+                }
+            }
+        );
+
+        var hits = response.Results.SelectMany(r => r.Hits).ToList();
+        return Ok(hits);
+    }
+
+    [HttpGet("poses")]
+    public async Task<IActionResult> GetRecommendationPoses()
+    {
+        var response = await _recommendClient.GetRecommendationsAsync(
+            new GetRecommendationsParams
+            {
+                Requests = new List<RecommendationsRequest>
+                {
+                    new RecommendationsRequest(
+                        new TrendingItemsQuery
+                        {
+                            IndexName = _indexPoses,
                             Model = TrendingItemsModel.TrendingItems
                         }
                     )
