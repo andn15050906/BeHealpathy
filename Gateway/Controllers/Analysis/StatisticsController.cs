@@ -6,12 +6,11 @@ using Contract.Requests.Statistics;
 using Contract.Responses.Identity;
 using Contract.Responses.Statistics;
 using Core.Helpers;
-using Gateway.Services.AI.ChatBot;
-using Gateway.Services.AI.Translator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using System.Text.Json;
 
 namespace Gateway.Controllers.Analysis;
 
@@ -50,10 +49,9 @@ public sealed class StatisticsController : ContractController
 
     [HttpGet("sentiment")]
     [Authorize]
-    [ResponseCache(Duration = 180)]
+    //[ResponseCache(Duration = 180)]
     public async Task<IActionResult> GetSentimentAnalysis(
-        [FromQuery] QueryStatisticsDto dto, [FromServices] HealpathyContext context,
-        [FromServices] IChatbotClient chatbotClient, [FromServices] ICalculationApiService calculationApiService
+        [FromQuery] QueryStatisticsDto dto, [FromServices] HealpathyContext context, [FromServices] ICalculationApiService calculationApiService
         )
     {
         var userId = ClientId;
@@ -69,16 +67,16 @@ public sealed class StatisticsController : ContractController
         }
 
         // MessageInputs
-        var chats = await context.ChatMessages
+        var chatInputs = await context.ChatMessages
             .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
             .Select(_ => new Input.Message(_.CreationTime, _.Content))
             .ToListAsync();
-        var diaryNotes = await context.DiaryNotes
+        var diaryNoteInputs = await context.DiaryNotes
             .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
             .Select(_ => new Input.Message(_.CreationTime, _.Content))
             .ToListAsync();
-        var messages = new List<Input.Message>();
-        messages = [..chats, ..diaryNotes];
+        var messageInputs = new List<Input.Message>();
+        messageInputs = [..chatInputs, ..diaryNoteInputs];
 
         // Input.Reactions
         var articleReactions = await context.ArticleReactions
@@ -105,18 +103,59 @@ public sealed class StatisticsController : ContractController
         // ArticleInputs
 
         // MediaInputs
+        List<Guid> mediaIds = [];
+        List<Input.Media> mediaInputs = [];
+        var mediaViewedLogs = await context.ActivityLogs
+            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.Content.Contains("Media_Viewed"))
+            .ToListAsync();
+        foreach (var mediaViewLog in mediaViewedLogs)
+        {
+            try
+            {
+                var log = JsonSerializer.Deserialize<MediaViewedLog>(mediaViewLog.Content);
+                var logContent = JsonSerializer.Deserialize<MediaViewedLog.MediaViewedLogContent>(log?.Content ?? string.Empty);
+                var logInnerContent = JsonSerializer.Deserialize<MediaViewedLog.MediaViewedLogContentContent>(logContent?.Content ?? string.Empty, JsonSerializerOptions.Web);
+                mediaIds.Add(logInnerContent?.Id ?? Guid.Empty);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
+                mediaIds.Add(Guid.Empty);
+            }
+        }
+        var medias = await context.MediaResources
+            .Where(_ => mediaIds.Contains(_.Id))
+            .ToListAsync();
+        for (int i = 0; i < mediaViewedLogs.Count; i++)
+        {
+            var media = medias.FirstOrDefault(_ => _.Id == mediaViewedLogs[i].Id);
+            if (media is null || string.IsNullOrWhiteSpace(media.Description))
+                continue;
+            mediaInputs.Add(new Input.Media(
+                mediaViewedLogs[i].CreationTime,
+                media.Description,
+                media.Title,
+                media.Type.ToString()
+            ));
+        }
 
         // RoutineInputs
+        var routineInputs = await context.Routines
+            .Where(_ => _.CreatorId == userId)
+            .Select(_ => new Input.Routine(_.CreationTime, _.Title, _.Description, _.Objective, string.Empty, new List<Input.RoutineLog>()))
+            .ToListAsync();
 
 
 
         var groupedInput = new Input.DataCollection
         {
             UserId = userId,
-            MessageInputs = messages,
+            MessageInputs = messageInputs,
             ReactionInputs = [.. articleReactions, .. lectureReactions, .. messageReactions],
             CourseInputs = courses,
             SubmissionInputs = await GetUserSubmissions(context, userId, startTime, endTime),
+            MediaInputs = mediaInputs,
+            RoutineInputs = routineInputs,
             PreferenceInputs = await GetUserPreferences(context, userId)
         };
 
@@ -134,25 +173,42 @@ public sealed class StatisticsController : ContractController
         foreach (var submissionInput in groupedInput.SubmissionInputs)
             foreach (var band in submissionInput.SurveyBandInputs)
                 inputs[submissionInput.StartedAt.Date].Metrics_Rating.Add(band.Metrics, band.Rating);
+        //...
+        foreach (var mediaInput in groupedInput.MediaInputs)
+            inputs[mediaInput.StartedAt.Date].Messages.Add(mediaInput.Title);
+        foreach (var routineInput in groupedInput.RoutineInputs)
+            inputs[routineInput.StartedAt.Date].Messages.Add(routineInput.Title);
 
 
 
         Dictionary<DateTime, Output.Analysis> outputs = [];
+        var tasks = new List<Task>();
         foreach (var input in inputs)
         {
-            var analysis = new Output.Analysis();
-            //var message = await GeminiClient.Instance.Prompt(dto.Content);
-
-            if (input.Value.Messages is not null && input.Value.Messages.Count > 0)
+            tasks.Add(Task.Run(async () =>
             {
-                var messageInput = string.Join("\n", input.Value.Messages);
-                var query = new GetSentimentPredictionQuery(messageInput);
-                var prediction = await calculationApiService.PredictSentiment(query);
-                if (prediction.IsSuccessful)
-                    analysis = prediction.Data!;
-            }
-            outputs.Add(input.Key, analysis);
+                var analysis = new Output.Analysis();
+                //var message = await GeminiClient.Instance.Prompt(dto.Content);
+
+                if (input.Value.Messages is not null && input.Value.Messages.Count > 0)
+                {
+                    var messageInput = string.Join(" ", input.Value.Messages);
+                    var prediction = await calculationApiService.PredictSentiment(new GetSentimentPredictionQuery(messageInput));
+                    if (prediction.IsSuccessful)
+                        analysis = prediction.Data!;
+                }
+                else if (outputs.Count > 0)
+                {
+                    analysis = outputs.Last().Value;
+                }
+
+                lock (outputs)
+                {
+                    outputs.Add(input.Key, analysis);
+                }
+            }));
         }
+        await Task.WhenAll(tasks);
         return Ok(outputs);
     }
 
@@ -334,4 +390,27 @@ public sealed class StatisticsController : ContractController
         inputs.Add(date.Date, value);
         return null;
     }*/
+
+    // Content
+    //   Content
+    //     Event
+    //     Id
+    // GenericType
+
+    public class MediaViewedLog
+    {
+        public class MediaViewedLogContent
+        {
+            public string Content { get; set; }
+        }
+
+        public class MediaViewedLogContentContent
+        {
+            public string Event { get; set; }
+            public Guid Id { get; set; }
+        }
+
+        public string Content { get; set; }
+        public string GenericType { get; set; }
+    }
 }

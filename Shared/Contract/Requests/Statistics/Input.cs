@@ -47,8 +47,9 @@ public class Input
         public string Content { get; set; } = content;
     }
 
-    public class Routine(string title, string description, string objective, string frequency, List<RoutineLog> logs)
+    public class Routine(DateTime startedAt, string title, string description, string objective, string frequency, List<RoutineLog> logs)
     {
+        public DateTime StartedAt { get; set; } = startedAt;
         public string Title { get; set; } = title;
         public string Description { get; set; } = description;
         public string Objective { get; set; } = objective;
