@@ -7,11 +7,17 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options => options.AddPolicy(POLICY, builder =>
-    builder.WithOrigins("http://localhost:5173")
-           .AllowCredentials()
-           .AllowAnyHeader()
-           .AllowAnyMethod()
-           .WithExposedHeaders("WWW-Authenticate"))
+    builder.WithOrigins(
+            [
+                "http://localhost:5173",
+                "https://healpathy.netlify.app",
+                "https://healpathy-gdftexbcfga9g5cs.southeastasia-01.azurewebsites.net"
+            ]
+        )
+        .AllowCredentials()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithExposedHeaders("WWW-Authenticate"))
 );
 
 var app = builder.Build();

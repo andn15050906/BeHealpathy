@@ -5,8 +5,8 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Gateway.Services.Community.ConversationHandlers;
 
-public sealed class CreateConversationHandler(HealpathyContext context, IAppLogger logger)
-    : RequestHandler<CreateConversationCommand, HealpathyContext>(context, logger)
+public sealed class CreateConversationHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<CreateConversationCommand, HealpathyContext>(context, logger, cache)
 {
 
 

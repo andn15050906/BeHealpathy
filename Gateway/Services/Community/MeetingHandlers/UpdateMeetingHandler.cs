@@ -5,12 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Community.MeetingHandlers;
 
-public sealed class UpdateMeetingHandler : RequestHandler<UpdateMeetingCommand, HealpathyContext>
+public sealed class UpdateMeetingHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
+    : RequestHandler<UpdateMeetingCommand, HealpathyContext>(context, logger, cache)
 {
-    public UpdateMeetingHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
-
-
-
     public override async Task<Result> Handle(UpdateMeetingCommand command, CancellationToken cancellationToken)
     {
         var entity = await _context.Meetings.FirstOrDefaultAsync(_ => _.Id == command.Rq.Id);
