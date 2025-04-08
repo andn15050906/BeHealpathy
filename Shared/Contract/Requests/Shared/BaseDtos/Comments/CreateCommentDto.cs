@@ -7,9 +7,8 @@ public sealed class CreateCommentDto
 {
     public Guid SourceId { get; set; }
 
-    [Required]
     [StringLength(255)]
-    public string Content { get; set; }
+    public string Content { get; set; } = string.Empty;
 
     public List<CreateMediaDto>? Medias { get; set; }
 
