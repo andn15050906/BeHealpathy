@@ -123,7 +123,7 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
         return dto.UserIds.Select(_ => new Notification(
             Guid.NewGuid(),
             command.UserId,
-            JsonSerializer.Serialize(dto.ConversationId),
+            JsonSerializer.Serialize(dto),
             NotificationType.InviteMember,
             _
         ));
