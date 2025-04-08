@@ -15,6 +15,8 @@ public class EnrollmentModel
 
     public Guid? BillId { get; set; }
 
+    public Guid CourseId { get; set; }
+
 
 
 
@@ -29,6 +31,8 @@ public class EnrollmentModel
             LastModificationTime = _.LastModificationTime,
 
             Status = _.Status,
-            BillId = _.BillId
+            BillId = _.BillId,
+
+            CourseId = _.CourseId
         };
 }
