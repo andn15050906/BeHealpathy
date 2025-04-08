@@ -5,6 +5,8 @@ namespace Contract.Requests.Courses.LectureRequests.Dtos;
 
 public sealed class CreateLectureDto
 {
+    public Guid? Id { get; set; }                           // not set from client
+
     [Required]
     [StringLength(100)]
     public string Title { get; set; }
