@@ -16,7 +16,6 @@ public class EnrollmentModel
     public Guid? BillId { get; set; }
     public Guid CourseId { get; set; }
 
-    public Guid CourseId { get; set; }
 
 
 
@@ -33,7 +32,5 @@ public class EnrollmentModel
             CourseId = _.CourseId,
             Status = _.Status,
             BillId = _.BillId,
-
-            CourseId = _.CourseId
         };
 }

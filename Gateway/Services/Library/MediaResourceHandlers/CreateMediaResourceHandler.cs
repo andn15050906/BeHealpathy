@@ -46,7 +46,7 @@ public class CreateMediaResourceHandler(HealpathyContext context, IAppLogger log
 
         return new MediaResource(
             command.Id, command.UserId,
-            command.Rq.Description, command.Rq.Artist, command.Media.Title, type
+            command.Rq.Description, command.Rq.Artist, command.Rq.Title, type
         );
     }
 }
