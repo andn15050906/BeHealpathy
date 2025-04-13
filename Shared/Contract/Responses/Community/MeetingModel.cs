@@ -11,12 +11,12 @@ public sealed class MeetingModel
     public DateTime CreationTime { get; set; }
     public DateTime LastModificationTime { get; set; }
 
-    public string Title { get; set; }
-    public string Description { get; set; }
+    public string Title { get; set; }                               = string.Empty;
+    public string Description { get; set; }                         = string.Empty;
     public DateTime StartAt { get; set; }
     public DateTime EndAt { get; set; }
     public int MaxParticipants { get; set; }
-    public List<MeetingParticipantModel> Participants { get; set; }
+    public List<MeetingParticipantModel> Participants { get; set; } = [];
 
 
 
@@ -43,7 +43,6 @@ public sealed class MeetingModel
                 CreatorId = _.CreatorId,
                 CreationTime = _.CreationTime,
                 MeetingId = _.MeetingId,
-                UserId = _.UserId,
                 IsHost = _.IsHost,
                 Status = _.Status
             }).ToList()
@@ -69,7 +68,6 @@ public sealed class MeetingModel
                 CreatorId = _.CreatorId,
                 CreationTime = _.CreationTime,
                 MeetingId = _.MeetingId,
-                UserId = _.UserId,
                 IsHost = _.IsHost,
                 Status = _.Status
             }).ToList()

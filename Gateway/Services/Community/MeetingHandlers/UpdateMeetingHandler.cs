@@ -36,7 +36,7 @@ public sealed class UpdateMeetingHandler(HealpathyContext context, IAppLogger lo
             if (addedParticipants is not null)
             {
                 foreach (var participant in addedParticipants)
-                    _cache.Add(participant.UserId, new Events.Meeting_Joined(entity.Id));
+                    _cache.Add(participant.CreatorId, new Events.Meeting_Joined(entity.Id));
             }
             return Ok();
         }
