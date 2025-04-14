@@ -1,4 +1,4 @@
-﻿using Contract.Domain.LibraryAggregate;
+﻿﻿using Contract.Domain.LibraryAggregate;
 using Contract.Helpers;
 using Contract.Requests.Community.ArticleRequests;
 using Contract.Requests.Library.ArticleRequests.Dtos;
@@ -27,25 +27,10 @@ public sealed class GetPagedArticlesHandler : RequestHandler<GetPagedArticlesQue
                 false,
                 _ => _.Tags, _ => _.Comments, _ => _.Reactions, _ => _.Creator
             );
+            var result = await query.ExecuteWithOrderBy(_ => _.LastModificationTime);
 
-            // Sắp xếp theo tiêu chí được chỉ định
-            if (request.Rq.SortOrder == "name-asc")
-            {
-                query = query.OrderBy(_ => _.Title);
-            }
-            else if (request.Rq.SortOrder == "name-desc")
-            {
-                query = query.OrderByDescending(_ => _.Title);
-            }
-            else
-            {
-                query = query.OrderBy(_ => _.LastModificationTime);
-            }
-
-            var result = await query.ToListAsync(cancellationToken);
-
-            List<Guid> thumbSourceIds = result.Select(_ => _.Id).ToList();
-            List<Guid> sectionSourceIds = result.SelectMany(_ => _.Sections).Select(_ => _.Id).ToList();
+            List<Guid> thumbSourceIds = result.Items.Select(_ => _.Id).ToList();
+            List<Guid> sectionSourceIds = result.Items.SelectMany(_ => _.Sections).Select(_ => _.Id).ToList();
             thumbSourceIds.AddRange(sectionSourceIds);
             var sourceIds = thumbSourceIds;
             var medias = await _context.Multimedia
@@ -58,7 +43,7 @@ public sealed class GetPagedArticlesHandler : RequestHandler<GetPagedArticlesQue
                 .Select(ReactionModel.MapExpression)
                 .ToListAsync(cancellationToken);
 
-            foreach (var article in result)
+            foreach (var article in result.Items)
             {
                 article.Thumb = medias.FirstOrDefault(_ => _.SourceId == article.Id);
                 foreach (var section in article.Sections)
