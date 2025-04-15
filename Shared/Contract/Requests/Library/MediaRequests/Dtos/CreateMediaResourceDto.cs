@@ -6,6 +6,7 @@ public sealed class CreateMediaResourceDto
 {
     public string Description { get; set; }
     public string Artist { get; set; }
+    public string Title { get; set; }
 
     public CreateMediaDto Media { get; set; }
 }
