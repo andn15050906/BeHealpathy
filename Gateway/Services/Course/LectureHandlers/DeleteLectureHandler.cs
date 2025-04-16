@@ -19,6 +19,7 @@ public sealed class DeleteLectureHandler : RequestHandler<DeleteLectureCommand, 
         try
         {
             _context.Lectures.DeleteExt(entity);
+            await _context.SaveChangesAsync(cancellationToken);
             return Ok();
         }
         catch (Exception ex)

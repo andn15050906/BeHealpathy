@@ -37,6 +37,7 @@ public sealed class LectureModel
 
             Title = _.Title,
             Content = _.Content,
+            ContentSummary = _.ContentSummary,
             IsPreviewable = _.IsPreviewable,
             CourseId = _.CourseId,
             //Materials = _.Materials,

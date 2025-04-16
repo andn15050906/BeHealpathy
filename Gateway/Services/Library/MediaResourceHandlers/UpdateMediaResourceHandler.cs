@@ -47,12 +47,10 @@ public class UpdateMediaResourceHandler : RequestHandler<UpdateMediaResourceComm
             entity.Description = command.Rq.Description;
         if (command.Rq.Artist is not null)
             entity.Artist = command.Rq.Artist;
-        if (command.Rq.Title is not null)
-            entity.Title = command.Rq.Title;
 
-        if (command.Media is not null)
+        if (command.Rq.ReplacedMedia is not null)
         {
-            entity.Title = command.Media.Title;
+            entity.Title = command.Rq.ReplacedMedia.Title;
             entity.Type = command.Media.Type switch
             {
                 MediaType.Image => MediaResourceType.Image,
