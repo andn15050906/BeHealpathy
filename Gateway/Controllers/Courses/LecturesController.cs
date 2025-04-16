@@ -16,7 +16,8 @@ public sealed class LecturesController : ContractController
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] QueryLectureDto dto)
     {
-        GetPagedLecturesQuery query = new(dto, ClientId);
+        var clientId = HttpContext.GetClientId();
+        GetPagedLecturesQuery query = new(dto, clientId);
         return await Send(query);
     }
 

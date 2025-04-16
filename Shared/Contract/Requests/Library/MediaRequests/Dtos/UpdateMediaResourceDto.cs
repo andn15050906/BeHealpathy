@@ -8,6 +8,7 @@ public sealed class UpdateMediaResourceDto
 
     public string Description { get; set; }
     public string Artist { get; set; }
+    public string Title { get; set; }
 
     public CreateMediaDto ReplacedMedia { get; set; }
 }

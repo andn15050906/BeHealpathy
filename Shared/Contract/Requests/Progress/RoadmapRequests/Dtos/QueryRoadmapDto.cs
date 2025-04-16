@@ -2,4 +2,5 @@
 
 public sealed class QueryRoadmapDto : PagingQueryDto
 {
+    public Guid? CreatorId { get; set; }
 }

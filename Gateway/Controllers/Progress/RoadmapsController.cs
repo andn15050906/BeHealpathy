@@ -19,6 +19,12 @@ public sealed class RoadmapsController : ContractController
         GetPagedRoadmapsQuery query = new(dto);
         return await Send(query);
     }
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        GetRoadmapByIdQuery query = new(id);
+        return await Send(query);
+    }
 
     [HttpPost]
     [Authorize]

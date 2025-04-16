@@ -123,7 +123,7 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
         return dto.UserIds.Select(_ => new Notification(
             Guid.NewGuid(),
             command.UserId,
-            JsonSerializer.Serialize(dto.ConversationId),
+            JsonSerializer.Serialize(dto),
             NotificationType.InviteMember,
             _
         ));
@@ -137,7 +137,7 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
             command.UserId,
             JsonSerializer.Serialize(dto),
             NotificationType.ReportUser,
-            PreSet.SystemUserId
+            dto.UserId
         );
     }
 
@@ -149,7 +149,7 @@ public sealed class CreateNotificationHandler : RequestHandler<CreateNotificatio
             command.UserId,
             JsonSerializer.Serialize(dto),
             NotificationType.UserBanned,
-            PreSet.SystemUserId
+            dto.UserId
         );
     }
 

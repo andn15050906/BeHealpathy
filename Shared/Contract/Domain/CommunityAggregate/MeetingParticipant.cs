@@ -5,16 +5,14 @@ namespace Contract.Domain.CommunityAggregate;
 
 public sealed class MeetingParticipant : CreationAuditedDomainObject
 {
-    // PK
     public Guid MeetingId { get; set; }
-    public Guid UserId { get; set; }
 
     // Attributes
     public bool IsHost { get; set; }
     public RegistrationStatus Status { get; set; }
 
     // Navigations
-    public User User { get; set; }
+    public User Creator { get; set; }                       // Creator != Meeting Creator
 
 
 

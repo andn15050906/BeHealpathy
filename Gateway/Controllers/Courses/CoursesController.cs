@@ -3,6 +3,7 @@ using Contract.Domain.UserAggregate.Constants;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Courses.CourseRequests;
 using Contract.Requests.Courses.CourseRequests.Dtos;
+using Contract.Requests.Shared.BaseDtos.Media;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -94,6 +95,19 @@ public sealed class CoursesController : ContractController
             var image = await fileService.SaveImageAndUpdateDto(dto.Thumb, id);
             if (image is not null)
                 medias.Add(image);
+        }
+        if (dto.Lectures is not null)
+        {
+            List<(CreateMediaDto, Guid)> mediaDtos = [];
+            foreach (var lecture in dto.Lectures)
+            {
+                lecture.Id = Guid.NewGuid();
+                if (lecture.Medias is not null)
+                    foreach (var media in lecture.Medias)
+                        mediaDtos.Add((media, (Guid)lecture.Id!));
+            }
+            var materials = await fileService.SaveMediasAndUpdateDtos(mediaDtos);
+            medias.AddRange(materials);
         }
 
         var command = new CreateCourseCommand(id, dto, ClientId, (Guid)AdvisorId, medias);

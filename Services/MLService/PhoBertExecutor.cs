@@ -4,48 +4,54 @@ using static Microsoft.ML.DataOperationsCatalog;
 
 namespace MLService;
 
-public sealed class BertExecutor
+public sealed class PhoBertExecutor
 {
+    private static Dictionary<int, PredictionEngine<PhoBertSentimentIssue, SentimentPrediction>> _engines = [];
+
     private readonly string _dataPath;
     private readonly string _modelPath;
-    private static PredictionEngine<BertSentimentIssue, SentimentPrediction>? _engine = null;
+    private readonly int _seed;
 
-    public BertExecutor(string dataPath, string modelPath)
+    public PhoBertExecutor(string dataPath, string modelPath, int seed)
     {
         _dataPath = dataPath;
         _modelPath = modelPath;
 
         // Create prediction engine related to the loaded trained model
-        if (_engine == null)
+        if (!_engines.TryGetValue(seed, out _))
         {
             var result = PrepareContext();
             var mlContext = result.Item1;
             var trainResult = result.Item2;
-            _engine = mlContext.Model.CreatePredictionEngine<BertSentimentIssue, SentimentPrediction>(trainResult.TrainedModel);
+            lock (_engines)
+            {
+                _engines.Add(seed, mlContext.Model.CreatePredictionEngine<PhoBertSentimentIssue, SentimentPrediction>(trainResult.TrainedModel));
+            }
         }
+        _seed = seed;
     }
 
     public SentimentPrediction Predict(string inputText)
     {
         // Make a single test prediction, loading the model from .ZIP file
-        return _engine!.Predict(new BertSentimentIssue { Text = inputText });
+        return _engines[_seed].Predict(new PhoBertSentimentIssue { Text = inputText });
     }
 
     private (MLContext, BertTrainResult) PrepareContext()
     {
         // Create MLContext to be shared across the model creation workflow objects 
         // Set a random seed for repeatable/deterministic results across multiple trainings.
-        var mlContext = new MLContext(seed: 1);
+        var mlContext = new MLContext(_seed);
 
         // STEP 1: Common data loading configuration
-        IDataView dataView = mlContext.Data.LoadFromTextFile<BertSentimentIssue>(_dataPath, hasHeader: true);
+        IDataView dataView = mlContext.Data.LoadFromTextFile<PhoBertSentimentIssue>(_dataPath, hasHeader: true);
 
         TrainTestData trainTestSplit = mlContext.Data.TrainTestSplit(dataView, testFraction: 0.2);
         IDataView trainingData = trainTestSplit.TrainSet;
         IDataView testData = trainTestSplit.TestSet;
 
         // STEP 2: Common data process configuration with pipeline data transformations          
-        var dataProcessPipeline = mlContext.Transforms.Text.FeaturizeText(outputColumnName: "Features", inputColumnName: nameof(BertSentimentIssue.Text));
+        var dataProcessPipeline = mlContext.Transforms.Text.FeaturizeText(outputColumnName: "Features", inputColumnName: nameof(PhoBertSentimentIssue.Text));
 
         // STEP 3: Set the training algorithm, then create and config the modelBuilder                            
         var trainer = mlContext.BinaryClassification.Trainers.SdcaLogisticRegression(labelColumnName: "Label", featureColumnName: "Features");

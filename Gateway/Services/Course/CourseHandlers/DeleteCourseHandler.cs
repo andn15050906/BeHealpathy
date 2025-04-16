@@ -28,6 +28,7 @@ public sealed class DeleteCourseHandler : RequestHandler<DeleteCourseCommand, He
         {
             // Thực hiện xóa khóa học
             _context.Courses.DeleteExt(entity);
+            await _context.SaveChangesAsync(cancellationToken);
             return Ok();
         }
         catch (Exception ex)

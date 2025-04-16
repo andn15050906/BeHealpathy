@@ -50,7 +50,7 @@ public sealed class Course : AuditedEntity
 
     public Course(Guid id, Guid creatorId, Guid instructorId, Guid leafCategoryId,
         string title, string thumbUrl, string intro, string description, double price,
-        CourseLevel level, string outcomes, string requirements/*, List<Section> sections*/)
+        CourseLevel level, string outcomes, string requirements, List<Lecture> lectures)
     {
         Id = id;
         CreatorId = creatorId;
@@ -66,7 +66,7 @@ public sealed class Course : AuditedEntity
         Level = level;
         Outcomes = outcomes;
         Requirements = requirements;
-        //Sections = sections;
+        Lectures = lectures;
     }
 #pragma warning restore CS8618
 

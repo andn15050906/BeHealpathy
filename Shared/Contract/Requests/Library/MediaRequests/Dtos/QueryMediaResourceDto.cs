@@ -4,7 +4,7 @@ namespace Contract.Requests.Library.MediaRequests.Dtos;
 
 public sealed class QueryMediaResourceDto : PagingQueryDto
 {
-    // public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get; set; }
 
     public string? Description { get; set; }
     public string? Artist { get; set; }

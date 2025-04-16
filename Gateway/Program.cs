@@ -17,9 +17,7 @@ using Gateway.Services.Cache;
 using Gateway.Services.Background;
 using Hangfire;
 using Microsoft.Extensions.Options;
-using Net.payOS.Constants;
 using Net.payOS;
-using Gateway;
 
 const string POLICY = "Policy";
 var builder = WebApplication.CreateBuilder(args);
@@ -47,15 +45,13 @@ builder.Services
     .AddRealtimeService()
     .AddControllers();
 
-// Bind config section
-builder.Services.Configure<Gateway.PayOSConfig>(builder.Configuration.GetSection("PayOS"));
-
-// Register PayOS singleton with config
-builder.Services.AddSingleton<PayOS>(sp =>
-{
-    var config = sp.GetRequiredService<IOptions<Gateway.PayOSConfig>>().Value;
-    return new PayOS(config.ClientId, config.ApiKey, config.ChecksumKey);
-});
+builder.Services
+    .Configure<Gateway.PayOSConfig>(builder.Configuration.GetSection("PayOS"))
+    .AddSingleton(sp =>
+    {
+        var config = sp.GetRequiredService<IOptions<Gateway.PayOSConfig>>().Value;
+        return new PayOS(config.ClientId, config.ApiKey, config.ChecksumKey);
+    });
 
 
 

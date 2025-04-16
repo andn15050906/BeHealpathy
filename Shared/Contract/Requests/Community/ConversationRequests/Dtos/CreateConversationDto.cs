@@ -6,7 +6,7 @@ public sealed class CreateConversationDto
 {
     public string Title { get; set; }
     public bool IsPrivate { get; set; }
-    public CreateMediaDto Thumb { get; set; }
+    public CreateMediaDto? Thumb { get; set; }
 
     public List<CreateConversationMemberDto> Members { get; set; }
 }

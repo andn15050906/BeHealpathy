@@ -463,7 +463,7 @@ public sealed class HealpathyContext : BaseContext
                 .SetColumnsTypes(Columns)
                 .SetEnumParsing(_ => _.Status)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
-                .HasKey(_ => new { _.MeetingId, _.UserId });
+                .HasKey(_ => new { _.MeetingId, _.CreatorId });
         }
     }
     #endregion

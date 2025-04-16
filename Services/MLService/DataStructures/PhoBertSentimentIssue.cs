@@ -2,9 +2,9 @@
 
 namespace MLService.DataStructures;
 
-public sealed class SentimentIssue
+public sealed class PhoBertSentimentIssue
 {
-    [LoadColumn(0)]
+    [LoadColumn(1)]
     public bool Label { get; set; }
 
     [LoadColumn(2)]

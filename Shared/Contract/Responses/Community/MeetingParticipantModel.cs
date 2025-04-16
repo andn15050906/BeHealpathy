@@ -10,7 +10,6 @@ public sealed class MeetingParticipantModel
     public DateTime CreationTime { get; set; }
 
     public Guid MeetingId { get; set; }
-    public Guid UserId { get; set; }
     public bool IsHost { get; set; }
     public RegistrationStatus Status { get; set; }
 
@@ -22,7 +21,6 @@ public sealed class MeetingParticipantModel
             CreatorId = _.CreatorId,
             CreationTime = _.CreationTime,
             MeetingId = _.MeetingId,
-            UserId = _.UserId,
             IsHost = _.IsHost,
             Status = _.Status
         };

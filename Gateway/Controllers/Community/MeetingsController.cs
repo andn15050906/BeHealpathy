@@ -16,7 +16,7 @@ public class MeetingsController : ContractController
 
     [HttpGet]
     [Authorize]
-    public async Task<IActionResult> GetPaged(QueryMeetingDto dto)
+    public async Task<IActionResult> GetPaged([FromQuery] QueryMeetingDto dto)
     {
         GetPagedMeetingsQuery query = new(dto, ClientId);
         return await Send(query);

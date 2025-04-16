@@ -20,8 +20,8 @@ public sealed class RecommendationsController : ContractController
         var preferences = await StatisticsController.GetUserPreferences(context, ClientId);
 
         var roadmaps = await context.Roadmaps.ToListAsync();
-        var strictRoadmap = roadmaps.FirstOrDefault(_ => _.Title.ToLower().Contains("Strict".ToLower()));
-        var lightRoadmap = roadmaps.FirstOrDefault(_ => _.Title.ToLower() == "mental roadmap");
+        var strictRoadmap = roadmaps.FirstOrDefault(_ => _.Id == new Guid("74224472-5d06-4e89-b10c-d860b0a0f68c"));
+        var lightRoadmap = roadmaps.FirstOrDefault(_ => _.Id == new Guid("8cacd52d-bad9-4dbb-b361-f388fd3d46de"));
 
         var dassEvel = submissions.FirstOrDefault(_ => _.SurveyName.Contains("DASS"));
         if (dassEvel is not null)

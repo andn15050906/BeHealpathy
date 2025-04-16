@@ -88,4 +88,8 @@ public sealed record Events
     public record LectureComment_Created(Guid Id) : BaseIntegrationEvent;
     //LectureComment_Updated,
     //LectureReaction_Deleted,
+
+
+
+    public record Article_Read(Guid Id) : BaseIntegrationEvent;
 }
