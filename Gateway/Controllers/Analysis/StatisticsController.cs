@@ -106,7 +106,7 @@ public sealed class StatisticsController : ContractController
         List<Guid> mediaIds = [];
         List<Input.Media> mediaInputs = [];
         var mediaViewedLogs = await context.ActivityLogs
-            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.Content.Contains("Media_Viewed"))
+            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.Content.Contains("Media_Viewed") && _.CreationTime >= startTime && _.CreationTime <= endTime)
             .ToListAsync();
         foreach (var mediaViewLog in mediaViewedLogs)
         {
@@ -141,7 +141,7 @@ public sealed class StatisticsController : ContractController
 
         // RoutineInputs
         var routineInputs = await context.Routines
-            .Where(_ => _.CreatorId == userId)
+            .Where(_ => _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
             .Select(_ => new Input.Routine(_.CreationTime, _.Title, _.Description, _.Objective, string.Empty, new List<Input.RoutineLog>()))
             .ToListAsync();
 
