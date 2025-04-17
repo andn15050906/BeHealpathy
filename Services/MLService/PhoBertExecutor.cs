@@ -25,7 +25,8 @@ public sealed class PhoBertExecutor
             var trainResult = result.Item2;
             lock (_engines)
             {
-                _engines.Add(seed, mlContext.Model.CreatePredictionEngine<PhoBertSentimentIssue, SentimentPrediction>(trainResult.TrainedModel));
+                if (!_engines.TryGetValue(seed, out _))
+                    _engines.Add(seed, mlContext.Model.CreatePredictionEngine<PhoBertSentimentIssue, SentimentPrediction>(trainResult.TrainedModel));
             }
         }
         _seed = seed;
