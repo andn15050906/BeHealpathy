@@ -251,8 +251,8 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<Setting, object?>>, string> Columns => new()
         {
-            { _ => _.Title, VARCHAR100 },
-            { _ => _.Choice, VARCHAR100 }
+            { _ => _.Title, NVARCHAR100 },
+            { _ => _.Choice, NVARCHAR100 }
         };
 
         public override void Configure(EntityTypeBuilder<Setting> builder)
@@ -306,7 +306,7 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<Bill, object?>>, string> Columns => new()
         {
-            { _ => _.Action, VARCHAR100 },
+            { _ => _.Action, NVARCHAR100 },
             { _ => _.Note, NVARCHAR255 },
             // Amount
             { _ => _.Gateway, VARCHAR20 },
@@ -614,7 +614,7 @@ public sealed class HealpathyContext : BaseContext
         protected override Dictionary<Expression<Func<RoutineLog, object?>>, string> Columns => new()
         {
             // RoutineId
-            { _ => _.Content, VARCHAR100 }
+            { _ => _.Content, NVARCHAR100 }
         };
 
         public override void Configure(EntityTypeBuilder<RoutineLog> builder)
@@ -831,7 +831,7 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<Tag, object?>>, string> Columns => new()
         {
-            { _ => _.Title, VARCHAR100 }
+            { _ => _.Title, NVARCHAR100 }
         };
 
         public override void Configure(EntityTypeBuilder<Tag> builder)
@@ -910,7 +910,7 @@ public sealed class HealpathyContext : BaseContext
         protected override Dictionary<Expression<Func<Category, object?>>, string> Columns => new()
         {
             { _ => _.Path, VARCHAR255 },
-            { _ => _.Title, VARCHAR100 },
+            { _ => _.Title, NVARCHAR100 },
             { _ => _.Description, NVARCHAR1000 },
             // IsLeaf
             // CourseCount
