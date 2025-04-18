@@ -19,6 +19,7 @@ public sealed class CreateLectureDto
     public string ContentSummary { get; set; }
 
     public bool IsPreviewable { get; set; }
+    public Guid CourseId { get; set; }
 
     public List<CreateMediaDto>? Medias { get; set; }
 }

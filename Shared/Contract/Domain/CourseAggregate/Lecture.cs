@@ -29,7 +29,7 @@ public sealed class Lecture : AuditedEntity
 
     }
 
-    public Lecture(Guid id, Guid creatorId, string title, string content, string contentSummary, bool isPreviewable)
+    public Lecture(Guid id, Guid creatorId, string title, string content, string contentSummary, bool isPreviewable, Guid courseId)
     {
         Id = id;
         CreatorId = creatorId;
@@ -37,6 +37,7 @@ public sealed class Lecture : AuditedEntity
         Content = content;
         ContentSummary = contentSummary;
         IsPreviewable = isPreviewable;
+        CourseId = courseId;
     }
 #pragma warning restore CS8618
 }

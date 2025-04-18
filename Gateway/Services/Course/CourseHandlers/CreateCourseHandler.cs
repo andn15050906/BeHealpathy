@@ -34,7 +34,7 @@ public sealed class CreateCourseHandler(HealpathyContext context, IAppLogger log
     private static Course Adapt(CreateCourseCommand command)
     {
         var lectures = (command.Rq.Lectures ?? []).Select(_ =>
-            new Lecture(_.Id ?? Guid.NewGuid(), command.UserId, _.Title, _.Content, _.ContentSummary, _.IsPreviewable)
+            new Lecture(_.Id ?? Guid.NewGuid(), command.UserId, _.Title, _.Content, _.ContentSummary, _.IsPreviewable, command.Id)
         ).ToList();
 
         return new Course(

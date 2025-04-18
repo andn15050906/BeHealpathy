@@ -35,6 +35,7 @@ public class UpdateLectureHandler : RequestHandler<UpdateLectureCommand, Healpat
 
     private void ApplyChanges(Lecture entity, UpdateLectureCommand command)
     {
+        entity.Title = command.Rq.Title ?? string.Empty;
         entity.Content = command.Rq.Content ?? string.Empty;
         entity.ContentSummary = command.Rq.ContentSummary ?? string.Empty;
         entity.LastModificationTime = TimeHelper.Now;

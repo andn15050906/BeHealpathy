@@ -25,9 +25,6 @@ public sealed class CreateLectureHandler : RequestHandler<CreateLectureCommand, 
             }
             await Task.WhenAll(lectureTask, mediaTask);
             await _context.SaveChangesAsync(cancellationToken);
-
-            await _context.Lectures.InsertExt(entity);
-            await _context.SaveChangesAsync(cancellationToken);
             return Created();
         }
         catch (Exception ex)
@@ -38,6 +35,6 @@ public sealed class CreateLectureHandler : RequestHandler<CreateLectureCommand, 
 
     private static Lecture Adapt(CreateLectureCommand command, Guid userId)
     {
-        return new Lecture(command.Id, command.UserId, command.Rq.Title, command.Rq.Content, command.Rq.ContentSummary, command.Rq.IsPreviewable);
+        return new Lecture(command.Id, command.UserId, command.Rq.Title, command.Rq.Content, command.Rq.ContentSummary, command.Rq.IsPreviewable, command.Rq.CourseId);
     }
 }

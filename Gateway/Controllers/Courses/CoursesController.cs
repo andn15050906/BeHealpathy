@@ -124,6 +124,14 @@ public sealed class CoursesController : ContractController
         if (AdvisorId is null)
             return Forbid();
 
+        List<Multimedia> addedMedias = [];
+        if (dto.Thumb is not null)
+        {
+            var image = await fileService.SaveImageAndUpdateDto(dto.Thumb, dto.Id);
+            if (image is not null)
+                addedMedias.Add(image);
+        }
+
         //List<Multimedia> addedMedias = [];
         //var mediaDtos = dto.AddedMedias is null
         //    ? []
@@ -136,7 +144,7 @@ public sealed class CoursesController : ContractController
         //}
         //List<Guid> removedMedias = dto.RemovedMedias?.ToList() ?? [];
 
-        var command = new UpdateCourseCommand(dto, ClientId, (Guid)AdvisorId, null, null);
+        var command = new UpdateCourseCommand(dto, ClientId, (Guid)AdvisorId, addedMedias, null);
         return await Send(command);
     }
 
