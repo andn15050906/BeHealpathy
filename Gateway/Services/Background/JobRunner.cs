@@ -48,7 +48,14 @@ public sealed class JobRunner
                             foreach (var pendingMilestoneId in pendingMilestoneIdList)
                             {
                                 var pendingMilestone = phase.Milestones.First(_ => _.Id == pendingMilestoneId);
-                                var eventCount = logs.Count(_ => _.Content.Contains(pendingMilestone.EventName));
+                                var eventCount = logs.Count(_ =>
+                                    _.Content.Contains(pendingMilestone.EventName) ||
+                                    (_.Content.Contains(nameof(Events.DiaryNote_Updated)) && pendingMilestone.EventName == nameof(Events.DiaryNote_Created)) ||
+                                    (_.Content.Contains("question") && pendingMilestone.EventName == "QuestionOfTheDay_Answered") ||
+                                    //..
+                                    (_.Content.Contains("yoga") && pendingMilestone.EventName == "Yoga_Practiced") ||
+                                    (_.Content.Contains("media") && pendingMilestone.EventName == "Media_Viewed")
+                                );
                                 if (eventCount >= pendingMilestone.RepeatTimesRequired)
                                     addedMilestones.Add(pendingMilestoneId);
                             }
