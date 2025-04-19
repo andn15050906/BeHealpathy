@@ -21,7 +21,7 @@ public sealed class GetPagedRoutinesHandler : RequestHandler<GetPagedRoutinesQue
                 RoutineModel.MapExpression,
                 GetPredicate(request.Rq),
                 request.Rq.PageIndex,
-                request.Rq.PageSize,
+                byte.MaxValue,
                 false
             );
             var result = await query.ExecuteWithOrderBy(_ => _.LastModificationTime);
