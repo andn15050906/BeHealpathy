@@ -118,10 +118,10 @@ public sealed class CoursesController : ContractController
     /// Cập nhật thông tin của một khóa học
     /// </summary>
     [HttpPatch]
-    [Authorize(Roles = RoleConstants.ADVISOR)]
+    [Authorize(Roles = RoleConstants.ADVISOR + "," + RoleConstants.ADMIN)]
     public async Task<IActionResult> Update([FromForm] UpdateCourseDto dto, [FromServices] IFileService fileService)
     {
-        if (AdvisorId is null)
+        if (AdvisorId is null || ClientId.ToString() is null)
             return Forbid();
 
         List<Multimedia> addedMedias = [];
