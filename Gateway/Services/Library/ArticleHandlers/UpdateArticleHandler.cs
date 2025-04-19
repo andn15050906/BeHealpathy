@@ -68,6 +68,25 @@ public class UpdateArticleHandler : RequestHandler<UpdateArticleCommand, Healpat
             foreach (var tag in removedTags)
                 entity.Tags.Remove(tag);
 
+        if (command.Rq.Sections is not null)
+        {
+            foreach (var section in command.Rq.Sections)
+            {
+                var updatedSection = _context.ArticleSections.FirstOrDefault(_ => _.Id == section.Id);
+
+                if (updatedSection is not null)
+                {
+                    if (section.Header is not null)
+                    {
+                        updatedSection.Header = section.Header;
+                    }
+                    if (section.Content is not null)
+                    {
+                        updatedSection.Content = section.Content;
+                    }
+                }
+            }
+        }
         return entity;
     }
 }
