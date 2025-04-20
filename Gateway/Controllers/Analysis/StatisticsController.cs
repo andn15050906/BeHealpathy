@@ -199,7 +199,10 @@ public sealed class StatisticsController : ContractController
                 }
                 else if (outputs.Count > 0)
                 {
-                    analysis = outputs.ToList().Last().Value;
+                    lock (outputs)
+                    {
+                        analysis = outputs.ToList().Last().Value;
+                    }
                 }
 
                 lock (outputs)
