@@ -212,47 +212,127 @@ public sealed class StatisticsController : ContractController
         return Ok(outputs);
     }
 
-    /*[HttpGet("result")]
-    [Authorize]
-    public async Task<IActionResult> GetStatisticsResult([FromServices] ITranslateClient translateClient)
+    [HttpGet("report/general")]
+    [Authorize(Roles = RoleConstants.ADMIN)]
+    public async Task<IActionResult> GetGeneralReport([FromServices] HealpathyContext context)
     {
-        Input.Analysis input = new()
+        var totalUserCount = await context.Users
+            .CountAsync();
+        var totalUserCountOverMonths = await context.Users
+            .GroupBy(_ => new { _.CreationTime.Year, _.CreationTime.Month })
+            .Select(_ => new
+            {
+                Year = _.Key.Year,
+                Month = _.Key.Month,
+                Count = _.Count()
+            })
+            .OrderBy(_ => _.Year).ThenBy(_ => _.Month)
+            .ToListAsync();
+        var recentlyActiveUserCount = await context.ActivityLogs
+            .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-7))
+            .Select(_ => _.CreatorId)
+            .Distinct()
+            .CountAsync();
+
+
+
+        var totalPremiumUserCount = await context.Users
+            .CountAsync(_ => _.IsPremium);
+        var totalPremiumUserCountOverMonths = await context.Users
+            .Where(_ => _.IsPremium)
+            .GroupBy(_ => new { _.CreationTime.Year, _.CreationTime.Month })
+            .Select(_ => new
+            {
+                Year = _.Key.Year,
+                Month = _.Key.Month,
+                Count = _.Count()
+            })
+            .OrderBy(_ => _.Year).ThenBy(_ => _.Month)
+            .ToListAsync();
+
+
+
+        var revenue = await context.Bills
+            .SumAsync(_ => _.Amount);
+        var revenueOverWeeks = await context.Bills
+            .GroupBy(_ => new { _.CreationTime.Year, _.CreationTime.Month })
+            .Select(_ => new
+            {
+                Year = _.Key.Year,
+                Month = _.Key.Month,
+                Sum = _.Sum(b => b.Amount)
+            })
+            .OrderBy(r => r.Year).ThenBy(r => r.Month)
+            .ToListAsync();
+
+
+
+        /*var eventList = new string[]
         {
-            UserId = Guid.NewGuid(),
-            ChatInputs =
-            [
-                new(new DateTime(2025, 2, 28, 6, 0, 0), "Hôm nay mình cảm thấy hơi căng thẳng vì công việc."),
-                new(new DateTime(2025, 2, 28, 12, 30, 0), "Mình đã giải quyết xong vấn đề, cảm thấy tốt hơn rồi!"),
-            ]
+            //"QuestionOfTheDay_Answered",
+            //"Mood_Updated",
+            "Yoga_Practiced",
+            //"Course_Completed",
+            "Media_Viewed",
+            //General_Activity_Created
+
+            //"BillCreated",
+            "Submission_Created",
+            "Routine_Created",
+            //"Routine_Updated",
+            //"RoutineLog_Created",
+            //"RoutineLog_Updated",
+            "DiaryNote_Created",
+            //"DiaryNote_Updated",
+
+            "Article_Created",
+            "ArticleComment_Created",
+            //"ArticleReaction_Created",
+            //"MediaResource_Created",
+
+            "Conversation_Created",
+            "Conversation_Joined",
+            //"Conversation_Left",
+            "ChatMessage_Created",
+            //"MessageReaction_Created",
+            "Meeting_Created",
+            "Meeting_Joined",
+
+            //"Advisor_Created",
+            //"Course_Created",
+            "Course_Enrolled",
+            //"Course_Unenrolled",
+            "CourseReview_Created",
+            "LectureComment_Created",
+
+            "Article_Read",
         };
-
-        //... one by one
-        foreach (var message in input.ChatInputs)
+        Dictionary<string, int> activityLogCounts = [];
+        foreach (var eventName in eventList)
         {
-            message.Content = await translateClient.Translate(message.Content, "vi", "en");
-        }
+            activityLogCounts.Add(
+                eventName,
+                await context.ActivityLogs.CountAsync(_ => _.CreationTime > TimeHelper.Now.AddDays(-7) && _.Content.Contains(eventName))
+            );
+        }*/
 
-        // 28 - 02
-        // UserId
-        Output.Analysis output1 = new()
+
+
+        return Ok(new
         {
-            Sentiment = "pessimistic",
-            Emotions = ["anxiety"],
-            Keywords = ["căng thẳng", "công việc"],
-            Topics = ["problem_solving"]
-        };
+            totalUserCount,
+            totalUserCountOverMonths,
+            recentlyActiveUserCount,
 
-        Output.Analysis output2 = new()
-        {
-            Sentiment = "optimistic",
-            Emotions = ["relief"],
-            Keywords = ["giải quyết", "tốt hơn"],
-            Topics = ["problem_solving"]
-        };
+            totalPremiumUserCount,
+            totalPremiumUserCountOverMonths,
 
-        return Ok(output1);
-    }*/
+            revenue,
+            revenueOverWeeks,
 
+            //activityLogCounts
+        });
+    }
 
 
 
