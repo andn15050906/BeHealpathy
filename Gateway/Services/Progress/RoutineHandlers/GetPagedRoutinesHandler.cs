@@ -3,6 +3,7 @@ using Contract.Helpers;
 using Contract.Requests.Progress.RoutineRequests;
 using Contract.Requests.Progress.RoutineRequests.Dtos;
 using Contract.Responses.Progress;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace Gateway.Services.Progress.RoutineHandlers;
@@ -25,6 +26,22 @@ public sealed class GetPagedRoutinesHandler : RequestHandler<GetPagedRoutinesQue
                 false
             );
             var result = await query.ExecuteWithOrderBy(_ => _.LastModificationTime);
+
+            var curr = DateTime.UtcNow.ToLocalTime();
+
+            var expiredRoutines = await _context.Routines
+                    .Where(r => !r.IsDeleted && !r.IsClosed && !r.IsCompleted && r.EndDate < curr && r.CreatorId == request.Rq.CreatorId)
+                    .ToListAsync();
+
+            if (expiredRoutines is not null)
+            {
+                foreach (var routine in expiredRoutines)
+                {
+                    routine.IsClosed = true;
+                }
+
+                await _context.SaveChangesAsync();
+            }
 
             return ToQueryResult(result);
         }
