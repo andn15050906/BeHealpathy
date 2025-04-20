@@ -162,7 +162,7 @@ public sealed class StatisticsController : ContractController
         Dictionary<DateTime, Input.GroupedData> inputs = [];
         var start = startTime.Date;
         var end = endTime.Date;
-        for (var i = start; i < end; i = i.AddDays(1))
+        for (var i = start; i <= end; i = i.AddDays(1))
             inputs.TryAdd(i, new Input.GroupedData());
 
         foreach (var messageInput in groupedInput.MessageInputs)
@@ -199,7 +199,7 @@ public sealed class StatisticsController : ContractController
                 }
                 else if (outputs.Count > 0)
                 {
-                    analysis = outputs.Last().Value;
+                    analysis = outputs.ToList().Last().Value;
                 }
 
                 lock (outputs)

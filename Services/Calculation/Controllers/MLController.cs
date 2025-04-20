@@ -43,39 +43,46 @@ public class MLController : ControllerBase
         string emotion = string.Empty;
         OutputAnalysis response;
 
-        var angerResult = new PhoBertExecutor(AngerPhoBertDataPath, AngerPhoBertModelPath, 1).Predict(dto.MessageInput);
-        if (angerResult.Probability > 0.3)
+        try
         {
-            response = new OutputAnalysis(true, angerResult.Probability, angerResult.Score, ["anger"]);
-        }
-        else
-        {
-            var enjoymentResult = new PhoBertExecutor(EnjoymentPhoBertDataPath, EnjoymentPhoBertModelPath, 2).Predict(dto.MessageInput);
-            if (enjoymentResult.Probability > 0.3)
+            var angerResult = new PhoBertExecutor(AngerPhoBertDataPath, AngerPhoBertModelPath, 1).Predict(dto.MessageInput);
+            if (angerResult.Probability > 0.3)
             {
-                response = new OutputAnalysis(false, enjoymentResult.Probability, enjoymentResult.Score, ["enjoyment"]);
+                response = new OutputAnalysis(true, angerResult.Probability, angerResult.Score, ["anger"]);
             }
             else
             {
-                var sadnessResult = new PhoBertExecutor(SadnessPhoBertDataPath, SadnessPhoBertModelPath, 3).Predict(dto.MessageInput);
-                if (sadnessResult.Probability > 0.3)
+                var enjoymentResult = new PhoBertExecutor(EnjoymentPhoBertDataPath, EnjoymentPhoBertModelPath, 2).Predict(dto.MessageInput);
+                if (enjoymentResult.Probability > 0.3)
                 {
-                    response = new OutputAnalysis(true, sadnessResult.Probability, sadnessResult.Score, ["sadness"]);
+                    response = new OutputAnalysis(false, enjoymentResult.Probability, enjoymentResult.Score, ["enjoyment"]);
                 }
                 else
                 {
-                    var fearResult = new PhoBertExecutor(FearPhoBertDataPath, FearPhoBertModelPath, 4).Predict(dto.MessageInput);
-                    if (fearResult.Probability > 0.3)
+                    var sadnessResult = new PhoBertExecutor(SadnessPhoBertDataPath, SadnessPhoBertModelPath, 3).Predict(dto.MessageInput);
+                    if (sadnessResult.Probability > 0.3)
                     {
-                        response = new OutputAnalysis(true, fearResult.Probability, fearResult.Score, ["fear"]);
+                        response = new OutputAnalysis(true, sadnessResult.Probability, sadnessResult.Score, ["sadness"]);
                     }
                     else
                     {
-                        var bertResult = new BertExecutor(BertDataPath, BertModelPath).Predict(dto.MessageInput);
-                        response = new OutputAnalysis(bertResult.Prediction, bertResult.Probability, bertResult.Score);
+                        var fearResult = new PhoBertExecutor(FearPhoBertDataPath, FearPhoBertModelPath, 4).Predict(dto.MessageInput);
+                        if (fearResult.Probability > 0.3)
+                        {
+                            response = new OutputAnalysis(true, fearResult.Probability, fearResult.Score, ["fear"]);
+                        }
+                        else
+                        {
+                            var bertResult = new BertExecutor(BertDataPath, BertModelPath).Predict(dto.MessageInput);
+                            response = new OutputAnalysis(bertResult.Prediction, bertResult.Probability, bertResult.Score);
+                        }
                     }
                 }
             }
+        }
+        catch (Exception ex)
+        {
+            return Ok(new OutputAnalysis(false, 0.2f, 0.2f));
         }
 
         return Ok(response);
