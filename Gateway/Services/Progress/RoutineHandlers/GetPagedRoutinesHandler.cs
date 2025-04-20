@@ -30,7 +30,7 @@ public sealed class GetPagedRoutinesHandler : RequestHandler<GetPagedRoutinesQue
             var curr = DateTime.UtcNow.ToLocalTime();
 
             var expiredRoutines = await _context.Routines
-                    .Where(r => !r.IsDeleted && !r.IsClosed && r.EndDate < curr && r.CreatorId == request.Rq.CreatorId)
+                    .Where(r => !r.IsDeleted && !r.IsClosed && !r.IsCompleted && r.EndDate < curr && r.CreatorId == request.Rq.CreatorId)
                     .ToListAsync();
 
             if (expiredRoutines is not null)
