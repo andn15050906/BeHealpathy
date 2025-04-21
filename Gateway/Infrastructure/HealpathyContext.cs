@@ -22,6 +22,7 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Notification> Notifications { get; set; }
     public DbSet<Bill> Bills { get; set; }
     public DbSet<ActivityLog> ActivityLogs { get; set; }
+    public DbSet<UserStatistics> UserStatistics { get; set; }
 
 
 
@@ -86,6 +87,7 @@ public sealed class HealpathyContext : BaseContext
         internal const string NOTIFICATION = "Notifications";
         internal const string BILL = "Bills";
         internal const string ACTIVITY_LOG = "ActivityLogs";
+        internal const string USER_STATISTICS = "UserStatistics";
         internal const string CONVERSATION = "Conversations";
         internal const string CONVERSATION_MEMBER = "ConversationMembers";
         internal const string CHAT_MESSAGE = "ChatMessages";
@@ -158,6 +160,7 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new NotificationConfig())
             .ApplyConfiguration(new BillConfig())
             .ApplyConfiguration(new ActivityLogConfig())
+            .ApplyConfiguration(new UserStatisticsConfig())
             .ApplyConfiguration(new ConversationConfig())
             .ApplyConfiguration(new ConversationMemberConfig())
             .ApplyConfiguration(new ChatMessageConfig())
@@ -338,6 +341,24 @@ public sealed class HealpathyContext : BaseContext
         {
             builder
                 .ToTable(RelationsConfig.ACTIVITY_LOG)
+                .SetColumnsTypes(Columns)
+                .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
+
+            builder.HasOne<User>().WithMany().HasForeignKey(_ => _.CreatorId).OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+
+    class UserStatisticsConfig : EntityConfiguration<UserStatistics>
+    {
+        protected override Dictionary<Expression<Func<UserStatistics, object?>>, string> Columns => new()
+        {
+            { _ => _.Content, NVARCHARMAX }
+        };
+
+        public override void Configure(EntityTypeBuilder<UserStatistics> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.USER_STATISTICS)
                 .SetColumnsTypes(Columns)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
 

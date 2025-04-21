@@ -34,59 +34,67 @@ public class MLController : ControllerBase
         SadnessPhoBertModelPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SadnessSentimentModel.zip");
     }
 
-    [HttpGet]
-    public IActionResult Predict([FromQuery] Dto dto)
+    [HttpPost]
+    public IActionResult Predict([FromBody] GetSentimentPredictionQuery query)
     {
-        if (string.IsNullOrEmpty(dto.MessageInput))
+        if (query.inputs.Count == 0)
             return BadRequest();
 
-        string emotion = string.Empty;
-        OutputAnalysis response;
+        List<AnalysisOutputByDay> response = [];
 
-        var angerResult = new PhoBertExecutor(AngerPhoBertDataPath, AngerPhoBertModelPath, 1).Predict(dto.MessageInput);
-        if (angerResult.Probability > 0.3)
+        foreach (var input in query.inputs)
         {
-            response = new OutputAnalysis(true, angerResult.Probability, angerResult.Score, ["anger"]);
-        }
-        else
-        {
-            var enjoymentResult = new PhoBertExecutor(EnjoymentPhoBertDataPath, EnjoymentPhoBertModelPath, 2).Predict(dto.MessageInput);
-            if (enjoymentResult.Probability > 0.3)
+            if (input != null)
             {
-                response = new OutputAnalysis(false, enjoymentResult.Probability, enjoymentResult.Score, ["enjoyment"]);
-            }
-            else
-            {
-                var sadnessResult = new PhoBertExecutor(SadnessPhoBertDataPath, SadnessPhoBertModelPath, 3).Predict(dto.MessageInput);
-                if (sadnessResult.Probability > 0.3)
-                {
-                    response = new OutputAnalysis(true, sadnessResult.Probability, sadnessResult.Score, ["sadness"]);
-                }
-                else
-                {
-                    var fearResult = new PhoBertExecutor(FearPhoBertDataPath, FearPhoBertModelPath, 4).Predict(dto.MessageInput);
-                    if (fearResult.Probability > 0.3)
+                foreach (var txt in input.text)
+                    try
                     {
-                        response = new OutputAnalysis(true, fearResult.Probability, fearResult.Score, ["fear"]);
+                        response.Add(new AnalysisOutputByDay(input.date, Analyze(txt)));
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        var bertResult = new BertExecutor(BertDataPath, BertModelPath).Predict(dto.MessageInput);
-                        response = new OutputAnalysis(bertResult.Prediction, bertResult.Probability, bertResult.Score);
+                        continue;
                     }
-                }
             }
         }
 
         return Ok(response);
     }
 
-    public class Dto
+    private OutputAnalysis Analyze(string message)
     {
-        public string MessageInput { get; set; }
+        try
+        {
+            var angerResult = new PhoBertExecutor(AngerPhoBertDataPath, AngerPhoBertModelPath, 1).Predict(message);
+            if (angerResult.Probability > 0.3)
+                return new OutputAnalysis(true, angerResult.Probability, angerResult.Score, ["anger"]);
+
+            var enjoymentResult = new PhoBertExecutor(EnjoymentPhoBertDataPath, EnjoymentPhoBertModelPath, 2).Predict(message);
+            if (enjoymentResult.Probability > 0.3)
+                return new OutputAnalysis(false, enjoymentResult.Probability, enjoymentResult.Score, ["enjoyment"]);
+
+            var sadnessResult = new PhoBertExecutor(SadnessPhoBertDataPath, SadnessPhoBertModelPath, 3).Predict(message);
+            if (sadnessResult.Probability > 0.3)
+                return new OutputAnalysis(true, sadnessResult.Probability, sadnessResult.Score, ["sadness"]);
+
+            var fearResult = new PhoBertExecutor(FearPhoBertDataPath, FearPhoBertModelPath, 4).Predict(message);
+            if (fearResult.Probability > 0.3)
+                return new OutputAnalysis(true, fearResult.Probability, fearResult.Score, ["fear"]);
+
+            var bertResult = new BertExecutor(BertDataPath, BertModelPath).Predict(message);
+            return new OutputAnalysis(bertResult.Prediction, bertResult.Probability, bertResult.Score);
+        }
+        catch (Exception)
+        {
+            return new OutputAnalysis(false, 0.2f, 0.2f);
+        }
     }
 
-    class OutputAnalysis
+    public record InputByDay(DateTime date, List<string> text);
+    public record AnalysisOutputByDay(DateTime date, OutputAnalysis analysis);
+    public record GetSentimentPredictionQuery(List<InputByDay> inputs);
+
+    public class OutputAnalysis
     {
         public bool Prediction { get; set; }
         public float Probability { get; set; }

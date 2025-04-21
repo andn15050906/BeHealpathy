@@ -16,7 +16,7 @@ public class BaseContext : DbContext
     public PagingQuery<T, TDto> GetPagingQuery<T, TDto>(
         Expression<Func<T, TDto>> mappingConfig,
         Expression<Func<T, bool>>? whereExpression,
-        short pageIndex, byte pageSize,
+        short pageIndex, int pageSize,
         bool asSplitQuery = false,
         params Expression<Func<T, object?>>[] includeExpressions)
         where T : DomainObject

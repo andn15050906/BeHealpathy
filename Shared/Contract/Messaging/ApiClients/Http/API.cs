@@ -13,8 +13,8 @@ public static class API
     {
         public const string MLBaseUri = "api/ml";
 
-        public static string PredictUri(GetSentimentPredictionQuery query)
-            =>  $"{MLBaseUri}?{QueryBuilder.BuildQuery(query)}";
+        public static string PredictUri()
+            =>  $"{MLBaseUri}";
 
 
 

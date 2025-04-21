@@ -20,7 +20,7 @@ public sealed class GetPagedActivityLogsHandler : RequestHandler<GetPagedActivit
                 ActivityLogModel.MapExpression,
                 GetPredicate(request.Rq),
                 request.Rq.PageIndex,
-                request.Rq.PageSize,
+                1024,//request.Rq.PageSize,
                 false
             );
             var result = await query.ExecuteWithOrderBy(_ => _.CreationTime, ascending: false);

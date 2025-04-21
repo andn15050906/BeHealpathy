@@ -12,7 +12,7 @@ public class PagingQuery<T, TDto> where T : DomainObject
     private IQueryable<T> _orderedQuery;
 
     private readonly short _pageIndex;
-    private readonly byte _pageSize;
+    private readonly int _pageSize;
     private readonly Expression<Func<T, TDto>> _mappingConfig;
 
     /// <summary>
@@ -21,7 +21,7 @@ public class PagingQuery<T, TDto> where T : DomainObject
     public PagingQuery(
         DbContext context, Expression<Func<T, TDto>> mappingConfig,
         Expression<Func<T, bool>>? whereExpression,
-        short pageIndex, byte pageSize,
+        short pageIndex, int pageSize,
         bool asSplitQuery = false, params Expression<Func<T, object?>>[] includeExpressions)
     {
         _context = context;
