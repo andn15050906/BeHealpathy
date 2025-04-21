@@ -6,6 +6,7 @@ using Contract.Requests.Statistics;
 using Contract.Responses.Identity;
 using Contract.Responses.Statistics;
 using Core.Helpers;
+using Gateway.Services.Background;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -49,7 +50,6 @@ public sealed class StatisticsController : ContractController
 
     [HttpGet("sentiment")]
     [Authorize]
-    //[ResponseCache(Duration = 180)]
     public async Task<IActionResult> GetSentimentAnalysis(
         [FromQuery] QueryStatisticsDto dto, [FromServices] HealpathyContext context, [FromServices] ICalculationApiService calculationApiService
         )
@@ -59,160 +59,24 @@ public sealed class StatisticsController : ContractController
             userId = (Guid)dto.UserId;
 
         DateTime endTime = TimeHelper.Now;
-        DateTime startTime = endTime.AddDays(-30);
+        DateTime startTime = endTime.AddDays(-21);
         if (dto.StartTime is not null && dto.EndTime is not null)
         {
             startTime = (DateTime)dto.StartTime;
             endTime = (DateTime)dto.EndTime;
         }
 
-        // MessageInputs
-        var chatInputs = await context.ChatMessages
-            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
-            .Select(_ => new Input.Message(_.CreationTime, _.Content))
-            .ToListAsync();
-        var diaryNoteInputs = await context.DiaryNotes
-            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
-            .Select(_ => new Input.Message(_.CreationTime, _.Content))
-            .ToListAsync();
-        var messageInputs = new List<Input.Message>();
-        messageInputs = [..chatInputs, ..diaryNoteInputs];
+        var resultInDb = await context.UserStatistics.OrderByDescending(_ => _.CreationTime)
+            .Where(_ => _.CreationTime > TimeHelper.Now.AddHours(-2))
+            .FirstOrDefaultAsync(_ => _.CreatorId == userId);
+        if (resultInDb is not null)
+            return Ok(resultInDb);
 
-        // Input.Reactions
-        var articleReactions = await context.ArticleReactions
-            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
-            .Select(_ => new Input.Reaction(_.CreationTime, string.Empty /*"JOIN with Articles"*/, _.Content))
-            .ToListAsync();
-        var lectureReactions = await context.LectureReactions
-            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
-            .Select(_ => new Input.Reaction(_.CreationTime, string.Empty /*"JOIN with Lectures"*/, _.Content))
-            .ToListAsync();
-        var messageReactions = await context.MessageReactions
-            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
-            .Select(_ => new Input.Reaction(_.CreationTime, string.Empty /*"JOIN with Messages"*/, _.Content))
-            .ToListAsync();
-
-        // Input.Courses
-        var courses = await context.Courses
-            .Include(_ => _.Enrollments).Include(_ => _.LeafCategory)
-            .AsSplitQuery()
-            .Where(_ => !_.IsDeleted && _.Enrollments.Any(e => e.CreatorId == userId))
-            .Select(_ => new Input.Course(_.CreationTime, _.LeafCategory.Title, _.Title, _.Description))
-            .ToListAsync();
-
-        // ArticleInputs
-
-        // MediaInputs
-        List<Guid> mediaIds = [];
-        List<Input.Media> mediaInputs = [];
-        var mediaViewedLogs = await context.ActivityLogs
-            .Where(_ => !_.IsDeleted && _.CreatorId == userId && _.Content.Contains("Media_Viewed") && _.CreationTime >= startTime && _.CreationTime <= endTime)
-            .ToListAsync();
-        foreach (var mediaViewLog in mediaViewedLogs)
-        {
-            try
-            {
-                var log = JsonSerializer.Deserialize<MediaViewedLog>(mediaViewLog.Content);
-                var logContent = JsonSerializer.Deserialize<MediaViewedLog.MediaViewedLogContent>(log?.Content ?? string.Empty);
-                var logInnerContent = JsonSerializer.Deserialize<MediaViewedLog.MediaViewedLogContentContent>(logContent?.Content ?? string.Empty, JsonSerializerOptions.Web);
-                mediaIds.Add(logInnerContent?.Id ?? Guid.Empty);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
-                mediaIds.Add(Guid.Empty);
-            }
-        }
-        var medias = await context.MediaResources
-            .Where(_ => mediaIds.Contains(_.Id))
-            .ToListAsync();
-        for (int i = 0; i < mediaViewedLogs.Count; i++)
-        {
-            var media = medias.FirstOrDefault(_ => _.Id == mediaViewedLogs[i].Id);
-            if (media is null || string.IsNullOrWhiteSpace(media.Description))
-                continue;
-            mediaInputs.Add(new Input.Media(
-                mediaViewedLogs[i].CreationTime,
-                media.Description,
-                media.Title,
-                media.Type.ToString()
-            ));
-        }
-
-        // RoutineInputs
-        var routineInputs = await context.Routines
-            .Where(_ => _.CreatorId == userId && _.CreationTime >= startTime && _.CreationTime <= endTime)
-            .Select(_ => new Input.Routine(_.CreationTime, _.Title, _.Description, _.Objective, string.Empty, new List<Input.RoutineLog>()))
-            .ToListAsync();
-
-
-
-        var groupedInput = new Input.DataCollection
-        {
-            UserId = userId,
-            MessageInputs = messageInputs,
-            ReactionInputs = [.. articleReactions, .. lectureReactions, .. messageReactions],
-            CourseInputs = courses,
-            SubmissionInputs = await GetUserSubmissions(context, userId, startTime, endTime),
-            MediaInputs = mediaInputs,
-            RoutineInputs = routineInputs,
-            PreferenceInputs = await GetUserPreferences(context, userId)
-        };
-
-        Dictionary<DateTime, Input.GroupedData> inputs = [];
-        var start = startTime.Date;
-        var end = endTime.Date;
-        for (var i = start; i <= end; i = i.AddDays(1))
-            inputs.TryAdd(i, new Input.GroupedData());
-
-        foreach (var messageInput in groupedInput.MessageInputs)
-            inputs[messageInput.CreatedAt.Date].Messages.Add(messageInput.Content);
-        //...
-        //foreach (var reactionInput in groupedInput.ReactionInputs)
-        //foreach (var courseInput in groupedInput.CourseInputs)
-        foreach (var submissionInput in groupedInput.SubmissionInputs)
-            foreach (var band in submissionInput.SurveyBandInputs)
-                inputs[submissionInput.StartedAt.Date].Metrics_Rating.Add(band.Metrics, band.Rating);
-        //...
-        foreach (var mediaInput in groupedInput.MediaInputs)
-            inputs[mediaInput.StartedAt.Date].Messages.Add(mediaInput.Title);
-        foreach (var routineInput in groupedInput.RoutineInputs)
-            inputs[routineInput.StartedAt.Date].Messages.Add(routineInput.Title);
-
-
-
-        Dictionary<DateTime, Output.Analysis> outputs = [];
-        var tasks = new List<Task>();
-        foreach (var input in inputs)
-        {
-            tasks.Add(Task.Run(async () =>
-            {
-                var analysis = new Output.Analysis();
-                //var message = await GeminiClient.Instance.Prompt(dto.Content);
-
-                if (input.Value.Messages is not null && input.Value.Messages.Count > 0)
-                {
-                    var messageInput = string.Join(" ", input.Value.Messages);
-                    var prediction = await calculationApiService.PredictSentiment(new GetSentimentPredictionQuery(messageInput));
-                    if (prediction.IsSuccessful)
-                        analysis = prediction.Data!;
-                }
-                else if (outputs.Count > 0)
-                {
-                    lock (outputs)
-                    {
-                        analysis = outputs.ToList().Last().Value;
-                    }
-                }
-
-                lock (outputs)
-                {
-                    outputs.Add(input.Key, analysis);
-                }
-            }));
-        }
-        await Task.WhenAll(tasks);
-        return Ok(outputs);
+        var result = await JobRunner.AnalyzeSentiment(
+            userId, startTime, endTime,
+            context, calculationApiService
+        );
+        return Ok(result);
     }
 
     [HttpGet("report/general")]
