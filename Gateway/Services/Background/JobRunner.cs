@@ -121,11 +121,13 @@ public sealed class JobRunner
     {
         private readonly HealpathyContext _context;
         private readonly ICalculationApiService _calculationApiService;
+        private readonly IAppLogger _logger;
 
-        public CalculateSentiment(HealpathyContext context, ICalculationApiService calculationApiService)
+        public CalculateSentiment(HealpathyContext context, ICalculationApiService calculationApiService, IAppLogger logger)
         {
             _context = context;
             _calculationApiService = calculationApiService;
+            _logger = logger;
         }
 
         public async Task Execute()
@@ -141,7 +143,7 @@ public sealed class JobRunner
 
             foreach (var user in recentlyActiveUsers)
             {
-                var analysis = await AnalyzeSentiment(user, startTime, endTime, _context, _calculationApiService);
+                var analysis = await AnalyzeSentiment(user, startTime, endTime, _context, _calculationApiService, _logger);
                 if (analysis != null)
                 {
                     _context.UserStatistics.Add(
@@ -155,7 +157,7 @@ public sealed class JobRunner
 
     public static async Task<Dictionary<DateTime, Output.Analysis>> AnalyzeSentiment(
         Guid userId, DateTime startTime, DateTime endTime,
-        HealpathyContext context, ICalculationApiService calculationApiService
+        HealpathyContext context, ICalculationApiService calculationApiService, IAppLogger logger
     )
     {
         try
@@ -327,12 +329,15 @@ public sealed class JobRunner
                         }
                     }
                 }
-                catch (Exception ex) { }
+                catch (Exception ex) {
+                    logger.Warn(ex.Message);
+                }
             }
             return outputs;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            logger.Warn(ex.Message);
             return [];
         }
     }

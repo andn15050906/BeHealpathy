@@ -1,24 +1,26 @@
 ﻿using Contract.BusinessRules.PreferenceBiz;
 using Contract.Domain.ProgressAggregates;
 using Contract.Domain.UserAggregate.Constants;
+using Contract.Helpers;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Statistics;
 using Contract.Responses.Identity;
-using Contract.Responses.Statistics;
 using Core.Helpers;
 using Gateway.Services.Background;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Text.Json;
 
 namespace Gateway.Controllers.Analysis;
 
 public sealed class StatisticsController : ContractController
 {
-    public StatisticsController(IMediator mediator) : base(mediator)
+    private readonly IAppLogger _logger;
+
+    public StatisticsController(IMediator mediator, IAppLogger logger) : base(mediator)
     {
+        _logger = logger;
     }
 
     public class QueryStatisticsDto
@@ -74,7 +76,7 @@ public sealed class StatisticsController : ContractController
 
         var result = await JobRunner.AnalyzeSentiment(
             userId, startTime, endTime,
-            context, calculationApiService
+            context, calculationApiService, _logger
         );
         return Ok(result);
     }
