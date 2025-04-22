@@ -6,8 +6,6 @@ using Contract.Responses.Statistics;
 using Core.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using static Contract.Responses.Statistics.Output;
-using static Gateway.Controllers.Analysis.StatisticsController;
 
 namespace Gateway.Services.Background;
 
@@ -28,59 +26,17 @@ public sealed class JobRunner
         {
             try
             {
-                var allUserIds = await _context.Users.Where(_ => !_.IsDeleted).Select(_ => _.Id).ToListAsync();
+                //var allUserIds = await _context.Users.Where(_ => !_.IsDeleted).Select(_ => _.Id).ToListAsync();
 
-                foreach (var userId in allUserIds)
-                {
-                    var currentRoadmapId = await _context.Users.Where(_ => _.Id == userId).Select(_ => _.RoadmapId).FirstOrDefaultAsync();
-                    if (currentRoadmapId == null)
-                        continue;
-                    var currentRoadmap = await _context.Roadmaps.Include(_ => _.Phases).ThenInclude(_ => _.Milestones).Where(_ => _.Id == currentRoadmapId).Select(RoadmapModel.MapExpression).FirstOrDefaultAsync();
-                    if (currentRoadmap == null)
-                        continue;
+                var recentlyActiveUsers = await _context.ActivityLogs
+                    .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-7))
+                    .Take(6)
+                    .Select(_ => _.CreatorId)
+                    .Distinct()
+                    .ToListAsync();
 
-                    foreach (var phase in currentRoadmap.Phases.OrderBy(_ => _.Index))
-                    {
-                        var currentProgress = await _context.RoadmapProgress.Where(_ => _.CreatorId == userId && _.RoadmapPhaseId == phase.Id).OrderByDescending(_ => _.CreationTime).FirstOrDefaultAsync();
-
-                        var currentMilestoneIdList = JsonSerializer.Deserialize<List<Guid>>(currentProgress?.MilestonesCompleted ?? "[]") ?? [];
-                        var pendingMilestoneIdList = phase.Milestones.Select(_ => _.Id).Except(currentMilestoneIdList);
-                        if (pendingMilestoneIdList.Any())
-                        {
-                            var addedMilestones = new List<Guid>();
-                            var logs = await _context.ActivityLogs.Where(_ => _.CreatorId == userId && _.CreationTime.AddDays(phase.TimeSpan) > TimeHelper.Now).ToListAsync();
-                            foreach (var pendingMilestoneId in pendingMilestoneIdList)
-                            {
-                                var pendingMilestone = phase.Milestones.First(_ => _.Id == pendingMilestoneId);
-                                var eventCount = logs.Count(_ =>
-                                    _.Content.Contains(pendingMilestone.EventName) ||
-                                    (_.Content.Contains(nameof(Events.DiaryNote_Updated)) && pendingMilestone.EventName == nameof(Events.DiaryNote_Created)) ||
-                                    (_.Content.Contains("question") && pendingMilestone.EventName == "QuestionOfTheDay_Answered") ||
-                                    //..
-                                    (_.Content.Contains("yoga") && pendingMilestone.EventName == "Yoga_Practiced") ||
-                                    (_.Content.Contains("media") && pendingMilestone.EventName == "Media_Viewed")
-                                );
-                                if (eventCount >= pendingMilestone.RepeatTimesRequired)
-                                    addedMilestones.Add(pendingMilestoneId);
-                            }
-                            if (addedMilestones.Count > 0)
-                            {
-                                currentMilestoneIdList.AddRange(addedMilestones);
-                                var completedMilestones = JsonSerializer.Serialize(currentMilestoneIdList);
-
-                                if (currentProgress is null)
-                                {
-                                    _context.RoadmapProgress.Add(new RoadmapProgress(userId, phase.Id, completedMilestones));
-                                }
-                                else
-                                {
-                                    currentProgress.MilestonesCompleted = completedMilestones;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                }
+                foreach (var userId in recentlyActiveUsers)
+                    await AnalyzeRoadmapProgress(_context, userId);
 
                 await _context.SaveChangesAsync();
             }
@@ -88,6 +44,76 @@ public sealed class JobRunner
             {
                 _appLogger.Warn(ex.Message);
             }
+        }
+    }
+
+    public static async Task AnalyzeRoadmapProgress(HealpathyContext context, Guid userId)
+    {
+        var currentRoadmapId = await context.Users
+            .Where(_ => _.Id == userId)
+            .Select(_ => _.RoadmapId)
+            .FirstOrDefaultAsync();
+        if (currentRoadmapId == null)
+            return;
+        var currentRoadmap = await context.Roadmaps
+            .Include(_ => _.Phases).ThenInclude(_ => _.Milestones)
+            .Where(_ => _.Id == currentRoadmapId)
+            .Select(RoadmapModel.MapExpression)
+            .FirstOrDefaultAsync();
+        if (currentRoadmap == null)
+            return;
+
+        foreach (var phase in currentRoadmap.Phases.OrderBy(_ => _.Index))
+        {
+            var currentProgress = await context.RoadmapProgress
+                .Where(_ => _.CreatorId == userId && _.RoadmapPhaseId == phase.Id)
+                .OrderByDescending(_ => _.CreationTime)
+                .FirstOrDefaultAsync();
+
+            var currentMilestoneIdList = JsonSerializer.Deserialize<List<Guid>>(currentProgress?.MilestonesCompleted ?? "[]") ?? [];
+            var pendingMilestoneIdList = phase.Milestones.Select(_ => _.Id).Except(currentMilestoneIdList);
+            if (!pendingMilestoneIdList.Any())
+                continue;
+
+            // calculate added milestones based on recent logs
+            var addedMilestones = new List<Guid>();
+            var recentLogContent = await context.ActivityLogs
+                .Where(_ => _.CreatorId == userId && _.CreationTime > TimeHelper.Now.AddDays(-phase.TimeSpan))
+                .Select(_ => _.Content)
+                .ToListAsync();
+            foreach (var pendingMilestoneId in pendingMilestoneIdList)
+            {
+                var pendingMilestone = phase.Milestones.First(_ => _.Id == pendingMilestoneId);
+                var eventCount = recentLogContent.Count(_ =>
+                    _.Contains(pendingMilestone.EventName) ||
+                    (_.Contains(nameof(Events.DiaryNote_Updated)) && pendingMilestone.EventName == nameof(Events.DiaryNote_Created)) ||
+                    (_.Contains("question") && pendingMilestone.EventName == "QuestionOfTheDay_Answered") ||
+                    //..
+                    (_.Contains("yoga") && pendingMilestone.EventName == "Yoga_Practiced") ||
+                    (_.Contains("media") && pendingMilestone.EventName == "Media_Viewed")
+                );
+                if (eventCount >= pendingMilestone.RepeatTimesRequired)
+                    addedMilestones.Add(pendingMilestoneId);
+            }
+
+            // calculate completed milestones and update value (not saved yet)
+            if (addedMilestones.Count > 0)
+            {
+                currentMilestoneIdList.AddRange(addedMilestones);
+                var completedMilestones = JsonSerializer.Serialize(currentMilestoneIdList);
+
+                if (currentProgress is null)
+                {
+                    // add a new progress record
+                    context.RoadmapProgress.Add(new RoadmapProgress(userId, phase.Id, completedMilestones));
+                }
+                else
+                {
+                    // update the existing entity
+                    currentProgress.MilestonesCompleted = completedMilestones;
+                }
+            }
+            return;
         }
     }
 
@@ -127,7 +153,7 @@ public sealed class JobRunner
         }
     }
 
-    public static async Task<Dictionary<DateTime, Analysis>> AnalyzeSentiment(
+    public static async Task<Dictionary<DateTime, Output.Analysis>> AnalyzeSentiment(
         Guid userId, DateTime startTime, DateTime endTime,
         HealpathyContext context, ICalculationApiService calculationApiService
     )
@@ -246,8 +272,8 @@ public sealed class JobRunner
 
 
 
-            Dictionary<DateTime, Analysis> outputs = [];
-            var analysis = new Analysis();
+            Dictionary<DateTime, Output.Analysis> outputs = [];
+            var analysis = new Output.Analysis();
             List<InputByDay> dayInputs = [];
             foreach (var input in inputs)
             {
@@ -265,7 +291,7 @@ public sealed class JobRunner
                         foreach (var date in inputs.Keys)
                         {
                             var inDateData = predictions.Data!.Where(_ => _.date == date).ToList() ?? [];
-                            var inDateAnalysis = new Analysis();
+                            var inDateAnalysis = new Output.Analysis();
                             if (inDateData.Count > 0)
                             {
                                 var prediction =
@@ -278,7 +304,7 @@ public sealed class JobRunner
                                 var keywords = inDateData.SelectMany(_ => _.analysis.Keywords).ToList();
                                 var topics = inDateData.SelectMany(_ => _.analysis.Topics).ToList();
 
-                                inDateAnalysis = new Analysis
+                                inDateAnalysis = new Output.Analysis
                                 {
                                     Prediction = prediction,
                                     Probability = prob,
