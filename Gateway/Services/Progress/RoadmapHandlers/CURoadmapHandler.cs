@@ -80,7 +80,8 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             Title = dto.Title,
             EventName = dto.EventName,
             RepeatTimesRequired = dto.RepeatTimesRequired,
-            TimeSpentRequired = dto.TimeSpentRequired,
+            Index = dto.Index,
+            IsRequired = dto.IsRequired,
             Recommendations = []
         };
 
@@ -149,9 +150,8 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         if (!string.IsNullOrEmpty(dto.EventName) && dto.EventName != entity.EventName)
             entity.EventName = dto.EventName;
         entity.RepeatTimesRequired = dto.RepeatTimesRequired;
-        entity.TimeSpentRequired = dto.TimeSpentRequired;
-
         entity.Recommendations.RemoveAll(recommendation => !dto.Recommendations.Any(_ => _.Id == recommendation.Id));
+
         foreach (var child in dto.Recommendations)
         {
             var existingChild = child.Id is not null ? entity.Recommendations.FirstOrDefault(_ => _.Id == child.Id) : null;

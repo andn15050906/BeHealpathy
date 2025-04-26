@@ -38,8 +38,15 @@ public sealed class StatisticsController : ContractController
         if (currentRoadmap is null)
             return NotFound();
 
-        var progress = await context.RoadmapProgress.Include(_ => _.RoadmapPhase).Where(_ => _.CreatorId == ClientId).ToListAsync();
-        return Ok(progress);
+        var progress = await context.RoadmapProgress
+            .Include(_ => _.RoadmapPhase)
+            .Where(_ => _.CreatorId == ClientId)
+            .ToListAsync();
+
+        return Ok(new
+        {
+            progress = progress
+        });
     }
 
     [HttpGet("mood")]
@@ -201,6 +208,13 @@ public sealed class StatisticsController : ContractController
 
             //activityLogCounts
         });
+    }
+
+    [HttpGet("force-progress")]
+    public async Task ForceCalculateProgress([FromServices] HealpathyContext context, [FromServices] IAppLogger logger)
+    {
+        var runner = new JobRunner.CalculateRoadmapProgress(context, logger);
+        await runner.Execute();
     }
 
 

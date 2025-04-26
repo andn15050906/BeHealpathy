@@ -1,7 +1,6 @@
 ﻿using Contract.Domain.ProgressAggregates;
 using Contract.Helpers;
 using Contract.Requests.Statistics;
-using Contract.Responses.Progress;
 using Contract.Responses.Statistics;
 using Core.Helpers;
 using Microsoft.EntityFrameworkCore;
@@ -58,61 +57,93 @@ public sealed class JobRunner
         var currentRoadmap = await context.Roadmaps
             .Include(_ => _.Phases).ThenInclude(_ => _.Milestones)
             .Where(_ => _.Id == currentRoadmapId)
-            .Select(RoadmapModel.MapExpression)
             .FirstOrDefaultAsync();
         if (currentRoadmap == null)
             return;
 
+        var submissions = await context.Submissions
+            .Where(_ => _.CreatorId == userId)
+            .ToListAsync();
+        var lastRequiredStepTime = TimeHelper.Now.AddDays(-100);
+
         foreach (var phase in currentRoadmap.Phases.OrderBy(_ => _.Index))
         {
-            var currentProgress = await context.RoadmapProgress
+            var currentCompletedMilestones = await context.RoadmapProgress
                 .Where(_ => _.CreatorId == userId && _.RoadmapPhaseId == phase.Id)
                 .OrderByDescending(_ => _.CreationTime)
-                .FirstOrDefaultAsync();
-
-            var currentMilestoneIdList = JsonSerializer.Deserialize<List<Guid>>(currentProgress?.MilestonesCompleted ?? "[]") ?? [];
-            var pendingMilestoneIdList = phase.Milestones.Select(_ => _.Id).Except(currentMilestoneIdList);
-            if (!pendingMilestoneIdList.Any())
-                continue;
-
-            // calculate added milestones based on recent logs
-            var addedMilestones = new List<Guid>();
-            var recentLogContent = await context.ActivityLogs
-                .Where(_ => _.CreatorId == userId && _.CreationTime > TimeHelper.Now.AddDays(-phase.TimeSpan))
-                .Select(_ => _.Content)
                 .ToListAsync();
-            foreach (var pendingMilestoneId in pendingMilestoneIdList)
+
+            var pendingMilestones = phase.Milestones.Where(_ => !currentCompletedMilestones.Select(_ => _.Milestone).Contains(_.Id)).ToList();
+            if (!pendingMilestones.Any())
             {
-                var pendingMilestone = phase.Milestones.First(_ => _.Id == pendingMilestoneId);
-                var eventCount = recentLogContent.Count(_ =>
-                    _.Contains(pendingMilestone.EventName) ||
-                    (_.Contains(nameof(Events.DiaryNote_Updated)) && pendingMilestone.EventName == nameof(Events.DiaryNote_Created)) ||
-                    (_.Contains("question") && pendingMilestone.EventName == "QuestionOfTheDay_Answered") ||
-                    //..
-                    (_.Contains("yoga") && pendingMilestone.EventName == "Yoga_Practiced") ||
-                    (_.Contains("media") && pendingMilestone.EventName == "Media_Viewed")
-                );
-                if (eventCount >= pendingMilestone.RepeatTimesRequired)
-                    addedMilestones.Add(pendingMilestoneId);
+                try
+                {
+                    var lastMilestoneTime = currentCompletedMilestones.First().CreationTime;
+                    lastRequiredStepTime = lastRequiredStepTime > lastMilestoneTime ? lastRequiredStepTime : lastMilestoneTime;
+                }
+                catch (Exception) { }
+                continue;
             }
 
-            // calculate completed milestones and update value (not saved yet)
-            if (addedMilestones.Count > 0)
-            {
-                currentMilestoneIdList.AddRange(addedMilestones);
-                var completedMilestones = JsonSerializer.Serialize(currentMilestoneIdList);
+            // calculate added milestones based on recent logs
+            var recentLogContent = await context.ActivityLogs
+                .Where(_ => _.CreatorId == userId && _.CreationTime > lastRequiredStepTime)
+                .Select(_ => new { _.Content, _.CreationTime })
+                .ToListAsync();
+            var logs = recentLogContent.Select(_ => (_.Content, _.CreationTime));
 
-                if (currentProgress is null)
+            foreach (var pendingMilestone in pendingMilestones.OrderBy(_ => _.Index))
+            {
+                int repeatCount = 0;
+                if (pendingMilestone.IsRequired)
                 {
-                    // add a new progress record
-                    context.RoadmapProgress.Add(new RoadmapProgress(userId, phase.Id, completedMilestones));
+                    if (pendingMilestone.Index == 1 && pendingMilestones.Count > 1)
+                        break;
+
+                    var resourceOptions = await context.RoadmapRecommendations
+                        .Where(_ => _.MilestoneId == pendingMilestone.Id)
+                        .ToListAsync();
+
+                    foreach (var option in resourceOptions)
+                    {
+                        if (option.EntityType == nameof(Survey))
+                        {
+                            repeatCount += submissions.Count(_ => _.SurveyId == option.TargetEntityId && _.CreationTime > lastRequiredStepTime);
+                        }
+                        else
+                        {
+                            repeatCount += logs.Count(_ => _.Content.Contains(option.TargetEntityId.ToString()));
+                        }
+                    }
+
+                    if (repeatCount >= pendingMilestone.RepeatTimesRequired)
+                    {
+                        context.RoadmapProgress.Add(new RoadmapProgress(userId, phase.Id, pendingMilestone.Id, TimeHelper.Now));
+                    }
                 }
                 else
                 {
-                    // update the existing entity
-                    currentProgress.MilestonesCompleted = completedMilestones;
+                    bool expression((string Content, DateTime CreationTime) _) =>
+                        _.Content.Contains(pendingMilestone.EventName) ||
+                        (_.Content.Contains(nameof(Events.DiaryNote_Updated)) && pendingMilestone.EventName == nameof(Events.DiaryNote_Created)) ||
+                        (_.Content.Contains("question") && pendingMilestone.EventName == "QuestionOfTheDay_Answered") ||
+                        //..
+                        (_.Content.Contains("yoga") && pendingMilestone.EventName == "Yoga_Practiced") ||
+                        (_.Content.Contains("media") && pendingMilestone.EventName == "Media_Viewed");
+
+                    repeatCount = logs.Count(expression);
+                    if (repeatCount >= pendingMilestone.RepeatTimesRequired)
+                    {
+                        var (Content, CreationTime) = logs.Where(expression).Take(pendingMilestone.RepeatTimesRequired).LastOrDefault();
+                        context.RoadmapProgress.Add(new RoadmapProgress(userId, phase.Id, pendingMilestone.Id, CreationTime));
+                    }
                 }
+
+                // Do not calculate further in case the required milestone is not completed or just completed
+                if (pendingMilestone.IsRequired)
+                    break;
             }
+
             return;
         }
     }
