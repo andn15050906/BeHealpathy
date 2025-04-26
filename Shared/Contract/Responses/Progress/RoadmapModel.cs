@@ -43,7 +43,9 @@ public sealed class RoadmapModel
                     Title = _.Title,
                     EventName = _.EventName,
                     RepeatTimesRequired = _.RepeatTimesRequired,
-                    TimeSpentRequired = _.TimeSpentRequired,
+                    Index = _.Index,
+                    IsRequired = _.IsRequired,
+
                     Recommendations = _.Recommendations.Select(_ => new RoadmapRecommendationModel
                     {
                         Id = _.Id,

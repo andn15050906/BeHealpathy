@@ -6,7 +6,8 @@ public sealed class CURoadmapMilestoneDto
     public string Title { get; set; } = string.Empty;
     public string EventName { get; set; } = string.Empty;
     public int RepeatTimesRequired { get; set; }
-    public int TimeSpentRequired { get; set; }
+    public int Index { get; set; } = 0;
+    public bool IsRequired { get; set; } = false;
 
 
 

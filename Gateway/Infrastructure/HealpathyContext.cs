@@ -714,8 +714,8 @@ public sealed class HealpathyContext : BaseContext
         {
             { _ => _.Title, NVARCHAR500 },
             { _ => _.EventName, VARCHAR255 }
-            // RepeatTimesRequired
-            // TimeSpentRequired
+            // Index
+            // IsRequired
         };
 
         public override void Configure(EntityTypeBuilder<RoadmapMilestone> builder)
@@ -749,7 +749,7 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<RoadmapProgress, object?>>, string> Columns => new()
         {
-            { _ => _.MilestonesCompleted, VARCHARMAX }
+            //{ _ => _.MilestonesCompleted, VARCHARMAX }
         };
 
         public override void Configure(EntityTypeBuilder<RoadmapProgress> builder)
@@ -757,7 +757,7 @@ public sealed class HealpathyContext : BaseContext
             builder
                 .ToTable(RelationsConfig.ROADMAP_PROGRESS)
                 .SetColumnsTypes(Columns)
-                .HasKey(_ => new { _.CreatorId, _.RoadmapPhaseId });
+                .HasKey(_ => new { _.CreatorId, _.Milestone });
         }
     }
 
