@@ -64,8 +64,6 @@ public class Configurer
         TokenOptions = Get<TokenOptions>("JwtOptions")!;
 
         ApiClientOptions = Get<ApiClientOptions>("ServicePaths")!;
-        //IdentityContextOptions = Get<MongoOptions>(IsRunningInContainer ? "IdentityContext:Container" : "IdentityContext:Local")!;
-        //NotificationContextOptions = Get<MongoOptions>(IsRunningInContainer ? "NotificationContext:Container" : "NotificationContext:Local")!;
         GatewayContextOptions = Get<SqlServerOptions>("GatewayContext:SqlServer:Local", ENV_GATEWAY)!;
         CloudStorageConfig = Get<CloudStorageConfig>("External:Cloudinary")!;
         RealtimeOptions = Get<Dependencies.Realtime.Options>("Azure:SignalR")!;

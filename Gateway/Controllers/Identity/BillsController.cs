@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Contract.BusinessRules.PaymentBiz;
 
-namespace Gateway.Controllers.Payment;
+namespace Gateway.Controllers.Identity;
 
 public sealed class BillsController : ContractController
 {

@@ -3,7 +3,7 @@ using Contract.Helpers;
 using Contract.Requests.Progress.SubmissionRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
-namespace Gateway.Services.Library.SubmissionHandlers;
+namespace Gateway.Services.Progress.SubmissionHandlers;
 
 public sealed class CreateSubmissionHandler(HealpathyContext context, IAppLogger logger, IEventCache cache)
     : RequestHandler<CreateSubmissionCommand, Guid, HealpathyContext>(context, logger, cache)
@@ -18,6 +18,11 @@ public sealed class CreateSubmissionHandler(HealpathyContext context, IAppLogger
             await _context.SaveChangesAsync(cancellationToken);
 
             _cache.Add(command.UserId, new Events.Submission_Created(entity.Id));
+#pragma warning disable CA2016
+#pragma warning disable CS4014
+            Task.Run(() => { ReadContext.RefreshSubmissions(); });
+#pragma warning restore CS4014
+#pragma warning restore CA2016
             return Created(entity.Id);
         }
         catch (Exception ex)
@@ -27,7 +32,7 @@ public sealed class CreateSubmissionHandler(HealpathyContext context, IAppLogger
         }
     }
 
-    private Submission Adapt(CreateSubmissionCommand command)
+    private static Submission Adapt(CreateSubmissionCommand command)
     {
         var choices = command.Rq.Choices.Select(_ => new McqChoice(command.Id, _.McqQuestionId, _.McqAnswerId)).ToList();
 

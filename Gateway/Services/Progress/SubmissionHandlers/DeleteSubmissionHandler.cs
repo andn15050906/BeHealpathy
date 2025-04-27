@@ -2,7 +2,7 @@
 using Contract.Requests.Progress.SubmissionRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 
-namespace Gateway.Services.Library.SubmissionHandlers;
+namespace Gateway.Services.Progress.SubmissionHandlers;
 
 public sealed class DeleteMcqQuestionHandler : RequestHandler<DeleteSubmissionCommand, HealpathyContext>
 {

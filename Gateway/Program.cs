@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using Contract.Helpers.Storage;
 using Contract.Services.Implementations;
 using Contract.Messaging.ApiClients.Http;
-using Infrastructure.MessageQueue;
 using Gateway.Helpers.AppStart;
 using Gateway.Services.Microservices;
 using Infrastructure.Helpers.Monitoring;
@@ -33,28 +32,20 @@ builder.Services
     .AddMediatR(options => { options.RegisterServicesFromAssembly(typeof(Program).Assembly); })
     .AddDbContextPool<HealpathyContext>(_ => _.UseSqlServer(Configurer.GatewayContextOptions.ConnectionString))
     .AddAuthServices(Configurer.TokenOptions, Configurer.OAuthOptions)
-    //AddMQPublisher(Configurer.IsRunningInContainer)
     .AddMicroservices()
     .AddBackgroundServices(Configurer.BackgroundOptions)
     .AddEmailService(Configurer.EmailOptions)
     .AddAI(Configurer.GeminiOptions)
-    //.AddPaymentService
+    .Configure<Gateway.PayOSConfig>(builder.Configuration.GetSection("PayOS"))
+        .AddSingleton(sp => {
+            var config = sp.GetRequiredService<IOptions<Gateway.PayOSConfig>>().Value;
+            return new PayOS(config.ClientId, config.ApiKey, config.ChecksumKey);
+        })
     .AddCloudStorage<CloudStorageService>(Configurer.CloudStorageConfig)
     .AddCache(Configurer.CacheOptions)
     .AddHttpContextAccessor()
     .AddRealtimeService()
     .AddControllers();
-
-builder.Services
-    .Configure<Gateway.PayOSConfig>(builder.Configuration.GetSection("PayOS"))
-    .AddSingleton(sp =>
-    {
-        var config = sp.GetRequiredService<IOptions<Gateway.PayOSConfig>>().Value;
-        return new PayOS(config.ClientId, config.ApiKey, config.ChecksumKey);
-    });
-
-
-
 
 var app = builder.Build();
 
@@ -73,7 +64,7 @@ app
 app.MapControllers();
 app.MapHub<AppHub>("/hub");
 
-app.RunWarmUpQuery();
+await app.RunWarmUpQuery();
 //app.ScheduleJobs();
 
 app.Run();

@@ -1,7 +1,7 @@
-﻿using Gateway.Services.Background;
-using Hangfire;
+﻿using Hangfire;
 using Infrastructure.Helpers.Monitoring;
 using OfficeOpenXml;
+using static Gateway.Services.Background.JobRunner;
 
 namespace Gateway.Helpers.AppStart;
 
@@ -21,20 +21,25 @@ public static class OneTimeRunner
         _initedConfig = true;
     }
 
-    public static void RunWarmUpQuery(this WebApplication app)
+    public static async Task RunWarmUpQuery(this WebApplication app)
     {
         using var scope = app.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<HealpathyContext>();
-        context.Users.Count();
+
+        ReadContext.Init(context);
+        await ReadContext.RefreshAllCaches();
+
+        var calculationApiService = scope.ServiceProvider.GetRequiredService<ICalculationApiService>();
+        await new CalculateSentiment(context, calculationApiService).Execute();
     }
 
     public static void ScheduleJobs(this WebApplication app)
     {
 #pragma warning disable CS0618
-        RecurringJob.AddOrUpdate<JobRunner.CalculateRoadmapProgress>(
-            nameof(JobRunner.CalculateRoadmapProgress),
+        RecurringJob.AddOrUpdate<CalculateRoadmapProgress>(
+            nameof(CalculateRoadmapProgress),
             _ => _.Execute(),
-            Cron.MinuteInterval(5)
+            Cron.MinuteInterval(1)
         );
 #pragma warning restore CS0618
     }

@@ -25,19 +25,19 @@ public sealed class JobRunner
         {
             try
             {
-                //var allUserIds = await _context.Users.Where(_ => !_.IsDeleted).Select(_ => _.Id).ToListAsync();
-
-                var recentlyActiveUsers = await _context.ActivityLogs
+                var recentlyActiveUsers = ReadContext.ActivityLogs
                     .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-7))
                     .Take(6)
                     .Select(_ => _.CreatorId)
                     .Distinct()
-                    .ToListAsync();
+                    .ToList();
 
                 foreach (var userId in recentlyActiveUsers)
                     await AnalyzeRoadmapProgress(_context, userId);
 
                 await _context.SaveChangesAsync();
+
+                ReadContext.RefreshAllCaches();
             }
             catch (Exception ex)
             {
@@ -152,13 +152,11 @@ public sealed class JobRunner
     {
         private readonly HealpathyContext _context;
         private readonly ICalculationApiService _calculationApiService;
-        private readonly IAppLogger _logger;
 
-        public CalculateSentiment(HealpathyContext context, ICalculationApiService calculationApiService, IAppLogger logger)
+        public CalculateSentiment(HealpathyContext context, ICalculationApiService calculationApiService)
         {
             _context = context;
             _calculationApiService = calculationApiService;
-            _logger = logger;
         }
 
         public async Task Execute()
@@ -174,7 +172,7 @@ public sealed class JobRunner
 
             foreach (var user in recentlyActiveUsers)
             {
-                var analysis = await AnalyzeSentiment(user, startTime, endTime, _context, _calculationApiService, _logger);
+                var analysis = await AnalyzeSentiment(user, startTime, endTime, _context, _calculationApiService);
                 if (analysis != null)
                 {
                     _context.UserStatistics.Add(
@@ -188,7 +186,7 @@ public sealed class JobRunner
 
     public static async Task<Dictionary<DateTime, Output.Analysis>> AnalyzeSentiment(
         Guid userId, DateTime startTime, DateTime endTime,
-        HealpathyContext context, ICalculationApiService calculationApiService, IAppLogger logger
+        HealpathyContext context, ICalculationApiService calculationApiService
     )
     {
         try
@@ -361,14 +359,14 @@ public sealed class JobRunner
                     }
                 }
                 catch (Exception ex) {
-                    logger.Warn(ex.Message);
+                    //logger.Warn(ex.Message);
                 }
             }
             return outputs;
         }
         catch (Exception ex)
         {
-            logger.Warn(ex.Message);
+            //logger.Warn(ex.Message);
             return [];
         }
     }

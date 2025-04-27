@@ -15,7 +15,6 @@ public class TagsController : ContractController
 
 
     [HttpGet]
-    [Authorize]
     public async Task<IActionResult> GetPaged()
     {
         GetAllTagsQuery query = new();
