@@ -6,11 +6,13 @@ using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Statistics;
 using Contract.Responses.Identity;
 using Contract.Responses.Progress;
+using Contract.Responses.Statistics;
 using Core.Helpers;
 using Gateway.Services.Background;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Gateway.Controllers.Analysis;
 
@@ -77,11 +79,15 @@ public sealed class StatisticsController : ContractController
             endTime = (DateTime)dto.EndTime;
         }
 
-        var resultInDb = await context.UserStatistics.OrderByDescending(_ => _.CreationTime)
-            .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-1))
-            .FirstOrDefaultAsync(_ => _.CreatorId == userId);
-        if (resultInDb is not null)
-            return Ok(resultInDb);
+        try
+        {
+            var resultInDb = await context.UserStatistics.OrderByDescending(_ => _.CreationTime)
+                .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-1))
+                .FirstOrDefaultAsync(_ => _.CreatorId == userId);
+            if (resultInDb is not null)
+                return Ok(JsonSerializer.Deserialize<Dictionary<DateTime, Output.Analysis>>(resultInDb.Content));
+        }
+        catch (Exception) { }
 
         var result = await JobRunner.AnalyzeSentiment(
             userId, startTime, endTime,
