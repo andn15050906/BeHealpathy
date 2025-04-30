@@ -6,7 +6,7 @@ using Contract.Requests.Notifications.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Gateway.Controllers.Notifications;
+namespace Gateway.Controllers.Identity;
 
 public class NotificationsController : ContractController
 {

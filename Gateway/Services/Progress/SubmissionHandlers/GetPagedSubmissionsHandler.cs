@@ -5,7 +5,7 @@ using Contract.Requests.Progress.SubmissionRequests.Dtos;
 using Contract.Responses.Progress;
 using System.Linq.Expressions;
 
-namespace Gateway.Services.Library.SubmissionHandlers;
+namespace Gateway.Services.Progress.SubmissionHandlers;
 
 public sealed class GetPagedSubmissionsHandler : RequestHandler<GetPagedSubmissionsQuery, PagedResult<SubmissionModel>, HealpathyContext>
 {

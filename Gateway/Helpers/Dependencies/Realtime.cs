@@ -18,9 +18,9 @@ public static class Realtime
         if (options is null || options.Enabled != "true")
             return services;
 
-        /*serverBuilder.AddAzureSignalR(_ => {
+        serverBuilder.AddAzureSignalR(_ => {
             _.ClaimsProvider = context => context.User.Claims;
-        });*/
+        });
         return services;
     }
 }

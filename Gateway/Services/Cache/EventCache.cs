@@ -1,8 +1,6 @@
 ﻿using System.Text.Json;
 using Contract.BusinessRules;
 using Contract.Helpers.FeatureFlags;
-using Contract.IntegrationEvents;
-using Contract.Requests.Identity.ActivityLogRequests;
 using Contract.Requests.Identity.ActivityLogRequests.Dtos;
 using Core.Helpers;
 using Microsoft.Extensions.Options;

@@ -5,12 +5,14 @@ using Contract.Helpers;
 using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Statistics;
 using Contract.Responses.Identity;
+using Contract.Responses.Progress;
+using Contract.Responses.Statistics;
 using Core.Helpers;
 using Gateway.Services.Background;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+using System.Text.Json;
 
 namespace Gateway.Controllers.Analysis;
 
@@ -34,7 +36,9 @@ public sealed class StatisticsController : ContractController
     [Authorize]
     public async Task<IActionResult> GetPersonalProgressStatistics([FromServices] HealpathyContext context)
     {
-        var currentRoadmap = await context.Users.Where(_ => _.Id == ClientId).Select(_ => _.RoadmapId).FirstOrDefaultAsync();
+        var currentRoadmap =
+            ReadContext.Users.Where(_ => _.Id == ClientId).Select(_ => _.RoadmapId).FirstOrDefault()
+            ?? await context.Users.Where(_ => _.Id == ClientId).Select(_ => _.RoadmapId).FirstOrDefaultAsync();
         if (currentRoadmap is null)
             return NotFound();
 
@@ -75,15 +79,19 @@ public sealed class StatisticsController : ContractController
             endTime = (DateTime)dto.EndTime;
         }
 
-        var resultInDb = await context.UserStatistics.OrderByDescending(_ => _.CreationTime)
-            .Where(_ => _.CreationTime > TimeHelper.Now.AddHours(-2))
-            .FirstOrDefaultAsync(_ => _.CreatorId == userId);
-        if (resultInDb is not null)
-            return Ok(resultInDb);
+        try
+        {
+            var resultInDb = await context.UserStatistics.OrderByDescending(_ => _.CreationTime)
+                .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-1))
+                .FirstOrDefaultAsync(_ => _.CreatorId == userId);
+            if (resultInDb is not null)
+                return Ok(JsonSerializer.Deserialize<Dictionary<DateTime, Output.Analysis>>(resultInDb.Content));
+        }
+        catch (Exception) { }
 
         var result = await JobRunner.AnalyzeSentiment(
             userId, startTime, endTime,
-            context, calculationApiService, _logger
+            context, calculationApiService
         );
         return Ok(result);
     }
@@ -92,9 +100,9 @@ public sealed class StatisticsController : ContractController
     [Authorize(Roles = RoleConstants.ADMIN)]
     public async Task<IActionResult> GetGeneralReport([FromServices] HealpathyContext context)
     {
-        var totalUserCount = await context.Users
-            .CountAsync();
-        var totalUserCountOverMonths = await context.Users
+        var totalUserCount = ReadContext.Users.Count;
+
+        var totalUserCountOverMonths = ReadContext.Users
             .GroupBy(_ => new { _.CreationTime.Year, _.CreationTime.Month })
             .Select(_ => new
             {
@@ -103,18 +111,19 @@ public sealed class StatisticsController : ContractController
                 Count = _.Count()
             })
             .OrderBy(_ => _.Year).ThenBy(_ => _.Month)
-            .ToListAsync();
-        var recentlyActiveUserCount = await context.ActivityLogs
+            .ToList();
+
+        var recentlyActiveUserCount = ReadContext.ActivityLogs
             .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-7))
             .Select(_ => _.CreatorId)
             .Distinct()
-            .CountAsync();
+            .Count();
 
 
 
-        var totalPremiumUserCount = await context.Users
-            .CountAsync(_ => _.IsPremium);
-        var totalPremiumUserCountOverMonths = await context.Users
+        var totalPremiumUserCount = ReadContext.Users
+            .Count(_ => _.IsPremium);
+        var totalPremiumUserCountOverMonths = ReadContext.Users
             .Where(_ => _.IsPremium)
             .GroupBy(_ => new { _.CreationTime.Year, _.CreationTime.Month })
             .Select(_ => new
@@ -124,7 +133,7 @@ public sealed class StatisticsController : ContractController
                 Count = _.Count()
             })
             .OrderBy(_ => _.Year).ThenBy(_ => _.Month)
-            .ToListAsync();
+            .ToList();
 
 
 
@@ -140,59 +149,6 @@ public sealed class StatisticsController : ContractController
             })
             .OrderBy(r => r.Year).ThenBy(r => r.Month)
             .ToListAsync();
-
-
-
-        /*var eventList = new string[]
-        {
-            //"QuestionOfTheDay_Answered",
-            //"Mood_Updated",
-            "Yoga_Practiced",
-            //"Course_Completed",
-            "Media_Viewed",
-            //General_Activity_Created
-
-            //"BillCreated",
-            "Submission_Created",
-            "Routine_Created",
-            //"Routine_Updated",
-            //"RoutineLog_Created",
-            //"RoutineLog_Updated",
-            "DiaryNote_Created",
-            //"DiaryNote_Updated",
-
-            "Article_Created",
-            "ArticleComment_Created",
-            //"ArticleReaction_Created",
-            //"MediaResource_Created",
-
-            "Conversation_Created",
-            "Conversation_Joined",
-            //"Conversation_Left",
-            "ChatMessage_Created",
-            //"MessageReaction_Created",
-            "Meeting_Created",
-            "Meeting_Joined",
-
-            //"Advisor_Created",
-            //"Course_Created",
-            "Course_Enrolled",
-            //"Course_Unenrolled",
-            "CourseReview_Created",
-            "LectureComment_Created",
-
-            "Article_Read",
-        };
-        Dictionary<string, int> activityLogCounts = [];
-        foreach (var eventName in eventList)
-        {
-            activityLogCounts.Add(
-                eventName,
-                await context.ActivityLogs.CountAsync(_ => _.CreationTime > TimeHelper.Now.AddDays(-7) && _.Content.Contains(eventName))
-            );
-        }*/
-
-
 
         return Ok(new
         {
@@ -224,16 +180,15 @@ public sealed class StatisticsController : ContractController
     public static async Task<List<Input.Submission>> GetUserSubmissions(
         HealpathyContext context, Guid userId, DateTime? startTime = null, DateTime? endTime = null, List<string>? latestSurveyNames = null)
     {
-        Expression<Func<Survey, bool>> surveyPredicate = latestSurveyNames is not null
-            ? _ => !_.IsDeleted && latestSurveyNames.Any(s => _.Name.Contains(s))
-            : _ => !_.IsDeleted;
-
-        var surveys = await context.Surveys
-            .Include(_ => _.Questions).ThenInclude(_ => _.Answers)
-            .Include(_ => _.Bands)
-            .AsSplitQuery()
-            .Where(surveyPredicate)
-            .ToListAsync();
+        List<SurveyModel> surveys = [];
+        if (latestSurveyNames is not null)
+        {
+            surveys = ReadContext.Surveys.Where(_ => latestSurveyNames.Any(s => _.Name.Contains(s))).ToList();
+        }
+        else
+        {
+            surveys = ReadContext.Surveys;
+        }
 
         List<Submission>? submissions = [];
         if (latestSurveyNames is null)

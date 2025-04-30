@@ -19,6 +19,8 @@ public class MLController : ControllerBase
     private readonly string SadnessPhoBertDataPath;
     private readonly string SadnessPhoBertModelPath;
 
+    private static AnalysisCache _cache;
+
     public MLController()
     {
         BertDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "wikiDetoxAnnotated40kRows.tsv");
@@ -32,6 +34,8 @@ public class MLController : ControllerBase
         FearPhoBertModelPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "FearSentimentModel.zip");
         SadnessPhoBertDataPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "train_nor_811_Sadness.tsv");
         SadnessPhoBertModelPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "SadnessSentimentModel.zip");
+
+        _cache ??= new AnalysisCache();
     }
 
     [HttpPost]
@@ -46,12 +50,19 @@ public class MLController : ControllerBase
         {
             if (input != null)
             {
-                foreach (var txt in input.text)
+                foreach (var textInput in input.text)
                     try
                     {
-                        response.Add(new AnalysisOutputByDay(input.date, Analyze(txt)));
+                        var analysis = _cache.TryGet(textInput);
+                        if (analysis is null)
+                        {
+                            analysis = Analyze(textInput);
+                            _cache.Set(textInput, analysis);
+                        }
+
+                        response.Add(new AnalysisOutputByDay(input.date, analysis));
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         continue;
                     }
@@ -122,6 +133,27 @@ public class MLController : ControllerBase
             Probability = probability;
             Score = score;
             Emotions = emotions;
+        }
+    }
+
+    public class AnalysisCache
+    {
+        private Dictionary<string, OutputAnalysis> _cache = [];
+
+        public void Set(string input, OutputAnalysis output)
+        {
+            try
+            {
+                _cache[input] = output;
+            }
+            catch (Exception) { }
+        }
+
+        public OutputAnalysis? TryGet(string input)
+        {
+            if (_cache.TryGetValue(input, out var result))
+                return result;
+            return null;
         }
     }
 }
