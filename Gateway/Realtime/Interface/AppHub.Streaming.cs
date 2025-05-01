@@ -40,8 +40,7 @@ public sealed partial class AppHub
             ConnectionsHandler.CreateRoom(roomId, participant);
 #pragma warning disable CS4014
             Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            Clients.Caller.SendAsync(
-                StreamEvents.RoomCreated.ToString(), roomId);
+            Clients.Caller.SendAsync(StreamEvents.RoomCreated.ToString(), roomId);
 #pragma warning restore CS4014
             return;
         }
@@ -52,8 +51,7 @@ public sealed partial class AppHub
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
 #pragma warning disable CS4014
             Clients.Caller.SendAsync(StreamEvents.RoomInfoReceived.ToString(), room);
-            Clients.OthersInGroup(roomId).SendAsync(
-                StreamEvents.RoomJoined.ToString(), roomId, participant);
+            Clients.OthersInGroup(roomId).SendAsync(StreamEvents.RoomJoined.ToString(), roomId, participant);
 #pragma warning restore CS4014
         }
     }
