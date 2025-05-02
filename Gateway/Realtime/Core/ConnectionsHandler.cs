@@ -62,13 +62,26 @@ public sealed class ConnectionsHandler
         return room;
     }
 
-    public static bool TryAddRoomParticipant(Participant guest, Room room)
+    /// <summary>
+    /// 0: failed
+    /// 1: replace existing connection
+    /// 2: new connection
+    /// </summary>
+    public static (int, string) TryAddRoomParticipant(Participant guest, Room room)
     {
         if (!room.TryAddParticipant(guest))
-            return false;
+            return (0, string.Empty);
+
         guest.SetRoom(room.Id);
         _connection_participant.Add(guest.ConnectionId, guest);
-        return true;
+
+        var existingConnection = room.Participants.FirstOrDefault(_ => _.UserId == guest.UserId && _.ConnectionId != guest.ConnectionId);
+        if (existingConnection is not null)
+        {
+            RemoveRoomParticipant(room, existingConnection.ConnectionId);
+            return (1, existingConnection.ConnectionId);
+        }
+        return (2, string.Empty);
     }
 
     public static void RemoveRoomParticipant(Room room, string guestConnectionId)

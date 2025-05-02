@@ -45,12 +45,16 @@ public sealed partial class AppHub
             return;
         }
 
-        bool isSuccess = ConnectionsHandler.TryAddRoomParticipant(participant, room);
-        if (isSuccess)
+        var status = ConnectionsHandler.TryAddRoomParticipant(participant, room);
+        if (status.Item1 != 0)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+
 #pragma warning disable CS4014
             Clients.Caller.SendAsync(StreamEvents.RoomInfoReceived.ToString(), room);
+
+            if (status.Item1 == 1 && !string.IsNullOrEmpty(status.Item2))
+                Clients.OthersInGroup(roomId).SendAsync(StreamEvents.ParticipantLeft.ToString(), roomId, status.Item2);
             Clients.OthersInGroup(roomId).SendAsync(StreamEvents.RoomJoined.ToString(), roomId, participant);
 #pragma warning restore CS4014
         }
@@ -75,7 +79,6 @@ public sealed partial class AppHub
         if (room == null)
             return;
         ConnectionsHandler.RemoveRoomParticipant(room, Context.ConnectionId);
-        await Clients.OthersInGroup(room.Id).SendAsync(
-            StreamEvents.ParticipantLeft.ToString(), room.Id, Context.ConnectionId);
+        await Clients.OthersInGroup(room.Id).SendAsync(StreamEvents.ParticipantLeft.ToString(), room.Id, Context.ConnectionId);
     }
 }
