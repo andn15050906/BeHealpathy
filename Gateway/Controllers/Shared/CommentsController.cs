@@ -97,24 +97,37 @@ public class CommentsController : ContractController
         return await Send(command);
     }
 
-    [HttpDelete("{id}")]
+    //[HttpDelete("{id}")]
+    //[Authorize]
+    //public async Task<IActionResult> Delete(Guid id)
+    //{
+    //    try
+    //    {
+    //        return await Send(new DeleteArticleCommentCommand(id, ClientId));
+    //    }
+    //    catch (Exception)
+    //    {
+    //        try
+    //        {
+    //            return await Send(new DeleteLectureCommentCommand(id, ClientId));
+    //        }
+    //        catch (Exception)
+    //        {
+    //            return NotFound();
+    //        }
+    //    }
+    //}
+    [HttpDelete("article/{id}")]
     [Authorize]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> DeleteArticleComment(Guid id)
     {
-        try
-        {
-            return await Send(new DeleteArticleCommentCommand(id, ClientId));
-        }
-        catch (Exception)
-        {
-            try
-            {
-                return await Send(new DeleteLectureCommentCommand(id, ClientId));
-            }
-            catch (Exception)
-            {
-                return NotFound();
-            }
-        }
+        return await Send(new DeleteArticleCommentCommand(id, ClientId));
+    }
+
+    [HttpDelete("lecture/{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteLectureComment(Guid id)
+    {
+        return await Send(new DeleteLectureCommentCommand(id, ClientId));
     }
 }
