@@ -173,7 +173,7 @@ public sealed class JobRunner
             foreach (var user in recentlyActiveUsers)
             {
                 var analysis = await AnalyzeSentiment(user, startTime, endTime, _context, _calculationApiService);
-                if (analysis != null)
+                if (analysis != null && analysis.Count > 0)
                 {
                     _context.UserStatistics.Add(
                         new UserStatistics(Guid.NewGuid(), user, TimeHelper.Now, JsonSerializer.Serialize(analysis))
