@@ -27,17 +27,27 @@ public sealed class JobRunner
             {
                 var recentlyActiveUsers = ReadContext.ActivityLogs
                     .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-7))
-                    .Take(6)
                     .Select(_ => _.CreatorId)
                     .Distinct()
                     .ToList();
 
                 foreach (var userId in recentlyActiveUsers)
-                    await AnalyzeRoadmapProgress(_context, userId);
+                {
+                    try
+                    {
+                        await AnalyzeRoadmapProgress(_context, userId);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                    }
+                }
 
                 await _context.SaveChangesAsync();
 
+#pragma warning disable CS4014
                 ReadContext.RefreshAllCaches();
+#pragma warning restore CS4014
             }
             catch (Exception ex)
             {
@@ -173,7 +183,7 @@ public sealed class JobRunner
             foreach (var user in recentlyActiveUsers)
             {
                 var analysis = await AnalyzeSentiment(user, startTime, endTime, _context, _calculationApiService);
-                if (analysis != null)
+                if (analysis != null && analysis.Count > 0)
                 {
                     _context.UserStatistics.Add(
                         new UserStatistics(Guid.NewGuid(), user, TimeHelper.Now, JsonSerializer.Serialize(analysis))
