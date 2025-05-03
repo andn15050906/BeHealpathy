@@ -44,6 +44,10 @@ public sealed class GetPagedMeetingsHandler : RequestHandler<GetPagedMeetingsQue
 
         if (dto.Start is not null && dto.End is not null)
         { 
+            if (dto.Participants is not null)
+            {
+                return _ => _.StartAt >= dto.Start && _.EndAt <= dto.End && !_.IsDeleted && _.Participants.Select(_ => _.CreatorId).Intersect(dto.Participants).Any();
+            }    
             return _ => _.StartAt >= dto.Start && _.EndAt <= dto.End && !_.IsDeleted;
         }
 
