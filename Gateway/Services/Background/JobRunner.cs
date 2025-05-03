@@ -32,11 +32,22 @@ public sealed class JobRunner
                     .ToList();
 
                 foreach (var userId in recentlyActiveUsers)
-                    await AnalyzeRoadmapProgress(_context, userId);
+                {
+                    try
+                    {
+                        await AnalyzeRoadmapProgress(_context, userId);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(ex.Message);
+                    }
+                }
 
                 await _context.SaveChangesAsync();
 
+#pragma warning disable CS4014
                 ReadContext.RefreshAllCaches();
+#pragma warning restore CS4014
             }
             catch (Exception ex)
             {

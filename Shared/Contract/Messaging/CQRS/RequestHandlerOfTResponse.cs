@@ -58,19 +58,19 @@ public abstract class RequestHandler<TRequest, TResponse, TContext> : IRequestHa
     protected static Result<PagedResult<T>> ToQueryResult<T>(PagedResult<T> pagedList)
     {
         if (pagedList is null || pagedList.TotalCount == 0)
-            return new(200, string.Empty);
+            return new(404, string.Empty);
         return new(200, pagedList);
     }
 
     protected static Result<IEnumerable<T>> ToQueryResult<T>(IEnumerable<T> values)
     {
         if (values is null || !values.Any())
-            return new(200, string.Empty);
+            return new(404, string.Empty);
         return new(200, values);
     }
 
     protected static Result<T> ToQueryResult<T>(T? value)
     {
-        return value is null ? new(200, string.Empty) : new(200, value);
+        return value is null ? new(404, string.Empty) : new(200, value);
     }
 }

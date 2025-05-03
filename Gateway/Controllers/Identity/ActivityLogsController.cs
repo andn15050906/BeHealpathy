@@ -35,7 +35,8 @@ public class ActivityLogsController : ContractController
         if (dbQueryResult.IsSuccessful)
         {
             cacheQueryResult ??= [];
-            cacheQueryResult.AddRange(dbQueryResult.Data?.Items!);
+            if (dbQueryResult.Data is not null)
+                cacheQueryResult.AddRange(dbQueryResult.Data?.Items!);
         }
 
         return Ok(cacheQueryResult);
