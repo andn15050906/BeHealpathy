@@ -81,8 +81,9 @@ public sealed class StatisticsController : ContractController
 
         try
         {
-            var resultInDb = await context.UserStatistics.OrderByDescending(_ => _.CreationTime)
-                .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-1) && _.Content != "{}")
+            var resultInDb = await context.UserStatistics
+                .OrderByDescending(_ => _.CreationTime)
+                .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-14) && _.Content != "{}")
                 .FirstOrDefaultAsync(_ => _.CreatorId == userId);
             if (resultInDb is not null)
                 return Ok(JsonSerializer.Deserialize<Dictionary<DateTime, Output.Analysis>>(resultInDb.Content));

@@ -3,7 +3,6 @@ using Contract.Messaging.ApiClients.Http;
 using Contract.Requests.Identity.ActivityLogRequests;
 using Contract.Requests.Identity.ActivityLogRequests.Dtos;
 using Contract.Responses.Identity;
-using Gateway.Services.Cache;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -34,7 +33,10 @@ public class ActivityLogsController : ContractController
 
         //...
         if (dbQueryResult.IsSuccessful)
+        {
+            cacheQueryResult ??= [];
             cacheQueryResult.AddRange(dbQueryResult.Data?.Items!);
+        }
 
         return Ok(cacheQueryResult);
     }

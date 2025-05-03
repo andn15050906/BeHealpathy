@@ -27,7 +27,6 @@ public sealed class JobRunner
             {
                 var recentlyActiveUsers = ReadContext.ActivityLogs
                     .Where(_ => _.CreationTime > TimeHelper.Now.AddDays(-7))
-                    .Take(6)
                     .Select(_ => _.CreatorId)
                     .Distinct()
                     .ToList();
