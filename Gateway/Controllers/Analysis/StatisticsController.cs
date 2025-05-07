@@ -173,6 +173,26 @@ public sealed class StatisticsController : ContractController
         await JobRunner.AnalyzeRoadmapProgress(context, ClientId);
     }
 
+    [HttpGet("force-milestone/{phase}/{milestone}")]
+    public async Task ForceDoneMilestone([FromServices] HealpathyContext context, Guid phase, Guid milestone)
+    {
+        if (phase == Guid.Empty || milestone == Guid.Empty)
+            return;
+
+        var completed = await context.RoadmapProgress.AnyAsync(_ => _.CreatorId == ClientId && _.Milestone == milestone);
+        if (!completed)
+        {
+            var progress = new RoadmapProgress
+            {
+                CreatorId = ClientId,
+                RoadmapPhaseId = phase,
+                Milestone = milestone,
+                CreationTime = TimeHelper.Now
+            };
+            await context.RoadmapProgress.AddAsync(progress);
+            await context.SaveChangesAsync();
+        }
+    }
 
 
 

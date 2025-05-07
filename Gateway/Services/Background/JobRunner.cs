@@ -84,7 +84,7 @@ public sealed class JobRunner
                 .ToListAsync();
 
             var pendingMilestones = phase.Milestones.Where(_ => !currentCompletedMilestones.Select(_ => _.Milestone).Contains(_.Id)).ToList();
-            if (!pendingMilestones.Any())
+            if (pendingMilestones.Count == 0)
             {
                 try
                 {
