@@ -33,13 +33,13 @@ public sealed class PrefStore
                 _ids[0],
                 "✨ What you want us to help you?✨",
                 new() {
-                    { _ids[1], "🌙 Reduce stress, anxiety, and enhance emotional well-being" },
-                    { _ids[2], "💆 Access self-help tools, guided meditations, and mindfulness exercises" },
-                    { _ids[3], "🏋️‍♂️ Connect with like-minded individuals, share progress and seek advice" },
-                    { _ids[4], "🧘 Boost physical health and increase energy levels" },
-                    { _ids[5], "💆 Receive personalized recommendations, enhance skills and achieve personal goals" },
-                    { _ids[6], "🍎 Establish a healthy routine and develop positive habits" },
-                    { _ids[7], "🧠 Improve focus, memory, and mental clarity" },
+                    { _ids[1], "🌙 Giảm căng thẳng, lo âu và tăng cường sức khỏe cảm xúc" },
+                    { _ids[2], "💆 Truy cập các công cụ tự trợ giúp, thiền có hướng dẫn và các bài tập chánh niệm" },
+                    { _ids[3], "🏋️‍ Kết nối với những người có cùng chí hướng, chia sẻ tiến trình và tìm kiếm lời khuyên" },
+                    { _ids[4], "🧘 Tăng cường sức khỏe thể chất và tăng mức năng lượng" },
+                    { _ids[5], "💆 Nhận các đề xuất được cá nhân hóa, nâng cao kỹ năng và đạt được mục tiêu cá nhân" },
+                    { _ids[6], "🍎 Thiết lập thói quen lành mạnh và phát triển những thói quen tích cực" },
+                    { _ids[7], "🧠 Cải thiện sự tập trung, trí nhớ và sự minh mẫn về tinh thần" },
                 }
             )
         ];

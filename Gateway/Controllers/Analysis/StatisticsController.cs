@@ -170,8 +170,7 @@ public sealed class StatisticsController : ContractController
     [HttpGet("force-progress")]
     public async Task ForceCalculateProgress([FromServices] HealpathyContext context, [FromServices] IAppLogger logger)
     {
-        var runner = new JobRunner.CalculateRoadmapProgress(context, logger);
-        await runner.Execute();
+        await JobRunner.AnalyzeRoadmapProgress(context, ClientId);
     }
 
 

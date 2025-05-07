@@ -33,7 +33,7 @@ public class GetPagedAdvisorsHandler : RequestHandler<GetPagedAdvisorsQuery, Pag
     private Expression<Func<Advisor, bool>>? GetPredicate(QueryAdvisorDto dto)
     {
         if (dto.UserId is not null)
-            return _ => _.Id == dto.UserId;
+            return _ => _.CreatorId == dto.UserId;
         return _ => true;
     }
 }
