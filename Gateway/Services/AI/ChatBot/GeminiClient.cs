@@ -46,7 +46,7 @@ public sealed class GeminiClient : IChatbotClient
         catch (Exception ex)
         {
             _logger.Warn(ex.Message);
-            return new Result<string>(500);
+            return new Result<string>(200) { Data = ex.Message ?? string.Empty };
         }
     }
 }
