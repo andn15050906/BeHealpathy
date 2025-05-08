@@ -69,7 +69,12 @@ public sealed class BillsController : ContractController
         var course = await context.Courses.FirstOrDefaultAsync(_ => _.Id == courseId && !_.IsDeleted);
         if (course is null)
             return NotFound();
-        var item = new ItemData(course.Title, 1, (int)course.Price);
+        double finalPrice = course.Price;
+        if (course.DiscountExpiry <= DateTime.UtcNow)
+        {
+            finalPrice = course.Price * (1 - course.Discount);
+        }
+        var item = new ItemData(course.Title, 1, (int)Math.Ceiling(finalPrice));
 
         var paymentData = new PaymentData(orderCode, (int)course.Price, PaymentOptions.Enrollment.ToString(), [item], cancelUrl, returnUrl);
         var result = await CreatePaymentLinkAndBill(paymentData, billId, course.Id.ToString());
