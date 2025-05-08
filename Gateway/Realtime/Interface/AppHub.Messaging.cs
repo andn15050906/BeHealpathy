@@ -35,18 +35,22 @@ public sealed partial class AppHub
 
         if (memberIds.Contains(PreSet.SystemUserId.ToString()))
         {
-            var reply = await GeminiClient.Instance.Prompt(dto.Content);
-            if (reply.IsSuccessful)
+            Result<string> reply = new();
+            try
             {
-                CreateChatMessageCommand replyCommand = new(Guid.NewGuid(), new CreateChatMessageDto
-                {
-                    Content = reply.Data ?? string.Empty,
-                    ConversationId = dto.ConversationId,            // also ClientId
-                    //Medias
-                }, PreSet.SystemUserId,/**/ []);
-                var replyMessage = await mediator.Send(replyCommand);
-                await Clients.User(clientId.ToString()).SendAsync(message.Callback, replyMessage.Data);
+                reply = await GeminiClient.Instance.Prompt(dto.Content);
             }
+            catch (Exception ex) {
+                reply = new Result<string>(200) { Data = ex.Message };
+            }
+
+            CreateChatMessageCommand replyCommand = new(Guid.NewGuid(), new CreateChatMessageDto
+            {
+                Content = reply.Data ?? string.Empty,
+                ConversationId = dto.ConversationId,            // also ClientId
+            }, PreSet.SystemUserId, []);
+            var replyMessage = await mediator.Send(replyCommand);
+            await Clients.User(clientId.ToString()).SendAsync(message.Callback, replyMessage.Data);
         }
     }
 
