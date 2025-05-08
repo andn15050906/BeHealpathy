@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Contract.BusinessRules;
+using Contract.Helpers;
 using Contract.Requests.Community.ChatMessageRequests;
 using Contract.Requests.Community.ChatMessageRequests.Dtos;
 using Contract.Requests.Community.MessageReactionRequests;
@@ -17,7 +18,7 @@ public sealed partial class AppHub
     // files -> fileNames
     // Moving mediator to another method (not awaited) might cause Connection closing / disposed ???
 
-    public async Task CreateChatMessage(Message message, [FromServices] IMediator mediator)
+    public async Task CreateChatMessage(Message message, [FromServices] IMediator mediator, [FromServices] IAppLogger logger)
     {
         Guid clientId = GetClientId();
         if (clientId == default)
@@ -31,26 +32,41 @@ public sealed partial class AppHub
         if (!createMessageResult.IsSuccessful)
             return;
         var memberIds = message.ConversationMembers.Select(_ => _.ToString());
-        await Clients.Users(memberIds).SendAsync(message.Callback, createMessageResult.Data);
-
-        if (memberIds.Contains(PreSet.SystemUserId.ToString()))
+        try
         {
-            Result<string> reply = new();
-            try
-            {
-                reply = await GeminiClient.Instance.Prompt(dto.Content);
-            }
-            catch (Exception ex) {
-                reply = new Result<string>(200) { Data = ex.Message };
-            }
+            await Clients.Users(memberIds).SendAsync(message.Callback, createMessageResult.Data);
+        }
+        catch (Exception ex)
+        {
+            logger.Warn(ex.Message);
+        }
 
-            CreateChatMessageCommand replyCommand = new(Guid.NewGuid(), new CreateChatMessageDto
+        try
+        {
+            if (memberIds.Contains(PreSet.SystemUserId.ToString()))
             {
-                Content = reply.Data ?? string.Empty,
-                ConversationId = dto.ConversationId,            // also ClientId
-            }, PreSet.SystemUserId, []);
-            var replyMessage = await mediator.Send(replyCommand);
-            await Clients.User(clientId.ToString()).SendAsync(message.Callback, replyMessage.Data);
+                Result<string> reply = new();
+                try
+                {
+                    reply = await GeminiClient.Instance.Prompt(dto.Content);
+                }
+                catch (Exception ex)
+                {
+                    reply = new Result<string>(200) { Data = ex.Message };
+                }
+
+                CreateChatMessageCommand replyCommand = new(Guid.NewGuid(), new CreateChatMessageDto
+                {
+                    Content = reply.Data ?? string.Empty,
+                    ConversationId = dto.ConversationId,            // also ClientId
+                }, PreSet.SystemUserId, []);
+                var replyMessage = await mediator.Send(replyCommand);
+                await Clients.User(clientId.ToString()).SendAsync(message.Callback, replyMessage.Data);
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.Warn(ex.Message);
         }
     }
 
