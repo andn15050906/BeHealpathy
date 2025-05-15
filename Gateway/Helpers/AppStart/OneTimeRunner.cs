@@ -36,11 +36,13 @@ public static class OneTimeRunner
     public static void ScheduleJobs(this WebApplication app)
     {
 #pragma warning disable CS0618
+        /*
         RecurringJob.AddOrUpdate<CalculateRoadmapProgress>(
             nameof(CalculateRoadmapProgress),
             _ => _.Execute(),
             Cron.MinuteInterval(1)
         );
+        */
 #pragma warning restore CS0618
     }
 }

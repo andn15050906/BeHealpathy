@@ -9,8 +9,11 @@ public sealed class Lecture : AuditedEntity
     public string Content { get; set; }
     public string ContentSummary { get; set; }
     public bool IsPreviewable { get; set; }
+    public int Index { get; set; }
+    public string LectureType { get; set; }         // video, document
+    public string MetaData { get; set; }
     
-    //public Guid SectionId { get; set; }
+    // FKs
     public Guid CourseId { get; set; }
 
     // Navigations

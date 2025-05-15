@@ -1,5 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
-using Contract.Helpers;
+﻿using Contract.Helpers;
 using Contract.Requests.Statistics;
 using Contract.Responses.Statistics;
 using Core.Helpers;
@@ -10,6 +9,7 @@ namespace Gateway.Services.Background;
 
 public sealed class JobRunner
 {
+    /*
     public class CalculateRoadmapProgress
     {
         private readonly HealpathyContext _context;
@@ -157,6 +157,7 @@ public sealed class JobRunner
             return;
         }
     }
+    */
 
     public class CalculateSentiment
     {

@@ -4,12 +4,11 @@ public sealed class RoadmapMilestoneModel
 {
     public Guid Id { get; set; }
 
+    public string Title { get; set; }               = string.Empty;
+    public string EventName { get; set; }           = string.Empty;
+    public string Content { get; set; }             = string.Empty;
 
-
-    public string Title { get; set; }
-    public string EventName { get; set; }
-    public int RepeatTimesRequired { get; set; }
-    public int Index { get; set; }
-    public bool IsRequired { get; set; }
-    public IEnumerable<RoadmapRecommendationModel> Recommendations { get; set; } = [];
+    public bool IsCompleted { get; set; }
+    public bool IsSkipped { get; set; }
+    public string Feedback { get; set; }            = string.Empty;
 }

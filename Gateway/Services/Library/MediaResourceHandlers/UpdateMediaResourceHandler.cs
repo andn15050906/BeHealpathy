@@ -1,6 +1,6 @@
-﻿using Contract.Domain.LibraryAggregate;
-using Contract.Domain.LibraryAggregate.Enums;
-using Contract.Domain.Shared.MultimediaBase.Enums;
+﻿using Contract.Domain.Shared.MultimediaBase.Enums;
+using Contract.Domain.ToolAggregate;
+using Contract.Domain.ToolAggregate.Enums;
 using Contract.Helpers;
 using Contract.Requests.Library.MediaRequests;
 using Core.Helpers;

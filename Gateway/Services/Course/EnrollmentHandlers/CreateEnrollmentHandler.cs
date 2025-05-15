@@ -16,7 +16,7 @@ public class CreateEnrollmentHandler(HealpathyContext context, IAppLogger logger
                 return BadRequest(BusinessMessages.Enrollment.INVALID_BILL_OR_GRANTED);
 
             var entity = Adapt(command);
-            await _context.Enrollments.InsertExt(entity);
+            await _context.CourseProgress.InsertExt(entity);
             await _context.SaveChangesAsync(cancellationToken);
 
             _cache.Add(command.UserId, new Events.Course_Enrolled(command.Id));
@@ -28,10 +28,10 @@ public class CreateEnrollmentHandler(HealpathyContext context, IAppLogger logger
         }
     }
 
-    private Enrollment Adapt(CreateEnrollmentCommand command)
+    private CourseProgress Adapt(CreateEnrollmentCommand command)
     {
         if (command.Rq.BillId is not null)
-            return new Enrollment(command.Id, command.Rq.CourseId, command.UserId, (Guid)command.Rq.BillId);
-        return new Enrollment(command.Id, command.Rq.CourseId, command.UserId);
+            return new CourseProgress(command.Id, command.Rq.CourseId, command.UserId, (Guid)command.Rq.BillId);
+        return new CourseProgress(command.Id, command.Rq.CourseId, command.UserId);
     }
 }

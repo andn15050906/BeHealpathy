@@ -31,7 +31,7 @@ public class GetPagedEnrollmentsHandler : RequestHandler<GetPagedEnrollmentsQuer
         }
     }
 
-    private Expression<Func<Enrollment, bool>>? GetPredicate(GetPagedEnrollmentsQuery query)
+    private Expression<Func<CourseProgress, bool>>? GetPredicate(GetPagedEnrollmentsQuery query)
     {
         if (query.Rq.CourseId is not null)
             return _ => _.CourseId == query.Rq.CourseId;

@@ -97,7 +97,7 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
     private async Task<Result<PagedResult<CourseOverviewModel>>> HandleTrendingQuery(GetPagedCoursesQuery request)
     {
         // Lấy danh sách đăng ký trong khoảng thời gian
-        var unorderedQuery = _context.Enrollments
+        var unorderedQuery = _context.CourseProgress
             .Where(_ => _.CreationTime >= TimeHelper.Now.AddMonths(-TREND_MONTHS));
         var total = await unorderedQuery.CountAsync();
 

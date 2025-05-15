@@ -22,6 +22,361 @@ namespace Gateway.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.McqAnswer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("McqQuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("McqQuestionId");
+
+                    b.ToTable("McqAnswers", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.McqChoice", b =>
+                {
+                    b.Property<Guid>("SubmissionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("McqAnswerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("SubmissionId", "McqAnswerId");
+
+                    b.HasIndex("McqAnswerId");
+
+                    b.ToTable("McqChoices", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.McqQuestion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Explanation")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SurveyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SurveyId");
+
+                    b.ToTable("McqQuestions", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.MentalProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Attribute")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(MAX)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MentalProfile", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Roadmap", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AdvisorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IntroText")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(3000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdvisorId");
+
+                    b.ToTable("Roadmaps", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.RoadmapMilestone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EventName")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)");
+
+                    b.Property<string>("Feedback")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSkipped")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("RoadmapPhaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoadmapPhaseId");
+
+                    b.ToTable("RoadmapMilestones", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.RoadmapPhase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(3000)");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsRequiredToAdvance")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("QuestionsToAdvance")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("RoadmapId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TimeSpan")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoadmapId");
+
+                    b.ToTable("RoadmapPhases", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.RoadmapRecommendation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("RoadmapPhaseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TargetEntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Trait")
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("TraitDescription")
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoadmapPhaseId");
+
+                    b.ToTable("RoadmapRecommendations", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Submission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SurveyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.HasIndex("SurveyId");
+
+                    b.ToTable("Submissions", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Survey", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsScientific")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Surveys", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.SurveyScoreBand", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BandName")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(45)");
+
+                    b.Property<string>("BandRating")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(45)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MaxScore")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinScore")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("SurveyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SurveyId");
+
+                    b.ToTable("SurveyScoreBands", (string)null);
+                });
+
             modelBuilder.Entity("Contract.Domain.CommunityAggregate.ChatMessage", b =>
                 {
                     b.Property<Guid>("Id")
@@ -336,6 +691,9 @@ namespace Gateway.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("AdvisorExpectedOutcome")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("AdvisorId")
                         .HasColumnType("uniqueidentifier");
 
@@ -348,20 +706,21 @@ namespace Gateway.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR(1000)");
 
-                    b.Property<double>("Discount")
+                    b.Property<double?>("Discount")
                         .HasColumnType("float");
 
-                    b.Property<DateTime>("DiscountExpiry")
+                    b.Property<DateTime?>("DiscountExpiry")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("ExpectedCompletion")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("InstructorId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Intro")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR(500)");
 
                     b.Property<bool>("IsDeleted")
@@ -393,17 +752,15 @@ namespace Gateway.Migrations
                         .HasColumnType("VARCHAR(255)");
 
                     b.Property<string>("Outcomes")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR(500)");
 
-                    b.Property<double>("Price")
+                    b.Property<double?>("Price")
                         .HasColumnType("float");
 
                     b.Property<int>("RatingCount")
                         .HasColumnType("int");
 
                     b.Property<string>("Requirements")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR(500)");
 
                     b.Property<string>("Status")
@@ -411,7 +768,6 @@ namespace Gateway.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ThumbUrl")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR(255)");
 
                     b.Property<string>("Title")
@@ -432,6 +788,64 @@ namespace Gateway.Migrations
                     b.ToTable("Courses", null, t =>
                         {
                             t.HasTrigger("onCourseInsertDelete");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
+                });
+
+            modelBuilder.Entity("Contract.Domain.CourseAggregate.CourseProgress", b =>
+                {
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CourseId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BillId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<int>("CurrentIndex")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpectedCompletionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CreatorId", "CourseId");
+
+                    b.HasIndex("BillId")
+                        .IsUnique()
+                        .HasFilter("[BillId] IS NOT NULL");
+
+                    b.HasIndex("CourseId");
+
+                    b.ToTable("Enrollments", null, t =>
+                        {
+                            t.HasTrigger("onEnrollmentInsertDelete");
                         });
 
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
@@ -489,54 +903,6 @@ namespace Gateway.Migrations
                     b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
                 });
 
-            modelBuilder.Entity("Contract.Domain.CourseAggregate.Enrollment", b =>
-                {
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BillId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("CreatorId", "CourseId");
-
-                    b.HasIndex("BillId")
-                        .IsUnique()
-                        .HasFilter("[BillId] IS NOT NULL");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("Enrollments", null, t =>
-                        {
-                            t.HasTrigger("onEnrollmentInsertDelete");
-                        });
-
-                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
-                });
-
             modelBuilder.Entity("Contract.Domain.CourseAggregate.Lecture", b =>
                 {
                     b.Property<Guid>("Id")
@@ -562,6 +928,9 @@ namespace Gateway.Migrations
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -575,6 +944,14 @@ namespace Gateway.Migrations
 
                     b.Property<Guid>("LastModifierId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LectureType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MetaData")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -735,728 +1112,6 @@ namespace Gateway.Migrations
                     b.ToTable("YogaPoses", (string)null);
                 });
 
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.Article", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CommentCount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsCommentDisabled")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(100)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<int>("ViewCount")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Articles", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleComment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ArticleCommentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ArticleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(500)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SourceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleCommentId");
-
-                    b.HasIndex("ArticleId");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("ArticleComments", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleReaction", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ArticleCommentId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ArticleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(45)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("SourceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleCommentId");
-
-                    b.HasIndex("ArticleId");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("ArticleReactions", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleSection", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ArticleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(3000)");
-
-                    b.Property<string>("Header")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ArticleId");
-
-                    b.ToTable("ArticleSections", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleTag", b =>
-                {
-                    b.Property<Guid>("ArticleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TagId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("ArticleId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("ArticleTags", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.MediaResource", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Artist")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(100)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(500)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("MediaResources", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.Tag", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tags", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.DiaryNote", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Mood")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<string>("Theme")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("DiaryNotes", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqAnswer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("McqQuestionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("McqQuestionId");
-
-                    b.ToTable("McqAnswers", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqChoice", b =>
-                {
-                    b.Property<Guid>("SubmissionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("McqQuestionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("McqAnswerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SubmissionId", "McqQuestionId");
-
-                    b.HasIndex("McqQuestionId");
-
-                    b.ToTable("McqChoices", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqQuestion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<string>("Explanation")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<int>("Index")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("SurveyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SurveyId");
-
-                    b.ToTable("McqQuestions", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Roadmap", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("IntroText")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(3000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(500)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roadmaps", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapMilestone", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EventName")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(255)");
-
-                    b.Property<int>("Index")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRequired")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("RepeatTimesRequired")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("RoadmapPhaseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoadmapPhaseId");
-
-                    b.ToTable("RoadmapMilestones", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapPhase", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(3000)");
-
-                    b.Property<int>("Index")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("RoadmapId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TimeSpan")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoadmapId");
-
-                    b.ToTable("RoadmapPhases", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapProgress", b =>
-                {
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("Milestone")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("RoadmapPhaseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CreatorId", "Milestone");
-
-                    b.HasIndex("RoadmapPhaseId");
-
-                    b.ToTable("RoadmapProgress", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapRecommendation", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("EntityType")
-                        .IsRequired()
-                        .HasColumnType("VARCHAR(255)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("MilestoneId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TargetEntityId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Trait")
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<string>("TraitDescription")
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MilestoneId");
-
-                    b.ToTable("RoadmapRecommendations", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Routine", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsClosed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Objective")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.Property<string>("Repeater")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("RepeaterSequenceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Tag")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Routines", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoutineLog", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(100)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("RoutineId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("RoutineId");
-
-                    b.ToTable("RoutineLogs", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Submission", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastModificationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("LastModifierId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("SurveyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.HasIndex("SurveyId");
-
-                    b.ToTable("Submissions", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Survey", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(1000)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(255)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Surveys", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.SurveyScoreBand", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("BandName")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(45)");
-
-                    b.Property<string>("BandRating")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(45)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("MaxScore")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MinScore")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("SurveyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SurveyId");
-
-                    b.ToTable("SurveyScoreBands", (string)null);
-                });
-
             modelBuilder.Entity("Contract.Domain.Shared.Bill", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1585,6 +1240,402 @@ namespace Gateway.Migrations
                     b.ToTable("Notifications", (string)null);
                 });
 
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.Article", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CommentCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsCommentDisabled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(100)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<int>("ViewCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Articles", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleComment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ArticleCommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(500)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleCommentId");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("ArticleComments", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleReaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ArticleCommentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(45)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleCommentId");
+
+                    b.HasIndex("ArticleId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("ArticleReactions", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleSection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(3000)");
+
+                    b.Property<string>("Header")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ArticleId");
+
+                    b.ToTable("ArticleSections", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleTag", b =>
+                {
+                    b.Property<Guid>("ArticleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ArticleId", "TagId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("ArticleTags", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.DiaryNote", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Mood")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Theme")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("DiaryNotes", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.MediaResource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Artist")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(100)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("MediaResources", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.Routine", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastModificationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("LastModifierId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Objective")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(255)");
+
+                    b.Property<string>("Repeater")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RepeaterSequenceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Tag")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Routines", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.RoutineLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(100)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("RoutineId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoutineId");
+
+                    b.ToTable("RoutineLogs", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.Tag", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Tags", (string)null);
+                });
+
             modelBuilder.Entity("Contract.Domain.UserAggregate.ActivityLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1611,69 +1662,6 @@ namespace Gateway.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("ActivityLogs", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.UserAggregate.Preference", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("SourceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Value")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Preferences", (string)null);
-                });
-
-            modelBuilder.Entity("Contract.Domain.UserAggregate.Setting", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Choice")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(100)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
-                    b.Property<Guid>("CreatorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR(100)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
-
-                    b.ToTable("Settings", (string)null);
                 });
 
             modelBuilder.Entity("Contract.Domain.UserAggregate.User", b =>
@@ -1735,6 +1723,9 @@ namespace Gateway.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETDATE()");
 
+                    b.Property<Guid?>("MentalProfileId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("MetaFullName")
                         .IsRequired()
                         .HasColumnType("VARCHAR(45)");
@@ -1742,9 +1733,6 @@ namespace Gateway.Migrations
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("VARCHAR(100)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("VARCHAR(45)");
 
                     b.Property<DateTime?>("PremiumExpiry")
                         .HasColumnType("datetime2");
@@ -1773,12 +1761,12 @@ namespace Gateway.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AdvisorId");
+
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("Phone")
-                        .IsUnique()
-                        .HasFilter("[Phone] IS NOT NULL");
+                    b.HasIndex("MentalProfileId");
 
                     b.HasIndex("UserName")
                         .IsUnique();
@@ -1837,6 +1825,106 @@ namespace Gateway.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("UserStatistics", (string)null);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.McqAnswer", b =>
+                {
+                    b.HasOne("Contract.Domain.AssessmentAggregate.McqQuestion", null)
+                        .WithMany("Answers")
+                        .HasForeignKey("McqQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.McqChoice", b =>
+                {
+                    b.HasOne("Contract.Domain.AssessmentAggregate.McqAnswer", "Answer")
+                        .WithMany()
+                        .HasForeignKey("McqAnswerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Contract.Domain.AssessmentAggregate.Submission", "Submission")
+                        .WithMany("Choices")
+                        .HasForeignKey("SubmissionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Answer");
+
+                    b.Navigation("Submission");
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.McqQuestion", b =>
+                {
+                    b.HasOne("Contract.Domain.AssessmentAggregate.Survey", null)
+                        .WithMany("Questions")
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Roadmap", b =>
+                {
+                    b.HasOne("Contract.Domain.CourseAggregate.Advisor", "Advisor")
+                        .WithMany()
+                        .HasForeignKey("AdvisorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Advisor");
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.RoadmapMilestone", b =>
+                {
+                    b.HasOne("Contract.Domain.AssessmentAggregate.RoadmapPhase", null)
+                        .WithMany("Milestones")
+                        .HasForeignKey("RoadmapPhaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.RoadmapPhase", b =>
+                {
+                    b.HasOne("Contract.Domain.AssessmentAggregate.Roadmap", null)
+                        .WithMany("Phases")
+                        .HasForeignKey("RoadmapId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.RoadmapRecommendation", b =>
+                {
+                    b.HasOne("Contract.Domain.AssessmentAggregate.RoadmapPhase", null)
+                        .WithMany("Recommendations")
+                        .HasForeignKey("RoadmapPhaseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Submission", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Contract.Domain.AssessmentAggregate.Survey", "Survey")
+                        .WithMany()
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+
+                    b.Navigation("Survey");
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.SurveyScoreBand", b =>
+                {
+                    b.HasOne("Contract.Domain.AssessmentAggregate.Survey", null)
+                        .WithMany("Bands")
+                        .HasForeignKey("SurveyId");
                 });
 
             modelBuilder.Entity("Contract.Domain.CommunityAggregate.ChatMessage", b =>
@@ -1943,22 +2031,7 @@ namespace Gateway.Migrations
                     b.Navigation("LeafCategory");
                 });
 
-            modelBuilder.Entity("Contract.Domain.CourseAggregate.CourseReview", b =>
-                {
-                    b.HasOne("Contract.Domain.CourseAggregate.Course", null)
-                        .WithMany("Reviews")
-                        .HasForeignKey("CourseId");
-
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.CourseAggregate.Enrollment", b =>
+            modelBuilder.Entity("Contract.Domain.CourseAggregate.CourseProgress", b =>
                 {
                     b.HasOne("Contract.Domain.CourseAggregate.Course", "Course")
                         .WithMany("Enrollments")
@@ -1973,6 +2046,21 @@ namespace Gateway.Migrations
                         .IsRequired();
 
                     b.Navigation("Course");
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.CourseAggregate.CourseReview", b =>
+                {
+                    b.HasOne("Contract.Domain.CourseAggregate.Course", null)
+                        .WithMany("Reviews")
+                        .HasForeignKey("CourseId");
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Creator");
                 });
@@ -2031,231 +2119,6 @@ namespace Gateway.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.Article", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleComment", b =>
-                {
-                    b.HasOne("Contract.Domain.LibraryAggregate.ArticleComment", null)
-                        .WithMany("Replies")
-                        .HasForeignKey("ArticleCommentId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Contract.Domain.LibraryAggregate.Article", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleReaction", b =>
-                {
-                    b.HasOne("Contract.Domain.LibraryAggregate.ArticleComment", null)
-                        .WithMany("Reactions")
-                        .HasForeignKey("ArticleCommentId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Contract.Domain.LibraryAggregate.Article", null)
-                        .WithMany("Reactions")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleSection", b =>
-                {
-                    b.HasOne("Contract.Domain.LibraryAggregate.Article", "Article")
-                        .WithMany("Sections")
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Article");
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleTag", b =>
-                {
-                    b.HasOne("Contract.Domain.LibraryAggregate.Article", null)
-                        .WithMany()
-                        .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Contract.Domain.LibraryAggregate.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.MediaResource", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.DiaryNote", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqAnswer", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.McqQuestion", null)
-                        .WithMany("Answers")
-                        .HasForeignKey("McqQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqChoice", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.McqQuestion", "Question")
-                        .WithMany()
-                        .HasForeignKey("McqQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Contract.Domain.ProgressAggregates.Submission", "Submission")
-                        .WithMany("Choices")
-                        .HasForeignKey("SubmissionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-
-                    b.Navigation("Submission");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqQuestion", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.Survey", null)
-                        .WithMany("Questions")
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapMilestone", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.RoadmapPhase", null)
-                        .WithMany("Milestones")
-                        .HasForeignKey("RoadmapPhaseId");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapPhase", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.Roadmap", null)
-                        .WithMany("Phases")
-                        .HasForeignKey("RoadmapId");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapProgress", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Contract.Domain.ProgressAggregates.RoadmapPhase", "RoadmapPhase")
-                        .WithMany()
-                        .HasForeignKey("RoadmapPhaseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-
-                    b.Navigation("RoadmapPhase");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapRecommendation", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.RoadmapMilestone", "Milestone")
-                        .WithMany("Recommendations")
-                        .HasForeignKey("MilestoneId");
-
-                    b.Navigation("Milestone");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Routine", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoutineLog", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.Routine", null)
-                        .WithMany("Logs")
-                        .HasForeignKey("RoutineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Submission", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany()
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Contract.Domain.ProgressAggregates.Survey", "Survey")
-                        .WithMany()
-                        .HasForeignKey("SurveyId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-
-                    b.Navigation("Survey");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.SurveyScoreBand", b =>
-                {
-                    b.HasOne("Contract.Domain.ProgressAggregates.Survey", null)
-                        .WithMany("Bands")
-                        .HasForeignKey("SurveyId");
-                });
-
             modelBuilder.Entity("Contract.Domain.Shared.Bill", b =>
                 {
                     b.HasOne("Contract.Domain.UserAggregate.User", null)
@@ -2279,6 +2142,127 @@ namespace Gateway.Migrations
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.Article", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleComment", b =>
+                {
+                    b.HasOne("Contract.Domain.ToolAggregate.ArticleComment", null)
+                        .WithMany("Replies")
+                        .HasForeignKey("ArticleCommentId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Contract.Domain.ToolAggregate.Article", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleReaction", b =>
+                {
+                    b.HasOne("Contract.Domain.ToolAggregate.ArticleComment", null)
+                        .WithMany("Reactions")
+                        .HasForeignKey("ArticleCommentId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Contract.Domain.ToolAggregate.Article", null)
+                        .WithMany("Reactions")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleSection", b =>
+                {
+                    b.HasOne("Contract.Domain.ToolAggregate.Article", "Article")
+                        .WithMany("Sections")
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Article");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleTag", b =>
+                {
+                    b.HasOne("Contract.Domain.ToolAggregate.Article", null)
+                        .WithMany()
+                        .HasForeignKey("ArticleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Contract.Domain.ToolAggregate.Tag", null)
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.DiaryNote", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.MediaResource", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.Routine", b =>
+                {
+                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.RoutineLog", b =>
+                {
+                    b.HasOne("Contract.Domain.ToolAggregate.Routine", null)
+                        .WithMany("Logs")
+                        .HasForeignKey("RoutineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Contract.Domain.UserAggregate.ActivityLog", b =>
                 {
                     b.HasOne("Contract.Domain.UserAggregate.User", null)
@@ -2288,30 +2272,16 @@ namespace Gateway.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Contract.Domain.UserAggregate.Preference", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany("Preferences")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
-            modelBuilder.Entity("Contract.Domain.UserAggregate.Setting", b =>
-                {
-                    b.HasOne("Contract.Domain.UserAggregate.User", "Creator")
-                        .WithMany("Settings")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Creator");
-                });
-
             modelBuilder.Entity("Contract.Domain.UserAggregate.User", b =>
                 {
+                    b.HasOne("Contract.Domain.CourseAggregate.Advisor", "Advisor")
+                        .WithMany()
+                        .HasForeignKey("AdvisorId");
+
+                    b.HasOne("Contract.Domain.AssessmentAggregate.MentalProfile", "MentalProfile")
+                        .WithMany()
+                        .HasForeignKey("MentalProfileId");
+
                     b.OwnsMany("Contract.Domain.UserAggregate.UserLogin", "UserLogins", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -2339,6 +2309,10 @@ namespace Gateway.Migrations
                                 .HasForeignKey("UserId");
                         });
 
+                    b.Navigation("Advisor");
+
+                    b.Navigation("MentalProfile");
+
                     b.Navigation("UserLogins");
                 });
 
@@ -2349,6 +2323,35 @@ namespace Gateway.Migrations
                         .HasForeignKey("CreatorId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.McqQuestion", b =>
+                {
+                    b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Roadmap", b =>
+                {
+                    b.Navigation("Phases");
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.RoadmapPhase", b =>
+                {
+                    b.Navigation("Milestones");
+
+                    b.Navigation("Recommendations");
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Submission", b =>
+                {
+                    b.Navigation("Choices");
+                });
+
+            modelBuilder.Entity("Contract.Domain.AssessmentAggregate.Survey", b =>
+                {
+                    b.Navigation("Bands");
+
+                    b.Navigation("Questions");
                 });
 
             modelBuilder.Entity("Contract.Domain.CommunityAggregate.ChatMessage", b =>
@@ -2394,7 +2397,7 @@ namespace Gateway.Migrations
                     b.Navigation("Replies");
                 });
 
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.Article", b =>
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.Article", b =>
                 {
                     b.Navigation("Comments");
 
@@ -2403,55 +2406,16 @@ namespace Gateway.Migrations
                     b.Navigation("Sections");
                 });
 
-            modelBuilder.Entity("Contract.Domain.LibraryAggregate.ArticleComment", b =>
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.ArticleComment", b =>
                 {
                     b.Navigation("Reactions");
 
                     b.Navigation("Replies");
                 });
 
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.McqQuestion", b =>
-                {
-                    b.Navigation("Answers");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Roadmap", b =>
-                {
-                    b.Navigation("Phases");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapMilestone", b =>
-                {
-                    b.Navigation("Recommendations");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.RoadmapPhase", b =>
-                {
-                    b.Navigation("Milestones");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Routine", b =>
+            modelBuilder.Entity("Contract.Domain.ToolAggregate.Routine", b =>
                 {
                     b.Navigation("Logs");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Submission", b =>
-                {
-                    b.Navigation("Choices");
-                });
-
-            modelBuilder.Entity("Contract.Domain.ProgressAggregates.Survey", b =>
-                {
-                    b.Navigation("Bands");
-
-                    b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("Contract.Domain.UserAggregate.User", b =>
-                {
-                    b.Navigation("Preferences");
-
-                    b.Navigation("Settings");
                 });
 #pragma warning restore 612, 618
         }

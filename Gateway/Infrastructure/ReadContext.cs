@@ -31,8 +31,10 @@ public class ReadContext
     public static async Task RefreshUsers()
     {
         Users = await _db.Users
+            /*
             .Include(_ => _.Settings)
             .Include(_ => _.Preferences)
+            */
             .AsSplitQuery()
             .Where(_ => !_.IsDeleted)
             .Select(UserFullModel.MapExpression)
@@ -96,7 +98,7 @@ public class ReadContext
     public static async Task RefreshRoadmaps()
     {
         Roadmaps = await _db.Roadmaps
-            .Include(_ => _.Phases).ThenInclude(_ => _.Milestones).ThenInclude(_ => _.Recommendations)
+            .Include(_ => _.Phases).ThenInclude(_ => _.Milestones)//.ThenInclude(_ => _.Recommendations)
             .Where(_ => !_.IsDeleted)
             .Select(RoadmapModel.MapExpression)
             .ToListAsync();

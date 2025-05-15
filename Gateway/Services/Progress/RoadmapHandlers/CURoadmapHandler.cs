@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ProgressAggregate;
 using Contract.Helpers;
 using Contract.Requests.Progress.RoadmapRequests;
 using Contract.Requests.Progress.RoadmapRequests.Dtos;
@@ -22,7 +22,9 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             else
             {
                 Roadmap? entity = await _context.Roadmaps
-                    .Include(_ => _.Phases).ThenInclude(_ => _.Milestones).ThenInclude(_ => _.Recommendations)
+                    .Include(_ => _.Phases).ThenInclude(_ => _.Milestones)
+                    .Include(_ => _.Phases).ThenInclude(_ => _.Recommendations)
+                    .AsSplitQuery()
                     .FirstOrDefaultAsync(_ => _.Id == command.Rq.Id);
 
                 if (entity is null)
@@ -68,11 +70,12 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         };
 
         foreach (var milestoneDto in dto.Milestones)
-            AddMilestone(phase, milestoneDto);
+            ;// AddMilestone(phase, milestoneDto);
         roadmap.Phases.Add(phase);
         return roadmap;
     }
 
+    /*
     private static RoadmapPhase AddMilestone(RoadmapPhase phase, CURoadmapMilestoneDto dto)
     {
         var milestone = new RoadmapMilestone
@@ -104,6 +107,7 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         milestone.Recommendations.Add(recommendation);
         return milestone;
     }
+    */
 
     private static void UpdateRoadmap(Roadmap entity, CURoadmapDto dto)
     {
@@ -136,13 +140,16 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         foreach (var child in dto.Milestones)
         {
             var existingChild = child.Id is not null ? entity.Milestones.FirstOrDefault(_ => _.Id == child.Id) : null;
+            /*
             if (existingChild is null)
                 AddMilestone(entity, child);
             else if (existingChild is not null)
                 UpdateMilestone(existingChild, child);
+            */
         }
     }
 
+    /*
     private static void UpdateMilestone(RoadmapMilestone entity, CURoadmapMilestoneDto dto)
     {
         if (!string.IsNullOrEmpty(dto.Title) && dto.Title != entity.Title)
@@ -171,4 +178,5 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
         entity.Trait = dto.Trait;
         entity.TraitDescription = dto.TraitDescription;
     }
+    */
 }

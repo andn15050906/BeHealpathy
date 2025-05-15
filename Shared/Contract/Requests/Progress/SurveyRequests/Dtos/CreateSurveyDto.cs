@@ -6,6 +6,7 @@ public sealed class CreateSurveyDto
 {
     public string Name { get; set; }
     public string Description { get; set; }
+    public bool IsScientific { get; set; } = false;
 
     public List<CreateMcqQuestionDto> Questions { get; set; }
     public List<CreateSurveyScoreBandDto>? Bands { get; set; }

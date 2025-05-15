@@ -12,14 +12,14 @@ public sealed class CourseOverviewModel
     public DateTime CreationTime { get; set; }
     public DateTime LastModificationTime { get; set; }
 
-    public string Title { get; set; }
-    public string ThumbUrl { get; set; }
+    public string Title { get; set; }                       = string.Empty;
+    public string ThumbUrl { get; set; }                    = string.Empty;
     //public string Intro { get; set; }
     //public string Description { get; set; }
     public CourseStatus Status { get; set; }
-    public double Price { get; set; }
-    public double Discount { get; set; }
-    public DateTime DiscountExpiry { get; set; }
+    public double? Price { get; set; }
+    public double? Discount { get; set; }
+    public DateTime? DiscountExpiry { get; set; }
     public CourseLevel Level { get; set; }
     //public string Outcomes { get; set; }
     //public string Requirements { get; set; }

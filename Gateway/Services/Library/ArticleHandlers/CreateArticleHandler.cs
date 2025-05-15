@@ -1,4 +1,4 @@
-﻿using Contract.Domain.LibraryAggregate;
+﻿using Contract.Domain.ToolAggregate;
 using Contract.Helpers;
 using Contract.Requests.Community.ArticleRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;

@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ProgressAggregate;
 using Contract.Helpers;
 using Contract.Requests.Progress.SurveyRequests;
 using Microsoft.EntityFrameworkCore;

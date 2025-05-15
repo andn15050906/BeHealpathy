@@ -23,8 +23,6 @@ public sealed class UserFullModel
     public int EnrollmentCount { get; set; }
 
     public DateTime CreationTime { get; set; }
-    public IEnumerable<PreferenceModel> Preferences { get; set; } = [];
-    public IEnumerable<SettingModel> Settings { get; set; } = [];
 
 
 
@@ -50,17 +48,7 @@ public sealed class UserFullModel
 
             RoadmapId = user.RoadmapId,
             EnrollmentCount = user.EnrollmentCount,
-            LoginProviders = user.UserLogins?.Select(_ => _.LoginProvider) ?? [],
-            Settings = user.Settings?.Select(_ => new SettingModel
-            {
-                Title = _.Title,
-                Choice = _.Choice
-            }) ?? [],
-            Preferences = user.Preferences?.Select(_ => new PreferenceModel
-            {
-                SourceId = _.SourceId,
-                Value = _.Value
-            }) ?? []
+            LoginProviders = user.UserLogins?.Select(_ => _.LoginProvider) ?? []
         };
     }
 
@@ -83,16 +71,6 @@ public sealed class UserFullModel
 
             RoadmapId = _.RoadmapId,
             EnrollmentCount = _.EnrollmentCount,
-            LoginProviders = _.UserLogins.Select(x => x.LoginProvider),
-            Settings = _.Settings.Select(_ => new SettingModel
-            {
-                Title = _.Title,
-                Choice = _.Choice
-            }),
-            Preferences = _.Preferences.Select(_ => new PreferenceModel
-            {
-                SourceId = _.SourceId,
-                Value = _.Value
-            })
+            LoginProviders = _.UserLogins.Select(x => x.LoginProvider)
         };
 }

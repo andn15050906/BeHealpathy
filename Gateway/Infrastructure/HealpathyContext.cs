@@ -4,27 +4,36 @@ using Contract.Domain.Shared;
 using Infrastructure.DataAccess.SQLServer;
 using Microsoft.EntityFrameworkCore;
 using Contract.Domain.CourseAggregate;
-using Contract.Domain.LibraryAggregate;
-using Contract.Domain.ProgressAggregates;
 using Infrastructure.DataAccess.SQLServer.Configurations;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Linq.Expressions;
 using Contract.Domain.Shared.MultimediaBase.Enums;
 using Contract.Domain.Shared.MultimediaBase;
+using Contract.Domain.ToolAggregate;
+using Contract.Domain.ProgressAggregate;
 
 namespace Gateway.Infrastructure;
 
 public sealed class HealpathyContext : BaseContext
 {
     public DbSet<User> Users { get; set; }
-    public DbSet<Setting> Settings { get; set; }
-    public DbSet<Preference> Preferences { get; set; }
-    public DbSet<Notification> Notifications { get; set; }
-    public DbSet<Bill> Bills { get; set; }
     public DbSet<ActivityLog> ActivityLogs { get; set; }
     public DbSet<UserStatistics> UserStatistics { get; set; }
+    public DbSet<Bill> Bills { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
+    public DbSet<MentalProfile> MentalProfiles { get; set; }
+    public DbSet<Roadmap> Roadmaps { get; set; }
+    public DbSet<RoadmapPhase> RoadmapPhases { get; set; }
+    public DbSet<RoadmapRecommendation> RoadmapRecommendations { get; set; }
+    public DbSet<RoadmapMilestone> RoadmapMilestones { get; set; }
 
+    public DbSet<Submission> Submissions { get; set; }
+    public DbSet<Survey> Surveys { get; set; }
+    public DbSet<SurveyScoreBand> SurveyScoreBands { get; set; }
+    public DbSet<McqQuestion> McqQuestions { get; set; }
+    public DbSet<McqAnswer> McqAnswers { get; set; }
+    public DbSet<McqChoice> McqChoices { get; set; }
 
     public DbSet<Conversation> Conversations { get; set; }
     public DbSet<ConversationMember> ConversationMembers { get; set; }
@@ -33,25 +42,6 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Meeting> Meetings { get; set; }
     public DbSet<MeetingParticipant> MeetingParticipants { get; set; }
 
-
-
-    public DbSet<Survey> Surveys { get; set; }
-    public DbSet<SurveyScoreBand> SurveyScoreBands { get; set; }
-    public DbSet<McqQuestion> McqQuestions { get; set; }
-    public DbSet<McqAnswer> McqAnswers { get; set; }
-    public DbSet<McqChoice> McqChoices { get; set; }
-    public DbSet<Submission> Submissions { get; set; }
-    public DbSet<Routine> Routines { get; set; }
-    public DbSet<RoutineLog> RoutineLogs { get; set; }
-    public DbSet<DiaryNote> DiaryNotes { get; set; }
-    public DbSet<Roadmap> Roadmaps { get; set; }
-    public DbSet<RoadmapPhase> RoadmapPhases { get; set; }
-    public DbSet<RoadmapMilestone> RoadmapMilestones { get; set; }
-    public DbSet<RoadmapRecommendation> RoadmapRecommendations { get; set; }
-    public DbSet<RoadmapProgress> RoadmapProgress { get; set; }
-
-
-
     public DbSet<Article> Articles { get; set; }
     public DbSet<ArticleSection> ArticleSections { get; set; }
     public DbSet<ArticleComment> ArticleComments { get; set; }
@@ -59,20 +49,19 @@ public sealed class HealpathyContext : BaseContext
     public DbSet<Tag> Tags { get; set; }
     public DbSet<ArticleTag> ArticleTags { get; set; }
     public DbSet<MediaResource> MediaResources { get; set; }
-
-
+    public DbSet<Routine> Routines { get; set; }
+    public DbSet<RoutineLog> RoutineLogs { get; set; }
+    public DbSet<DiaryNote> DiaryNotes { get; set; }
 
     public DbSet<Advisor> Advisors { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Course> Courses { get; set; }
-    public DbSet<Enrollment> Enrollments { get; set; }
+    public DbSet<CourseProgress> CourseProgress { get; set; }
     public DbSet<CourseReview> CourseReviews { get; set; }
     public DbSet<Lecture> Lectures { get; set; }
     public DbSet<LectureComment> LectureComments { get; set; }
     public DbSet<LectureReaction> LectureReactions { get; set; }
-    public DbSet<YogaPose> YogaPoses { get; set; }  
-
-
+    public DbSet<YogaPose> YogaPoses { get; set; }
 
     // DbSet instead of Shared Type Entity
     public DbSet<Multimedia> Multimedia { get; set; }
@@ -82,18 +71,21 @@ public sealed class HealpathyContext : BaseContext
     struct RelationsConfig
     {
         internal const string USER = "Users";
+        /*
         internal const string SETTING = "Settings";
         internal const string PREFERENCE = "Preferences";
+        */
         internal const string NOTIFICATION = "Notifications";
         internal const string BILL = "Bills";
         internal const string ACTIVITY_LOG = "ActivityLogs";
         internal const string USER_STATISTICS = "UserStatistics";
-        internal const string CONVERSATION = "Conversations";
-        internal const string CONVERSATION_MEMBER = "ConversationMembers";
-        internal const string CHAT_MESSAGE = "ChatMessages";
-        internal const string MESSAGE_REACTION = "MessageReactions";
-        internal const string MEETING = "Meetings";
-        internal const string MEETING_PARTICIPANT = "MeetingParticipants";
+
+        internal const string MENTAL_PROFILE = "MentalProfile";
+        internal const string ROADMAP = "Roadmaps";
+        internal const string ROADMAP_MILESTONE = "RoadmapMilestones";
+        internal const string ROADMAP_PHASE = "RoadmapPhases";
+        internal const string ROADMAP_RECOMMENDATION = "RoadmapRecommendations";
+        internal const string ROADMAP_PROGRESS = "RoadmapProgress";
 
         internal const string SURVEY = "Surveys";
         internal const string SURVEY_SCORE_BAND = "SurveyScoreBands";
@@ -101,15 +93,14 @@ public sealed class HealpathyContext : BaseContext
         internal const string MCQ_ANSWER = "McqAnswers";
         internal const string MCQ_CHOICE = "McqChoices";
         internal const string SUBMISSION = "Submissions";
-        internal const string ROUTINE = "Routines";
-        internal const string ROUTINE_LOG = "RoutineLogs";
-        internal const string DIARY_NOTE = "DiaryNotes";
 
-        internal const string ROADMAP = "Roadmaps";
-        internal const string ROADMAP_MILESTONE = "RoadmapMilestones";
-        internal const string ROADMAP_PHASE = "RoadmapPhases";
-        internal const string ROADMAP_RECOMMENDATION = "RoadmapRecommendations";
-        internal const string ROADMAP_PROGRESS = "RoadmapProgress";
+        internal const string CONVERSATION = "Conversations";
+        internal const string CONVERSATION_MEMBER = "ConversationMembers";
+        internal const string CHAT_MESSAGE = "ChatMessages";
+        internal const string MESSAGE_REACTION = "MessageReactions";
+        internal const string MEETING = "Meetings";
+        internal const string MEETING_PARTICIPANT = "MeetingParticipants";
+
         internal const string ARTICLE = "Articles";
         internal const string ARTICLE_SECTION = "ArticleSections";
         internal const string ARTICLE_COMMENT = "ArticleComments";
@@ -117,6 +108,10 @@ public sealed class HealpathyContext : BaseContext
         internal const string TAG = "Tags";
         internal const string ARTICLE_TAG = "ArticleTags";
         internal const string MEDIA_RESOURCE = "MediaResources";
+        internal const string ROUTINE = "Routines";
+        internal const string ROUTINE_LOG = "RoutineLogs";
+        internal const string DIARY_NOTE = "DiaryNotes";
+
         internal const string ADVISOR = "Advisors";
         internal const string CATEGORY = "Categories";
         internal const string COURSE = "Courses";
@@ -155,12 +150,17 @@ public sealed class HealpathyContext : BaseContext
 
         modelBuilder
             .ApplyConfiguration(new UserConfig())
-            .ApplyConfiguration(new SettingConfig())
-            .ApplyConfiguration(new PreferenceConfig())
-            .ApplyConfiguration(new NotificationConfig())
-            .ApplyConfiguration(new BillConfig())
             .ApplyConfiguration(new ActivityLogConfig())
             .ApplyConfiguration(new UserStatisticsConfig())
+            .ApplyConfiguration(new BillConfig())
+            .ApplyConfiguration(new NotificationConfig())
+
+            .ApplyConfiguration(new MentalProfileConfig())
+            .ApplyConfiguration(new RoadmapConfig())
+            .ApplyConfiguration(new RoadmapPhaseConfig())
+            .ApplyConfiguration(new RoadmapRecommendationConfig())
+            .ApplyConfiguration(new RoadmapMilestoneConfig())
+
             .ApplyConfiguration(new ConversationConfig())
             .ApplyConfiguration(new ConversationMemberConfig())
             .ApplyConfiguration(new ChatMessageConfig())
@@ -168,21 +168,13 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new MeetingConfig())
             .ApplyConfiguration(new MeetingParticipantConfig())
 
+            .ApplyConfiguration(new SubmissionConfig())
             .ApplyConfiguration(new SurveyConfig())
             .ApplyConfiguration(new SurveyScoreBandConfig())
             .ApplyConfiguration(new McqQuestionConfig())
             .ApplyConfiguration(new McqAnswerConfig())
             .ApplyConfiguration(new McqChoiceConfig())
-            .ApplyConfiguration(new SubmissionConfig())
-            .ApplyConfiguration(new RoutineConfig())
-            .ApplyConfiguration(new RoutineLogConfig())
-            .ApplyConfiguration(new DiaryNoteConfig())
 
-            .ApplyConfiguration(new RoadmapConfig())
-            .ApplyConfiguration(new RoadmapPhaseConfig())
-            .ApplyConfiguration(new RoadmapMilestoneConfig())
-            .ApplyConfiguration(new RoadmapRecommendationConfig())
-            .ApplyConfiguration(new RoadmapProgressConfig())
             .ApplyConfiguration(new ArticleConfig())
             .ApplyConfiguration(new ArticleSectionConfig())
             .ApplyConfiguration(new ArticleCommentConfig())
@@ -190,6 +182,10 @@ public sealed class HealpathyContext : BaseContext
             .ApplyConfiguration(new TagConfig())
             .ApplyConfiguration(new ArticleTagConfig())
             .ApplyConfiguration(new MediaResourceConfig())
+            .ApplyConfiguration(new RoutineConfig())
+            .ApplyConfiguration(new RoutineLogConfig())
+            .ApplyConfiguration(new DiaryNoteConfig())
+
             .ApplyConfiguration(new AdvisorConfig())
             .ApplyConfiguration(new CategoryConfig())
             .ApplyConfiguration(new CourseConfig())
@@ -224,9 +220,6 @@ public sealed class HealpathyContext : BaseContext
             // UnbanDate
             { _ => _.Bio, NVARCHAR1000 },
             // DateOfBirth
-            { _ => _.Phone, VARCHAR45 },
-
-            // EnrollmentCount
         };
 
         public override void Configure(EntityTypeBuilder<User> builder)
@@ -235,7 +228,7 @@ public sealed class HealpathyContext : BaseContext
                 .ToTable(RelationsConfig.USER)
                 .SetColumnsTypes(Columns)
                 .SetEnumParsing(_ => _.Role)
-                .SetUnique(_ => _.UserName, _ => _.Email, _ => _.Phone)
+                .SetUnique(_ => _.UserName, _ => _.Email)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
                 .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
 
@@ -247,38 +240,6 @@ public sealed class HealpathyContext : BaseContext
 
             // System User
             builder.HasData(new User { Id = Guid.Parse("00000000-0000-0000-0000-000000000001") });
-        }
-    }
-
-    class SettingConfig : EntityConfiguration<Setting>
-    {
-        protected override Dictionary<Expression<Func<Setting, object?>>, string> Columns => new()
-        {
-            { _ => _.Title, NVARCHAR100 },
-            { _ => _.Choice, NVARCHAR100 }
-        };
-
-        public override void Configure(EntityTypeBuilder<Setting> builder)
-        {
-            builder
-                .ToTable(RelationsConfig.SETTING)
-                .SetColumnsTypes(Columns)
-                .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
-        }
-    }
-
-    class PreferenceConfig : EntityConfiguration<Preference>
-    {
-        protected override Dictionary<Expression<Func<Preference, object?>>, string> Columns => new()
-        {
-            { _ => _.Value, NVARCHAR100 }
-        };
-
-        public override void Configure(EntityTypeBuilder<Preference> builder)
-        {
-            builder
-                .ToTable(RelationsConfig.PREFERENCE)
-                .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
         }
     }
 
@@ -363,6 +324,23 @@ public sealed class HealpathyContext : BaseContext
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
 
             builder.HasOne<User>().WithMany().HasForeignKey(_ => _.CreatorId).OnDelete(DeleteBehavior.NoAction);
+        }
+    }
+
+    class MentalProfileConfig : EntityConfiguration<MentalProfile>
+    {
+        protected override Dictionary<Expression<Func<MentalProfile, object?>>, string> Columns => new()
+        {
+            { _ => _.Attribute, NVARCHAR255 },
+            { _ => _.Value, NVARCHARMAX }
+        };
+
+        public override void Configure(EntityTypeBuilder<MentalProfile> builder)
+        {
+            builder
+                .ToTable(RelationsConfig.MENTAL_PROFILE)
+                .SetColumnsTypes(Columns)
+                .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE);
         }
     }
 
@@ -569,7 +547,6 @@ public sealed class HealpathyContext : BaseContext
         protected override Dictionary<Expression<Func<McqChoice, object?>>, string> Columns => new()
         {
             // SubmissionId
-            // McqQuestionId
             // McqAnswerId
         };
 
@@ -578,7 +555,7 @@ public sealed class HealpathyContext : BaseContext
             builder
                 .ToTable(RelationsConfig.MCQ_CHOICE)
                 .SetColumnsTypes(Columns)
-                .HasKey(_ => new { _.SubmissionId, _.McqQuestionId });
+                .HasKey(_ => new { _.SubmissionId, _.McqAnswerId });
         }
     }
 
@@ -689,6 +666,8 @@ public sealed class HealpathyContext : BaseContext
                 .SetColumnsTypes(Columns)
                 .SetDefaultSQL(_ => _.CreationTime, SQL_GETDATE)
                 .SetDefaultSQL(_ => _.LastModificationTime, SQL_GETDATE);
+
+            builder.HasMany(_ => _.Phases).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 
@@ -705,6 +684,9 @@ public sealed class HealpathyContext : BaseContext
             builder
                 .ToTable(RelationsConfig.ROADMAP_PHASE)
                 .SetColumnsTypes(Columns);
+
+            builder.HasMany(_ => _.Milestones).WithOne().OnDelete(DeleteBehavior.Cascade);
+            builder.HasMany(_ => _.Recommendations).WithOne().OnDelete(DeleteBehavior.Cascade);
         }
     }
 
@@ -745,6 +727,7 @@ public sealed class HealpathyContext : BaseContext
         }
     }
 
+    /*
     class RoadmapProgressConfig : EntityConfiguration<RoadmapProgress>
     {
         protected override Dictionary<Expression<Func<RoadmapProgress, object?>>, string> Columns => new()
@@ -760,6 +743,7 @@ public sealed class HealpathyContext : BaseContext
                 .HasKey(_ => new { _.CreatorId, _.Milestone });
         }
     }
+    */
 
     class ArticleConfig : EntityConfiguration<Article>
     {
@@ -979,11 +963,11 @@ public sealed class HealpathyContext : BaseContext
         }
     }
 
-    class EnrollmentConfig : EntityConfiguration<Enrollment>
+    class EnrollmentConfig : EntityConfiguration<CourseProgress>
     {
-        protected override Dictionary<Expression<Func<Enrollment, object?>>, string> Columns => new() { };
+        protected override Dictionary<Expression<Func<CourseProgress, object?>>, string> Columns => new() { };
 
-        public override void Configure(EntityTypeBuilder<Enrollment> builder)
+        public override void Configure(EntityTypeBuilder<CourseProgress> builder)
         {
             builder
                 .ToTable(RelationsConfig.ENROLLMENT, _ => _.HasTrigger(Triggers.onEnrollmentInsertDelete))

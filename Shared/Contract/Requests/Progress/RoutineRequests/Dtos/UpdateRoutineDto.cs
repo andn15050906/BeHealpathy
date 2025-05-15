@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates.Enums;
+﻿using Contract.Domain.ToolAggregate.Enums;
 
 namespace Contract.Requests.Progress.RoutineRequests.Dtos;
 

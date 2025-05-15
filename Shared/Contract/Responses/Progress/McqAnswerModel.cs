@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ProgressAggregate;
 using System.Linq.Expressions;
 
 namespace Contract.Responses.Progress;

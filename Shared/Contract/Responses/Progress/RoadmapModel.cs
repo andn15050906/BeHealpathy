@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ProgressAggregate;
 using System.Linq.Expressions;
 
 namespace Contract.Responses.Progress;
@@ -13,9 +13,9 @@ public sealed class RoadmapModel
 
 
 
-    public string Title { get; set; }
-    public string IntroText { get; set; }
-    public IEnumerable<RoadmapPhaseModel> Phases { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string IntroText { get; set; } = string.Empty;
+    public IEnumerable<RoadmapPhaseModel> Phases { get; set; } = [];
 
 
 
@@ -33,6 +33,7 @@ public sealed class RoadmapModel
             Phases = _.Phases.Select(_ => new RoadmapPhaseModel
             {
                 Id = _.Id,
+
                 Index = _.Index,
                 Title = _.Title,
                 Description = _.Description,
@@ -40,21 +41,14 @@ public sealed class RoadmapModel
                 Milestones = _.Milestones.Select(_ => new RoadmapMilestoneModel
                 {
                     Id = _.Id,
+
                     Title = _.Title,
                     EventName = _.EventName,
-                    RepeatTimesRequired = _.RepeatTimesRequired,
-                    Index = _.Index,
-                    IsRequired = _.IsRequired,
+                    Content = _.Content,
 
-                    Recommendations = _.Recommendations.Select(_ => new RoadmapRecommendationModel
-                    {
-                        Id = _.Id,
-                        EntityType = _.EntityType,
-                        MilestoneId = _.MilestoneId,
-                        TargetEntityId = _.TargetEntityId,
-                        Trait = _.Trait,
-                        TraitDescription = _.TraitDescription
-                    })
+                    IsCompleted = _.IsCompleted,
+                    IsSkipped = _.IsSkipped,
+                    Feedback = _.Feedback
                 })
             })
         };

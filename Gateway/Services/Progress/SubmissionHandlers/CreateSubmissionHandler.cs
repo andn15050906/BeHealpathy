@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ProgressAggregate;
 using Contract.Helpers;
 using Contract.Requests.Progress.SubmissionRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
@@ -34,7 +34,7 @@ public sealed class CreateSubmissionHandler(HealpathyContext context, IAppLogger
 
     private static Submission Adapt(CreateSubmissionCommand command)
     {
-        var choices = command.Rq.Choices.Select(_ => new McqChoice(command.Id, _.McqQuestionId, _.McqAnswerId)).ToList();
+        var choices = command.Rq.Choices.Select(_ => new McqChoice(command.Id, _.McqAnswerId)).ToList();
 
         return new Submission(command.Id, command.UserId, command.Rq.SurveyId, choices);
     }

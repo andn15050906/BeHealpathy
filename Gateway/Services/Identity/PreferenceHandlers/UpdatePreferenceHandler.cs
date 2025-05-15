@@ -15,6 +15,7 @@ public sealed class UpdatePreferenceHandler : RequestHandler<UpdatePreferenceCom
 
     public override async Task<Result> Handle(UpdatePreferenceCommand request, CancellationToken cancellationToken)
     {
+        /*
         var surveys = PrefStore.Surveys.FirstOrDefault(_ => _.Id == request.Rq.SourceId);
         if (surveys is null)
             return NotFound(string.Empty);
@@ -33,6 +34,7 @@ public sealed class UpdatePreferenceHandler : RequestHandler<UpdatePreferenceCom
             var entity = new Preference(Guid.NewGuid(), request.UserId, request.Rq.SourceId, jsonValue);
             await _context.Preferences.InsertExt(entity);
         }
+        */
 
         /*var surveys = PrefStore.Surveys.Where(_ => request.Rq.Any(
             dto => _.Id == dto.SourceId && _.Values.Any(value => value.Item1 == dto.PreferenceValueId))

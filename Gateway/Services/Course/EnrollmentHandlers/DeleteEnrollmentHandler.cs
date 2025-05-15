@@ -9,7 +9,7 @@ public sealed class DeleteEnrollmentHandler(HealpathyContext context, IAppLogger
 {
     public override async Task<Result> Handle(DeleteCourseCommand command, CancellationToken cancellationToken)
     {
-        var entity = await _context.Enrollments.FindExt(command.Id);
+        var entity = await _context.CourseProgress.FindExt(command.Id);
         if (entity is null)
             return NotFound(string.Empty);
         if (entity.CreatorId != command.UserId)
@@ -17,7 +17,7 @@ public sealed class DeleteEnrollmentHandler(HealpathyContext context, IAppLogger
 
         try
         {
-            _context.Enrollments.DeleteExt(entity);
+            _context.CourseProgress.DeleteExt(entity);
             _cache.Add(command.UserId, new Events.Course_Unenrolled(command.Id));
             return Ok();
         }

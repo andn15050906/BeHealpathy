@@ -2,7 +2,7 @@
 
 namespace Contract.Domain.UserAggregate.Constants;
 
-public class RoleConstants
+public sealed class RoleConstants
 {
     public const string MEMBER = nameof(Role.Member);
     public const string ADVISOR = nameof(Role.Advisor);

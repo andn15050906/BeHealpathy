@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ProgressAggregate;
 using System.Linq.Expressions;
 
 namespace Contract.Responses.Progress;
@@ -23,7 +23,6 @@ public sealed class SubmissionModel
             Choices = _.Choices.Select(_ => new McqChoiceModel
             {
                 SubmissionId = _.SubmissionId,
-                McqQuestionId = _.McqQuestionId,
                 McqAnswerId = _.McqAnswerId
             }).ToList()
         };

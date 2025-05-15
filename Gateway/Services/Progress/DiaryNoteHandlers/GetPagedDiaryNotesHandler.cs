@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ToolAggregate;
 using Contract.Helpers;
 using Contract.Requests.Progress.DiaryNoteRequests;
 using Contract.Requests.Progress.DiaryNoteRequests.Dtos;

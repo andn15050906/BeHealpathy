@@ -22,7 +22,7 @@ public class EnrollmentModel
 
 
 
-    public static Expression<Func<Enrollment, EnrollmentModel>> MapExpression
+    public static Expression<Func<CourseProgress, EnrollmentModel>> MapExpression
         = _ => new EnrollmentModel
         {
             Id = _.Id,

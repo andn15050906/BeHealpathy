@@ -23,13 +23,17 @@ public class SignInHandler : RequestHandler<SignInCommand, AuthModel, HealpathyC
         if (request.Rq.UserName is not null)
         {
             entity = await _context.Users
+                /*
                 .Include(_ => _.Preferences).Include(_ => _.Settings)
+                */
                 .FirstOrDefaultAsync(_ => _.UserName == request.Rq.UserName);
         }
         else if (request.Rq.Email is not null)
         {
             entity = await _context.Users
+                /*
                 .Include(_ => _.Preferences).Include(_ => _.Settings)
+                */
                 .FirstOrDefaultAsync(_ => _.Email == request.Rq.Email);
         }
         else

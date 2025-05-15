@@ -2,6 +2,9 @@
 
 public enum CourseStatus : byte
 {
+    Draft,
+    Published,
+
     Ongoing,
     Postponed,
     Completed

@@ -1,4 +1,4 @@
-﻿using Contract.Domain.ProgressAggregates;
+﻿using Contract.Domain.ProgressAggregate;
 using Contract.Helpers;
 using Contract.Requests.Progress.SurveyRequests;
 using Infrastructure.DataAccess.SQLServer.Helpers;
@@ -40,6 +40,6 @@ public sealed class CreateSurveyHandler : RequestHandler<CreateSurveyCommand, He
 
         var bands = (command.Rq.Bands ?? []).Select(_ => new SurveyScoreBand(_.MinScore, _.MaxScore, _.BandName, _.BandRating)).ToList();
 
-        return new Survey(command.Id, command.Rq.Name, command.Rq.Description, questions, bands);
+        return new Survey(command.Id, command.Rq.Name, command.Rq.Description, command.Rq.IsScientific, questions, bands);
     }
 }

@@ -10,4 +10,10 @@ public sealed class HealthCheckController : ControllerBase
     public void Check()
     {
     }
+
+    [HttpGet("switch-payment")]
+    public void SwitchPayment()
+    {
+
+    }
 }

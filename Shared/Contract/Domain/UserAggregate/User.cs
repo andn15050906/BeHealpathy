@@ -1,4 +1,6 @@
-﻿using Contract.Domain.UserAggregate.Enums;
+﻿using Contract.Domain.CourseAggregate;
+using Contract.Domain.ProgressAggregate;
+using Contract.Domain.UserAggregate.Enums;
 using Core.Helpers;
 
 namespace Contract.Domain.UserAggregate;
@@ -24,7 +26,6 @@ public sealed class User : TimeAuditedEntity
     public DateTime? UnbanDate { get; set; }
     public string Bio { get; set; }
     public DateTime? DateOfBirth { get; set; }
-    public string? Phone { get; set; }
 
     public Guid? RoadmapId { get; set; }
     public int EnrollmentCount { get; set; }
@@ -32,14 +33,21 @@ public sealed class User : TimeAuditedEntity
 
     // FKs
     public Guid? AdvisorId { get; set; }
+    public Guid? MentalProfileId { get; set; }
 
     // Navigations
     public List<UserLogin> UserLogins { get; set; }
-    public List<Preference> Preferences { get; set; }
-    public List<Setting> Settings { get; set; }
+    public Advisor? Advisor { get; set; }
+    public MentalProfile? MentalProfile { get; set; }
 
-
-
+    /// <summary>
+    /// User_Setting
+    /// 
+    /// Language
+    /// Theme
+    /// Question Answer
+    /// Email Notification Enabled
+    /// </summary>
 
 
 

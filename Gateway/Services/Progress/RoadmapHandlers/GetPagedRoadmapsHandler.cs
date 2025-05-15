@@ -1,11 +1,9 @@
-﻿using Contract.Domain.ProgressAggregates;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Contract.Helpers;
 using Contract.Requests.Progress.RoadmapRequests;
 using Contract.Requests.Progress.RoadmapRequests.Dtos;
 using Contract.Responses.Progress;
-using Contract.Responses.Shared;
-using Microsoft.EntityFrameworkCore;
+using Contract.Domain.ProgressAggregate;
 
 namespace Gateway.Services.Progress.RoadmapHandlers;
 
