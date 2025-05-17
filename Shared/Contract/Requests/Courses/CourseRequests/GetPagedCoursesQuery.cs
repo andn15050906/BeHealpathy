@@ -3,7 +3,7 @@ using Contract.Responses.Courses;
 
 namespace Contract.Requests.Courses.CourseRequests;
 
-public sealed class GetPagedCoursesQuery : IRequest<Result<PagedResult<CourseOverviewModel>>>
+public sealed class GetPagedCoursesQuery : IRequest<Result<PagedResult<CourseModel>>>
 {
     public QueryCourseDto Rq { get; init; }
 

@@ -5,19 +5,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Courses.Services.Courses;
 
-public sealed class GetMultipleCoursesHandler : RequestHandler<GetMultipleCoursesQuery, List<CourseOverviewModel>, HealpathyContext>
+public sealed class GetMultipleCoursesHandler : RequestHandler<GetMultipleCoursesQuery, List<CourseModel>, HealpathyContext>
 {
     public GetMultipleCoursesHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
 
 
-    public override async Task<Result<List<CourseOverviewModel>>> Handle(GetMultipleCoursesQuery request, CancellationToken cancellationToken)
+    public override async Task<Result<List<CourseModel>>> Handle(GetMultipleCoursesQuery request, CancellationToken cancellationToken)
     {
         try
         {
             var result = await _context.Courses
                 .Where(_ => request.Ids.Contains(_.Id))
-                .Select(CourseOverviewModel.MapExpression)
+                .Select(CourseModel.MapExpression)
                 .ToListAsync(cancellationToken);
 
             return ToQueryResult(result);

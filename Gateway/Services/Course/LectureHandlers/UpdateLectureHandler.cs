@@ -3,7 +3,6 @@ using Contract.Helpers;
 using Contract.Requests.Courses.LectureRequests;
 using Core.Helpers;
 using Infrastructure.DataAccess.SQLServer.Helpers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Gateway.Services.Course.LectureHandlers;
 
@@ -39,5 +38,9 @@ public class UpdateLectureHandler : RequestHandler<UpdateLectureCommand, Healpat
         entity.Content = command.Rq.Content ?? string.Empty;
         entity.ContentSummary = command.Rq.ContentSummary ?? string.Empty;
         entity.LastModificationTime = TimeHelper.Now;
+
+        entity.Index = command.Rq.Index ?? 0;
+        entity.LectureType = command.Rq.LectureType ?? string.Empty;
+        entity.MetaData = command.Rq.MetaData ?? string.Empty;
     }
 }

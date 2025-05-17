@@ -51,23 +51,32 @@ public sealed class Course : AuditedEntity
     }
 
     public Course(Guid id, Guid creatorId, Guid instructorId, Guid leafCategoryId,
-        string title, string thumbUrl, string intro, string description, double price,
-        CourseLevel level, string outcomes, string requirements, List<Lecture> lectures)
+        string title, string? thumbUrl, string? intro, string? description, CourseStatus status,
+        double price, double? discount, DateTime? discountExpiry,
+        CourseLevel level, string? advisorExpectedOutcome, string? outcomes, string? requirements, int? expectedCompletion,
+        List<Lecture> lectures)
     {
         Id = id;
         CreatorId = creatorId;
-
         InstructorId = instructorId;
         LeafCategoryId = leafCategoryId;
+
         SetTitle(title);
-        ThumbUrl = thumbUrl;
-        Intro = intro;
-        Description = description;
-        Status = CourseStatus.Ongoing;
+        ThumbUrl = thumbUrl ?? string.Empty;
+        Intro = intro ?? string.Empty;
+        Description = description ?? string.Empty;
+        Status = status;
+
         Price = price;
+        Discount = discount ?? 0;
+        DiscountExpiry = discountExpiry;
+
         Level = level;
-        Outcomes = outcomes;
-        Requirements = requirements;
+        AdvisorExpectedOutcome = advisorExpectedOutcome ?? string.Empty;
+        Outcomes = outcomes ?? string.Empty;
+        Requirements = requirements ?? string.Empty;
+        ExpectedCompletion = expectedCompletion ?? 0;
+
         Lectures = lectures;
     }
 #pragma warning restore CS8618

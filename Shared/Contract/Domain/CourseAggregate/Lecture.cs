@@ -32,14 +32,24 @@ public sealed class Lecture : AuditedEntity
 
     }
 
-    public Lecture(Guid id, Guid creatorId, string title, string content, string contentSummary, bool isPreviewable, Guid courseId)
+    public Lecture(
+        Guid id, Guid creatorId,
+        string title, string? content, string? contentSummary, bool isPreviewable,
+        int? index, string? lectureType, string? metaData,
+        Guid courseId)
     {
         Id = id;
         CreatorId = creatorId;
+
         Title = title;
-        Content = content;
-        ContentSummary = contentSummary;
+        Content = content ?? string.Empty;
+        ContentSummary = contentSummary ?? string.Empty;
         IsPreviewable = isPreviewable;
+
+        Index = index ?? 0;
+        LectureType = lectureType ?? string.Empty;
+        MetaData = metaData ?? string.Empty;
+
         CourseId = courseId;
     }
 #pragma warning restore CS8618

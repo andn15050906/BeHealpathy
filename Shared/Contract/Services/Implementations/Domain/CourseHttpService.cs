@@ -58,8 +58,8 @@ public sealed class CourseHttpService : HttpApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<CourseOverviewModel>>> GetPagedAsync(GetPagedCoursesQuery query)
-        => await GetAsync<PagedResult<CourseOverviewModel>>(API.Courses.GetPagedCoursesUri(query));
+    public async Task<Result<PagedResult<CourseModel>>> GetPagedAsync(GetPagedCoursesQuery query)
+        => await GetAsync<PagedResult<CourseModel>>(API.Courses.GetPagedCoursesUri(query));
 
     public async Task<Result<CourseModel>> GetByIdAsync(GetCourseByIdQuery query)
         => await GetAsync<CourseModel>(API.Courses.GetCourseByIdUri(query.Id));
@@ -67,12 +67,8 @@ public sealed class CourseHttpService : HttpApiClient, ICourseApiService
     public async Task<Result<PagedResult<CourseMinModel>>> GetMinAsync(GetMinimumCoursesQuery query)
         => await GetAsync<PagedResult<CourseMinModel>>(API.Courses.GetMinCourseUri(query));
 
-    public async Task<Result<List<CourseOverviewModel>>> GetMultipleAsync(GetMultipleCoursesQuery query)
-        => await GetAsync<List<CourseOverviewModel>>(API.Courses.GetMultipleCoursesUri(query.Ids));
-
-    //Task<Result<List<CourseOverviewModel>>> GetSimilarAsync(Guid id);
-
-    //thumb
+    public async Task<Result<List<CourseModel>>> GetMultipleAsync(GetMultipleCoursesQuery query)
+        => await GetAsync<List<CourseModel>>(API.Courses.GetMultipleCoursesUri(query.Ids));
 
     public async Task<Result> CreateAsync(CreateCourseCommand command)
     {

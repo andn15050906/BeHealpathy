@@ -2,7 +2,7 @@
 
 namespace Contract.Requests.Courses.CourseRequests;
 
-public sealed class GetMultipleCoursesQuery : IRequest<Result<List<CourseOverviewModel>>>
+public sealed class GetMultipleCoursesQuery : IRequest<Result<List<CourseModel>>>
 {
     public IEnumerable<Guid> Ids { get; set; }
 

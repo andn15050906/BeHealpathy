@@ -9,39 +9,27 @@ using System.Linq.Expressions;
 
 namespace Courses.Services.Courses;
 
-/// <summary>
-/// Handler xử lý việc lấy danh sách khóa học có phân trang
-/// </summary>
-public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery, PagedResult<CourseOverviewModel>, HealpathyContext>
+public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery, PagedResult<CourseModel>, HealpathyContext>
 {
-    /// <summary>
-    /// Số tháng để tính xu hướng khóa học
-    /// </summary>
     private const int TREND_MONTHS = 6;
 
     public GetPagedCoursesHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
-    /// <summary>
-    /// Xử lý yêu cầu lấy danh sách khóa học có phân trang
-    /// </summary>
-    public override async Task<Result<PagedResult<CourseOverviewModel>>> Handle(GetPagedCoursesQuery request, CancellationToken cancellationToken)
+    public override async Task<Result<PagedResult<CourseModel>>> Handle(GetPagedCoursesQuery request, CancellationToken cancellationToken)
     {
         try
         {
-            // Nếu yêu cầu lấy theo xu hướng
             if (request.Rq.ByTrend)
                 return await HandleTrendingQuery(request);
 
-            // Tạo query với phân trang
             var query = _context.GetPagingQuery(
-                CourseOverviewModel.MapExpression,
+                CourseModel.MapExpression,
                 GetPredicate(request.Rq),
                 request.Rq.PageIndex,
                 request.Rq.PageSize
             );
 
-            // Thực hiện sắp xếp theo các tiêu chí khác nhau
-            PagedResult<CourseOverviewModel> result;
+            PagedResult<CourseModel> result;
             if (request.Rq.ByPrice is true)
                 result = await query.ExecuteWithOrderBy(_ => _.Price);
             else if (request.Rq.ByDiscount is true)
@@ -61,9 +49,6 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
         }
     }
 
-    /// <summary>
-    /// Tạo điều kiện lọc cho query dựa trên các tham số
-    /// </summary>
     private Expression<Func<Course, bool>>? GetPredicate(QueryCourseDto dto)
     {
         if (dto.Title is not null)
@@ -81,9 +66,6 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
         return null;
     }
 
-    /// <summary>
-    /// Lấy danh sách các thuộc tính cần include trong query
-    /// </summary>
     private Expression<Func<Course, object?>>[]? GetIncludedProperties(QueryCourseDto dto)
     {
         //if (dto.CategoryId is not null)
@@ -91,21 +73,16 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
         return null;
     }
 
-    /// <summary>
-    /// Xử lý query lấy khóa học theo xu hướng (dựa trên số lượng đăng ký trong thời gian gần đây)
-    /// </summary>
-    private async Task<Result<PagedResult<CourseOverviewModel>>> HandleTrendingQuery(GetPagedCoursesQuery request)
+    private async Task<Result<PagedResult<CourseModel>>> HandleTrendingQuery(GetPagedCoursesQuery request)
     {
-        // Lấy danh sách đăng ký trong khoảng thời gian
         var unorderedQuery = _context.CourseProgress
             .Where(_ => _.CreationTime >= TimeHelper.Now.AddMonths(-TREND_MONTHS));
         var total = await unorderedQuery.CountAsync();
 
-        // Join với bảng Courses và lấy thông tin chi tiết
         var items = await unorderedQuery
             .OrderByDescending(_ => _.CreationTime)
             .Join(_context.Courses, enrollment => enrollment.CourseId, course => course.Id, (enrollment, _) =>
-                new CourseOverviewModel
+                new CourseModel
                 {
                     Id = _.Id,
                     CreatorId = _.CreatorId,
@@ -115,15 +92,18 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
 
                     Title = _.Title,
                     ThumbUrl = _.ThumbUrl,
-                    //public string Intro { get; set; },
-                    //public string Description { get; set; },
+                    Intro = _.Intro,
+                    Description = _.Description,
                     Status = _.Status,
                     Price = _.Price,
                     Discount = _.Discount,
                     DiscountExpiry = _.DiscountExpiry,
                     Level = _.Level,
-                    //public string Outcomes { get; set; },
-                    //public string Requirements { get; set; },
+                    Outcomes = _.Outcomes,
+                    AdvisorExpectedOutcome = _.AdvisorExpectedOutcome,
+                    ExpectedCompletion = _.ExpectedCompletion,
+                    Requirements = _.Requirements,
+
                     LectureCount = _.LectureCount,
                     LearnerCount = _.LearnerCount,
                     RatingCount = _.RatingCount,
@@ -137,7 +117,7 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
             .Take(request.Rq.PageSize)
             .ToListAsync();
 
-        var result = new PagedResult<CourseOverviewModel>(total, request.Rq.PageSize, (byte)request.Rq.PageIndex, items);
+        var result = new PagedResult<CourseModel>(total, request.Rq.PageSize, (byte)request.Rq.PageIndex, items);
         return ToQueryResult(result);
     }
 

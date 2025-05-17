@@ -59,8 +59,8 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<CourseOverviewModel>>> GetPagedAsync(GetPagedCoursesQuery query)
-        => await Send<GetPagedCoursesQuery, PagedResult<CourseOverviewModel>>(query);
+    public async Task<Result<PagedResult<CourseModel>>> GetPagedAsync(GetPagedCoursesQuery query)
+        => await Send<GetPagedCoursesQuery, PagedResult<CourseModel>>(query);
 
     public async Task<Result<CourseModel>> GetByIdAsync(GetCourseByIdQuery query)
         => await Send<GetCourseByIdQuery, CourseModel>(query);
@@ -68,12 +68,8 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
     public async Task<Result<PagedResult<CourseMinModel>>> GetMinAsync(GetMinimumCoursesQuery query)
         => await Send<GetMinimumCoursesQuery, PagedResult<CourseMinModel>>(query);
 
-    public async Task<Result<List<CourseOverviewModel>>> GetMultipleAsync(GetMultipleCoursesQuery query)
-        => await Send<GetMultipleCoursesQuery, List<CourseOverviewModel>>(query);
-
-    //Task<Result<List<CourseOverviewModel>>> GetSimilarAsync(Guid id);
-
-    //thumb
+    public async Task<Result<List<CourseModel>>> GetMultipleAsync(GetMultipleCoursesQuery query)
+        => await Send<GetMultipleCoursesQuery, List<CourseModel>>(query);
 
     public async Task<Result> CreateAsync(CreateCourseCommand command)
     {

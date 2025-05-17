@@ -8,37 +8,28 @@ using Infrastructure.DataAccess.SQLServer.Helpers;
 
 namespace Courses.Services.Courses;
 
-/// <summary>
-/// Handler xử lý việc cập nhật thông tin khóa học
-/// </summary>
 public class UpdateCourseHandler(HealpathyContext context, IAppLogger logger/*, IEventCache cache*/)
     : RequestHandler<UpdateCourseCommand, HealpathyContext>(context, logger/*, cache*/)
 {
-    /// <summary>
-    /// Xử lý yêu cầu cập nhật thông tin khóa học
-    /// </summary>
     public override async Task<Result> Handle(UpdateCourseCommand request, CancellationToken cancellationToken)
     {
         try
         {
-            // Kiểm tra khóa học có tồn tại không
             var entity = await _context.Courses.FindExt(request.Rq.Id);
             if (entity is null)
                 return NotFound(string.Empty);
-            // Kiểm tra quyền cập nhật
+
             if (entity.CreatorId != request.UserId)
                 return Unauthorized(string.Empty);
 
-            // Áp dụng các thay đổi
             ApplyChanges(entity, request.Rq, request.UserId);
-            // Xử lý thêm/xóa media
+
             if (request.AddedMedias is not null && request.AddedMedias.Count > 0)
                 _context.Multimedia.AddRange(request.AddedMedias);
             if (request.RemovedMedias is not null && request.RemovedMedias.Count > 0)
                 await _context.Multimedia.DeleteExt(request.RemovedMedias);
             await _context.SaveChangesAsync(cancellationToken);
 
-            //_cache.Add(request.UserId, new Events.Course_Updated)
             return Ok();
         }
         catch (Exception ex)
@@ -56,12 +47,8 @@ public class UpdateCourseHandler(HealpathyContext context, IAppLogger logger/*, 
         //);
     }
 
-    /// <summary>
-    /// Áp dụng các thay đổi từ DTO vào entity
-    /// </summary>
     private void ApplyChanges(Course entity, UpdateCourseDto dto, Guid userId)
     {
-        // Cập nhật các thông tin cơ bản
         if (dto.Intro is not null)
             entity.Intro = dto.Intro;
         if (dto.Description is not null)
@@ -78,10 +65,13 @@ public class UpdateCourseHandler(HealpathyContext context, IAppLogger logger/*, 
             entity.Requirements = dto.Requirements;
         if (dto.LeafCategoryId is not null)
             entity.LeafCategoryId = (Guid)dto.LeafCategoryId;
+        if (dto.AdvisorExpectedOutcome is not null)
+            entity.AdvisorExpectedOutcome = dto.AdvisorExpectedOutcome;
+        if (dto.ExpectedCompletion is not null)
+            entity.ExpectedCompletion = (int)dto.ExpectedCompletion;
 
         entity.LastModificationTime = TimeHelper.Now;
 
-        // Cập nhật các thông tin đặc biệt
         if (dto.Title is not null)
             entity.SetTitle(dto.Title);
         if (dto.Discount is not null && dto.DiscountExpiry is not null)

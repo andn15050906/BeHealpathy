@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using Contract.Domain.CourseAggregate;
-using Contract.Domain.Shared.MultimediaBase;
 using Contract.Responses.Shared;
 
 namespace Contract.Responses.Courses;
@@ -13,13 +12,16 @@ public sealed class LectureModel
     public DateTime CreationTime { get; set; }
     public DateTime LastModificationTime { get; set; }
 
-    public string Title { get; set; } = string.Empty;
-    public string Content { get; set; } = string.Empty;
-    public string ContentSummary { get; set; } = string.Empty;
+    public string Title { get; set; }                           = string.Empty;
+    public string Content { get; set; }                         = string.Empty;
+    public string ContentSummary { get; set; }                  = string.Empty;
     public bool IsPreviewable { get; set; }
+    public int Index { get; set; }
+    public string LectureType { get; set; }                     = string.Empty;
+    public string MetaData { get; set; }                        = string.Empty;
     public Guid CourseId { get; set; }
     public IEnumerable<MultimediaModel> Materials { get; set; } = [];
-    public IEnumerable<CommentModel> Comments { get; set; } = [];
+    public IEnumerable<CommentModel> Comments { get; set; }     = [];
 
 
 
@@ -40,6 +42,9 @@ public sealed class LectureModel
             ContentSummary = _.ContentSummary,
             IsPreviewable = _.IsPreviewable,
             CourseId = _.CourseId,
+            Index = _.Index,
+            LectureType = _.LectureType,
+            MetaData = _.MetaData,
             //Materials = _.Materials,
             Comments = _.Comments.Select(_ => new CommentModel
             {

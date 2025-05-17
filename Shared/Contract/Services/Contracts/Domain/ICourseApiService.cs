@@ -25,11 +25,9 @@ public interface ICourseApiService
 
 
     Task<Result<CourseModel>> GetByIdAsync(GetCourseByIdQuery query);
-    Task<Result<PagedResult<CourseOverviewModel>>> GetPagedAsync(GetPagedCoursesQuery query);
+    Task<Result<PagedResult<CourseModel>>> GetPagedAsync(GetPagedCoursesQuery query);
     Task<Result<PagedResult<CourseMinModel>>> GetMinAsync(GetMinimumCoursesQuery query);
-    Task<Result<List<CourseOverviewModel>>> GetMultipleAsync(GetMultipleCoursesQuery query);
-    //Task<Result<List<CourseOverviewModel>>> GetSimilarAsync(Guid id);
-    //thumb
+    Task<Result<List<CourseModel>>> GetMultipleAsync(GetMultipleCoursesQuery query);
     Task<Result> CreateAsync(CreateCourseCommand command);
     Task<Result> UpdateAsync(UpdateCourseCommand command);
     Task<Result> DeleteAsync(DeleteCourseCommand command);

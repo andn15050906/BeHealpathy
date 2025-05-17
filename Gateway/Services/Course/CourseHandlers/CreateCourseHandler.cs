@@ -34,13 +34,37 @@ public sealed class CreateCourseHandler(HealpathyContext context, IAppLogger log
     private static Course Adapt(CreateCourseCommand command)
     {
         var lectures = (command.Rq.Lectures ?? []).Select(_ =>
-            new Lecture(_.Id ?? Guid.NewGuid(), command.UserId, _.Title, _.Content, _.ContentSummary, _.IsPreviewable, command.Id)
+            new Lecture(
+                _.Id ?? Guid.NewGuid(), command.UserId,
+                _.Title, _.Content, _.ContentSummary, _.IsPreviewable,
+                _.Index, _.LectureType, _.MetaData,
+                command.Id
+            )
         ).ToList();
 
         return new Course(
-            command.Id, command.UserId, command.InstructorId, command.Rq.LeafCategoryId,
-            command.Rq.Title, command.Rq.Thumb.Url ?? string.Empty, command.Rq.Intro, command.Rq.Description, command.Rq.Price,
-            command.Rq.Level, command.Rq.Outcomes, command.Rq.Requirements, lectures
+            command.Id,
+            command.UserId,
+            command.InstructorId,
+            command.Rq.LeafCategoryId,
+
+            command.Rq.Title,
+            command.Rq.Thumb.Url ?? string.Empty,
+            command.Rq.Intro ?? string.Empty,
+            command.Rq.Description ?? string.Empty,
+            command.Rq.Status,
+
+            command.Rq.Price ?? 0,
+            command.Rq.Discount ?? 0,
+            command.Rq.DiscountExpiry,
+
+            command.Rq.Level,
+            command.Rq.AdvisorExpectedOutcome ?? string.Empty,
+            command.Rq.Outcomes ?? string.Empty,
+            command.Rq.Requirements ?? string.Empty,
+            command.Rq.ExpectedCompletion,
+            
+            lectures
         );
     }
 

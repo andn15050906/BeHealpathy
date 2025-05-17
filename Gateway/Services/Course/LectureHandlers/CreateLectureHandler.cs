@@ -35,6 +35,11 @@ public sealed class CreateLectureHandler : RequestHandler<CreateLectureCommand, 
 
     private static Lecture Adapt(CreateLectureCommand command, Guid userId)
     {
-        return new Lecture(command.Id, command.UserId, command.Rq.Title, command.Rq.Content, command.Rq.ContentSummary, command.Rq.IsPreviewable, command.Rq.CourseId);
+        return new Lecture(
+            command.Id, userId,
+            command.Rq.Title, command.Rq.Content, command.Rq.ContentSummary, command.Rq.IsPreviewable,
+            command.Rq.Index, command.Rq.LectureType, command.Rq.MetaData,
+            command.Rq.CourseId
+        );
     }
 }
