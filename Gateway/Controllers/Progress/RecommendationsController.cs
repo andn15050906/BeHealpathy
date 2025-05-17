@@ -17,6 +17,27 @@ public sealed class RecommendationsController : ContractController
     [Authorize]
     public async Task<IActionResult> GetRecommendedRoadmap([FromServices] HealpathyContext context)
     {
+        /*
+    calculateStressLevel() {
+      let level = 20;
+      if (this.answers.issue === 'study_pressure' || this.answers.issue === 'work_stress') level += 40;
+      if (this.answers.issue === 'bullying' || this.answers.issue === 'intern_stress') level += 30;
+      if (this.answers.issue === 'parent_conflict' || this.answers.issue === 'colleague_conflict') level += 20;
+      // ... các trường hợp khác
+      return Math.min(level, 100);
+    },
+    calculateDepressionRisk() {
+      let risk = 10;
+      if (this.answers.issue === 'loneliness' || this.answers.issue === 'no_close_friend') risk += 40;
+      if (this.answers.issue === 'no_motivation' || this.answers.issue === 'no_passion') risk += 30;
+      if (this.answers.related === 'myself') risk += 20;
+      // ... các trường hợp khác
+      return Math.min(risk, 100);
+
+         */
+
+
+
         /*var submissions = await StatisticsController.GetUserSubmissions(context, ClientId, null, null, ["DASS", "First"]);
 
         var roadmaps = await context.Roadmaps.ToListAsync();
