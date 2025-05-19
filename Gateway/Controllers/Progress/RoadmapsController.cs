@@ -233,214 +233,214 @@ public sealed class RoadmapsController : ContractController
                         "Trong quá trình này, bạn sẽ học cách nhận diện những suy nghĩ tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
                         "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
                     },
-                Steps = 5,
-                Category = "anxiety",
-                Featured = true,
-                CompletionRate = 78,
-                Image = "/images/anxiety.jpg",
-                Phases = new List<PhaseModel>
-                {
-                    new PhaseModel
+                    Steps = 5,
+                    Category = "anxiety",
+                    Featured = true,
+                    CompletionRate = 78,
+                    Image = "/images/anxiety.jpg",
+                    Phases = new List<PhaseModel>
                     {
-                        Id = "1",
-                        Title = "Nhận diện vấn đề",
-                        Description = "Nhận biết các triệu chứng lo âu và hiểu nguồn gốc của chúng",
-                        VideoUrl = "/videos/phase1.mp4",
-                        ExerciseCount = 2,
-                        Completed = false,
-                        Current = true,
-                        ThemeColor = "indigo",
-                        Icon = "mdi-eye-outline"
-                    },
-                    new PhaseModel
-                    {
-                        Id = "2",
-                        Title = "Giảm nhẹ tức thì",
-                        Description = "Học các kỹ thuật thư giãn nhanh để giảm lo âu trong tình huống khẩn cấp",
-                        VideoUrl = "/videos/phase2.mp4",
-                        AudioUrl = "/audio/relaxation.mp3",
-                        ExerciseCount = 3,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "teal",
-                        Icon = "mdi-hand-heart-outline"
-                    },
-                    new PhaseModel
-                    {
-                        Id = "3",
-                        Title = "Ổn định tâm trí",
-                        Description = "Thực hành chánh niệm và các bài tập thiền để ổn định tâm trí",
-                        VideoUrl = "/videos/phase3.mp4",
-                        AudioUrl = "/audio/meditation.mp3",
-                        ExerciseCount = 4,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "purple",
-                        Icon = "mdi-sprout-outline"
-                    },
-                    new PhaseModel
-                    {
-                        Id = "4",
-                        Title = "Đối mặt với vấn đề",
-                        Description = "Phát triển chiến lược để đối mặt với các tình huống gây lo âu",
-                        VideoUrl = "/videos/phase4.mp4",
-                        ExerciseCount = 5,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "blue",
-                        Icon = "mdi-brain"
-                    },
-                    new PhaseModel
-                    {
-                        Id = "5",
-                        Title = "Duy trì và phát triển",
-                        Description = "Xây dựng kế hoạch duy trì lâu dài và tiếp tục phát triển",
-                        VideoUrl = "/videos/phase5.mp4",
-                        ExerciseCount = 3,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "green",
-                        Icon = "mdi-heart-pulse"
+                        new PhaseModel
+                        {
+                            Id = "1",
+                            Title = "Nhận diện vấn đề",
+                            Description = "Nhận biết các triệu chứng lo âu và hiểu nguồn gốc của chúng",
+                            VideoUrl = "/videos/phase1.mp4",
+                            ExerciseCount = 2,
+                            Completed = false,
+                            Current = true,
+                            ThemeColor = "indigo",
+                            Icon = "mdi-eye-outline"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "2",
+                            Title = "Giảm nhẹ tức thì",
+                            Description = "Học các kỹ thuật thư giãn nhanh để giảm lo âu trong tình huống khẩn cấp",
+                            VideoUrl = "/videos/phase2.mp4",
+                            AudioUrl = "/audio/relaxation.mp3",
+                            ExerciseCount = 3,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "teal",
+                            Icon = "mdi-hand-heart-outline"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "3",
+                            Title = "Ổn định tâm trí",
+                            Description = "Thực hành chánh niệm và các bài tập thiền để ổn định tâm trí",
+                            VideoUrl = "/videos/phase3.mp4",
+                            AudioUrl = "/audio/meditation.mp3",
+                            ExerciseCount = 4,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "purple",
+                            Icon = "mdi-sprout-outline"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "4",
+                            Title = "Đối mặt với vấn đề",
+                            Description = "Phát triển chiến lược để đối mặt với các tình huống gây lo âu",
+                            VideoUrl = "/videos/phase4.mp4",
+                            ExerciseCount = 5,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "blue",
+                            Icon = "mdi-brain"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "5",
+                            Title = "Duy trì và phát triển",
+                            Description = "Xây dựng kế hoạch duy trì lâu dài và tiếp tục phát triển",
+                            VideoUrl = "/videos/phase5.mp4",
+                            ExerciseCount = 3,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "green",
+                            Icon = "mdi-heart-pulse"
+                        }
                     }
-                }
-            },
-            new RoadmapModel
-            {
-                Id = "2",
-                Title = "Xây dựng sự tự tin",
-                Description = "Phát triển sự tự tin và khả năng đối mặt với thử thách mới",
-                IntroText = new List<string>
-                {
-                    "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
-                    "Trong quá trình này, bạn sẽ học cách nhận diện những suy nghĩ tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
-                    "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
                 },
-                Steps = 4,
-                Category = "confidence",
-                Featured = true,
-                CompletionRate = 85,
-                Image = "/images/confidence.jpg",
-                Phases = new List<PhaseModel>
+                new RoadmapModel
                 {
-                    new PhaseModel
+                    Id = "2",
+                    Title = "Xây dựng sự tự tin",
+                    Description = "Phát triển sự tự tin và khả năng đối mặt với thử thách mới",
+                    IntroText = new List<string>
                     {
-                        Id = "1",
-                        Title = "Nhận diện vấn đề",
-                        Description = "Nhận biết các triệu chứng lo âu và hiểu nguồn gốc của chúng",
-                        VideoUrl = "/videos/phase1.mp4",
-                        ExerciseCount = 2,
-                        Completed = false,
-                        Current = true,
-                        ThemeColor = "indigo",
-                        Icon = "mdi-eye-outline"
+                        "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
+                        "Trong quá trình này, bạn sẽ học cách nhận diện những suy nghĩ tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
+                        "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
                     },
-                    new PhaseModel
+                    Steps = 4,
+                    Category = "confidence",
+                    Featured = true,
+                    CompletionRate = 85,
+                    Image = "/images/confidence.jpg",
+                    Phases = new List<PhaseModel>
                     {
-                        Id = "2",
-                        Title = "Giảm nhẹ tức thì",
-                        Description = "Học các kỹ thuật thư giãn nhanh để giảm lo âu trong tình huống khẩn cấp",
-                        VideoUrl = "/videos/phase2.mp4",
-                        AudioUrl = "/audio/relaxation.mp3",
-                        ExerciseCount = 3,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "teal",
-                        Icon = "mdi-hand-heart-outline"
-                    },
-                    new PhaseModel
-                    {
-                        Id = "3",
-                        Title = "Ổn định tâm trí",
-                        Description = "Thực hành chánh niệm và các bài tập thiền để ổn định tâm trí",
-                        VideoUrl = "/videos/phase3.mp4",
-                        AudioUrl = "/audio/meditation.mp3",
-                        ExerciseCount = 4,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "purple",
-                        Icon = "mdi-sprout-outline"
-                    },
-                    new PhaseModel
-                    {
-                        Id = "4",
-                        Title = "Đối mặt với vấn đề",
-                        Description = "Phát triển chiến lược để đối mặt với các tình huống gây lo âu",
-                        VideoUrl = "/videos/phase4.mp4",
-                        ExerciseCount = 5,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "blue",
-                        Icon = "mdi-brain"
-                    },
-                    new PhaseModel
-                    {
-                        Id = "5",
-                        Title = "Duy trì và phát triển",
-                        Description = "Xây dựng kế hoạch duy trì lâu dài và tiếp tục phát triển",
-                        VideoUrl = "/videos/phase5.mp4",
-                        ExerciseCount = 3,
-                        Completed = false,
-                        Current = false,
-                        ThemeColor = "green",
-                        Icon = "mdi-heart-pulse"
+                        new PhaseModel
+                        {
+                            Id = "1",
+                            Title = "Nhận diện vấn đề",
+                            Description = "Nhận biết các triệu chứng lo âu và hiểu nguồn gốc của chúng",
+                            VideoUrl = "/videos/phase1.mp4",
+                            ExerciseCount = 2,
+                            Completed = false,
+                            Current = true,
+                            ThemeColor = "indigo",
+                            Icon = "mdi-eye-outline"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "2",
+                            Title = "Giảm nhẹ tức thì",
+                            Description = "Học các kỹ thuật thư giãn nhanh để giảm lo âu trong tình huống khẩn cấp",
+                            VideoUrl = "/videos/phase2.mp4",
+                            AudioUrl = "/audio/relaxation.mp3",
+                            ExerciseCount = 3,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "teal",
+                            Icon = "mdi-hand-heart-outline"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "3",
+                            Title = "Ổn định tâm trí",
+                            Description = "Thực hành chánh niệm và các bài tập thiền để ổn định tâm trí",
+                            VideoUrl = "/videos/phase3.mp4",
+                            AudioUrl = "/audio/meditation.mp3",
+                            ExerciseCount = 4,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "purple",
+                            Icon = "mdi-sprout-outline"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "4",
+                            Title = "Đối mặt với vấn đề",
+                            Description = "Phát triển chiến lược để đối mặt với các tình huống gây lo âu",
+                            VideoUrl = "/videos/phase4.mp4",
+                            ExerciseCount = 5,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "blue",
+                            Icon = "mdi-brain"
+                        },
+                        new PhaseModel
+                        {
+                            Id = "5",
+                            Title = "Duy trì và phát triển",
+                            Description = "Xây dựng kế hoạch duy trì lâu dài và tiếp tục phát triển",
+                            VideoUrl = "/videos/phase5.mp4",
+                            ExerciseCount = 3,
+                            Completed = false,
+                            Current = false,
+                            ThemeColor = "green",
+                            Icon = "mdi-heart-pulse"
+                        }
                     }
+                },
+                new RoadmapModel
+                {
+                    Id = "3",
+                    Title = "Kiểm soát cảm xúc",
+                    Description = "Học cách nhận biết và điều chỉnh cảm xúc tiêu cực",
+                    IntroText = new List<string>
+                    {
+                        "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
+                        "Trong quá trình này, bạn sẽ học cách nhận diện những suy nghĩ tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
+                        "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
+                    },
+                    Steps = 3,
+                    Category = "emotions",
+                    Featured = false,
+                    CompletionRate = 62,
+                    Image = "/images/emotions.jpg",
+                    Phases = new List<PhaseModel>()
+                },
+                new RoadmapModel
+                {
+                    Id = "4",
+                    Title = "Cân bằng công việc - cuộc sống",
+                    Description = "Tạo sự cân bằng giữa công việc và cuộc sống cá nhân",
+                    IntroText = new List<string>
+                    {
+                        "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
+                        "Trong quá trình này, bạn sẽ học cách nhận diện những suy ngh�� tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
+                        "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
+                    },
+                    Steps = 4,
+                    Category = "work-life",
+                    Featured = false,
+                    CompletionRate = 70,
+                    Image = "/images/balance.jpg",
+                    Phases = new List<PhaseModel>()
+                },
+                new RoadmapModel
+                {
+                    Id = "5",
+                    Title = "Giấc ngủ chất lượng",
+                    Description = "Phương pháp giúp ngủ ngon và sâu giấc",
+                    IntroText = new List<string>
+                    {
+                        "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
+                        "Trong quá trình này, bạn sẽ học cách nhận diện những suy nghĩ tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
+                        "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
+                    },
+                    Steps = 3,
+                    Category = "sleep",
+                    Featured = false,
+                    CompletionRate = 90,
+                    Image = "/images/sleep.jpg",
+                    Phases = new List<PhaseModel>()
                 }
-            },
-            new RoadmapModel
-            {
-                Id = "3",
-                Title = "Kiểm soát cảm xúc",
-                Description = "Học cách nhận biết và điều chỉnh cảm xúc tiêu cực",
-                IntroText = new List<string>
-                {
-                    "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
-                    "Trong quá trình này, bạn sẽ học cách nhận diện những suy nghĩ tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
-                    "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
-                },
-                Steps = 3,
-                Category = "emotions",
-                Featured = false,
-                CompletionRate = 62,
-                Image = "/images/emotions.jpg",
-                Phases = new List<PhaseModel>()
-            },
-            new RoadmapModel
-            {
-                Id = "4",
-                Title = "Cân bằng công việc - cuộc sống",
-                Description = "Tạo sự cân bằng giữa công việc và cuộc sống cá nhân",
-                IntroText = new List<string>
-                {
-                    "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
-                    "Trong quá trình này, bạn sẽ học cách nhận diện những suy ngh�� tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
-                    "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
-                },
-                Steps = 4,
-                Category = "work-life",
-                Featured = false,
-                CompletionRate = 70,
-                Image = "/images/balance.jpg",
-                Phases = new List<PhaseModel>()
-            },
-            new RoadmapModel
-            {
-                Id = "5",
-                Title = "Giấc ngủ chất lượng",
-                Description = "Phương pháp giúp ngủ ngon và sâu giấc",
-                IntroText = new List<string>
-                {
-                    "Lộ trình này được thiết kế dựa trên các phương pháp đã được chứng minh hiệu quả trong việc hỗ trợ sức khỏe tinh thần.",
-                    "Trong quá trình này, bạn sẽ học cách nhận diện những suy nghĩ tiêu cực, thách thức chúng và thay thế bằng những suy nghĩ tích cực hơn.",
-                    "Mỗi bước trong lộ trình sẽ cung cấp cho bạn các công cụ và kỹ thuật thực tế để cải thiện sức khỏe tinh thần."
-                },
-                Steps = 3,
-                Category = "sleep",
-                Featured = false,
-                CompletionRate = 90,
-                Image = "/images/sleep.jpg",
-                Phases = new List<PhaseModel>()
-            }
-        };
+            };
 
             // Initialize all phases with complete data
             _allPhases = new Dictionary<string, Dictionary<string, PhaseDetail>>
@@ -1520,6 +1520,11 @@ public sealed class RoadmapsController : ContractController
             };
         }
 
+        public void MigrateToDb(HealpathyContext context)
+        {
+            //context
+        }
+
         public List<PhaseModel> GetRoadmapSteps()
         {
             return _defaultRoadmaps[0].Phases;
@@ -1586,6 +1591,41 @@ public sealed class RoadmapsController : ContractController
     }
 
     private MentalHealthDataService _dataService = new MentalHealthDataService();
+
+    [HttpPost]
+    public void Migrate([FromServices] HealpathyContext context)
+    {
+        _dataService.MigrateToDb(context);
+        /*
+        private readonly List<RoadmapModel> _defaultRoadmaps;
+            GetMentalHealthRoadmaps
+        private readonly Dictionary<string, Dictionary<string, PhaseDetail>> _allPhases;
+            GetPhaseDetails
+        private readonly MentalProfile _mental
+        private readonly List<Recommendation> _recommendationData;
+            GetRecommendationData
+        private readonly SuggestionData _suggestionData;
+            GetSuggestionData
+        private readonly CompletionData _completionData;
+            GetCompletionData
+        private readonly Dictionary<int, DetailedStep> _detailedSteps;
+            GetDetailedStep
+        private readonly CompletionViewData _completionViewData;
+            GetCompletionViewData
+        */
+
+        /*_dataService.GetMentalProfileData();
+        _dataService.GetRecommendationData();
+        _dataService.GetSuggestionData();
+        _dataService.GetMentalHealthRoadmaps();
+        _dataService.GetRoadmapDetails(roadmapId);
+        _dataService.GetRoadmapSteps();
+        _dataService.GetPhaseDetails(roadmapId, phaseId);
+        _dataService.GetDetailedStep(stepId);
+        _dataService.GetCompletionData();
+        _dataService.GetCompletionViewData();
+        */
+    }
 
     [HttpGet("mental-profile")]
     public IActionResult GetMentalProfileData()

@@ -71,13 +71,13 @@ public static class FileConverter
             for (int row = startRow; row < rowCount; row++)
             {
                 var questionContent = worksheet.Cells[row, 3].Text;
-                var questionExplanation = worksheet.Cells[row, 4].Text;
+                var questionPrecondition = worksheet.Cells[row, 4].Text;
                 if (questionContent != currentQuestion.Content && questionContent != string.Empty)
                 {
                     currentQuestion = new CreateMcqQuestionDto
                     {
                         Content = questionContent,
-                        Explanation = questionExplanation,
+                        Precondition = questionPrecondition,
                         Answers = []
                     };
                     dto.Questions.Add(currentQuestion);

@@ -15,9 +15,7 @@ public interface IFileService
     Task<bool> DeleteImage(string identifier);
 
     Task<List<Multimedia?>> SaveMedias(List<MediaWithStream?> medias);
-    Task<List<Multimedia>> SaveNotNullMedias(List<MediaWithStream?> medias);
     Task<List<Multimedia?>> UpdateMedias(List<MediaWithStream?> medias, List<string>? removedIdentifiers);
-    Task<List<Multimedia>> UpdateNotNullMedias(List<MediaWithStream?> medias, List<string>? removedIdentifiers);
     Task<bool[]> DeleteMedias(List<string>? identifier);
 
 

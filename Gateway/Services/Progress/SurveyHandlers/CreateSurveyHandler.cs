@@ -34,8 +34,8 @@ public sealed class CreateSurveyHandler : RequestHandler<CreateSurveyCommand, He
         foreach (var question in command.Rq.Questions)
         {
             var id = Guid.NewGuid();
-            var answers = question.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content, _.Score ?? 0)).ToList();
-            questions.Add(new McqQuestion(id, question.Content, question.Explanation, questions.Count, command.Id, answers));
+            var answers = question.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content, _.OptionValue, _.Score ?? 0)).ToList();
+            questions.Add(new McqQuestion(id, question.Content, question.Precondition, questions.Count, command.Id, answers));
         }
 
         var bands = (command.Rq.Bands ?? []).Select(_ => new SurveyScoreBand(_.MinScore, _.MaxScore, _.BandName, _.BandRating)).ToList();

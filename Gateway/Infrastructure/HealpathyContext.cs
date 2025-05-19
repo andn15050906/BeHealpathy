@@ -512,7 +512,8 @@ public sealed class HealpathyContext : BaseContext
         protected override Dictionary<Expression<Func<McqQuestion, object?>>, string> Columns => new()
         {
             { _ => _.Content, NVARCHAR255 },
-            { _ => _.Explanation, NVARCHAR255 }
+            { _ => _.Precondition, NVARCHAR255 }
+            // Index
             // SurveyId
         };
 
@@ -530,7 +531,8 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<McqAnswer, object?>>, string> Columns => new()
         {
-            { _ => _.Content, NVARCHAR255 }
+            { _ => _.Content, NVARCHAR255 },
+            { _ => _.OptionValue, NVARCHAR255 }
             // Score
         };
 
@@ -655,8 +657,16 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<Roadmap, object?>>, string> Columns => new()
         {
+            // AdvisorId
             { _ => _.Title, NVARCHAR500 },
-            { _ => _.IntroText, NVARCHAR3000 }
+            { _ => _.IntroText, NVARCHAR3000 },
+            { _ => _.Description, NVARCHAR3000 },
+            { _ => _.Category, NVARCHAR255 },
+            { _ => _.ThumbUrl , NVARCHAR255 },
+            // Price
+            // Discount
+            // DiscountExpiry
+            { _ => _.Coupons , NVARCHAR1000 }
         };
 
         public override void Configure(EntityTypeBuilder<Roadmap> builder)
@@ -677,6 +687,12 @@ public sealed class HealpathyContext : BaseContext
         {
             { _ => _.Title, NVARCHAR500 },
             { _ => _.Description, NVARCHAR3000 },
+            { _ => _.Introduction, NVARCHAR3000 },
+            // Index
+            // TimeSpan
+            // IsRequiredToAdvance
+            { _ => _.QuestionsToAdvance, NVARCHARMAX },
+            { _ => _.VideoUrl, NVARCHAR255 }
         };
 
         public override void Configure(EntityTypeBuilder<RoadmapPhase> builder)
@@ -695,9 +711,12 @@ public sealed class HealpathyContext : BaseContext
         protected override Dictionary<Expression<Func<RoadmapMilestone, object?>>, string> Columns => new()
         {
             { _ => _.Title, NVARCHAR500 },
-            { _ => _.EventName, VARCHAR255 }
-            // Index
-            // IsRequired
+            { _ => _.EventName, VARCHAR255 },
+            { _ => _.Content, NVARCHARMAX },
+
+            // IsCompleted
+            // IsSkipped
+            { _ => _.Feedback, NVARCHAR3000 }
         };
 
         public override void Configure(EntityTypeBuilder<RoadmapMilestone> builder)
@@ -712,11 +731,18 @@ public sealed class HealpathyContext : BaseContext
     {
         protected override Dictionary<Expression<Func<RoadmapRecommendation, object?>>, string> Columns => new()
         {
+            { _ => _.Title, NVARCHAR255 },
+            { _ => _.Content, NVARCHAR1000 },
+            { _ => _.Description, NVARCHAR1000 },
+            // IsAction
+
+            // Duration
+            { _ => _.MoodTags, NVARCHAR1000 },
+            // IsGeneralTip
+            { _ => _.Source, NVARCHAR255 },
+
             // TargetEntityId
             { _ => _.EntityType, VARCHAR255 },
-            // MilestoneId
-            { _ => _.Trait, NVARCHAR255 },
-            { _ => _.TraitDescription, NVARCHAR255 },
         };
 
         public override void Configure(EntityTypeBuilder<RoadmapRecommendation> builder)

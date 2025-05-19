@@ -62,6 +62,7 @@ public sealed class CreateCourseHandler(HealpathyContext context, IAppLogger log
             command.Rq.AdvisorExpectedOutcome ?? string.Empty,
             command.Rq.Outcomes ?? string.Empty,
             command.Rq.Requirements ?? string.Empty,
+            command.Rq.Tags ?? string.Empty,
             command.Rq.ExpectedCompletion,
             
             lectures

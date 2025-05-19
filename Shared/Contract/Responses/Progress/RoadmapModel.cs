@@ -11,11 +11,18 @@ public sealed class RoadmapModel
     public DateTime CreationTime { get; set; }
     public DateTime LastModificationTime { get; set; }
 
+    public string Title { get; set; }                           = string.Empty;
+    public string IntroText { get; set; }                       = string.Empty;
+    public string Description { get; set; }                     = string.Empty;
+    public string Category { get; set; }                        = string.Empty;
+    public string ThumbUrl { get; set; }                        = string.Empty;
 
+    public double? Price { get; set; }
+    public double? Discount { get; set; }
+    public DateTime? DiscountExpiry { get; set; }
+    public string? Coupons { get; set; }                        = string.Empty;
 
-    public string Title { get; set; } = string.Empty;
-    public string IntroText { get; set; } = string.Empty;
-    public IEnumerable<RoadmapPhaseModel> Phases { get; set; } = [];
+    public IEnumerable<RoadmapPhaseModel> Phases { get; set; }  = [];
 
 
 
@@ -30,14 +37,28 @@ public sealed class RoadmapModel
 
             Title = _.Title,
             IntroText = _.IntroText,
+            Description = _.Description,
+            Category = _.Category,
+            ThumbUrl = _.ThumbUrl,
+
+            Price = _.Price,
+            Discount = _.Discount,
+            DiscountExpiry = _.DiscountExpiry,
+            Coupons = _.Coupons,
+
             Phases = _.Phases.Select(_ => new RoadmapPhaseModel
             {
                 Id = _.Id,
 
-                Index = _.Index,
                 Title = _.Title,
                 Description = _.Description,
+                Introduction = _.Introduction,
+                Index = _.Index,
                 TimeSpan = _.TimeSpan,
+                IsRequiredToAdvance = _.IsRequiredToAdvance,
+                QuestionsToAdvance = _.QuestionsToAdvance,
+                VideoUrl = _.VideoUrl,
+
                 Milestones = _.Milestones.Select(_ => new RoadmapMilestoneModel
                 {
                     Id = _.Id,

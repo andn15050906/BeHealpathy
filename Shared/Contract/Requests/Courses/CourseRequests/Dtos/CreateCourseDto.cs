@@ -23,6 +23,7 @@ public sealed class CreateCourseDto
     public string? AdvisorExpectedOutcome { get; set; }     = string.Empty;
     public string? Outcomes { get; set; }                   = string.Empty;
     public string? Requirements { get; set; }               = string.Empty;
+    public string? Tags { get; set; }                       = string.Empty;
     public int? ExpectedCompletion { get; set; }
 
     public Guid LeafCategoryId { get; set; }

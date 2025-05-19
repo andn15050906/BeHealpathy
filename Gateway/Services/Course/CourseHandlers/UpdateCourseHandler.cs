@@ -69,6 +69,8 @@ public class UpdateCourseHandler(HealpathyContext context, IAppLogger logger/*, 
             entity.AdvisorExpectedOutcome = dto.AdvisorExpectedOutcome;
         if (dto.ExpectedCompletion is not null)
             entity.ExpectedCompletion = (int)dto.ExpectedCompletion;
+        if (dto.Tags is not null)
+            entity.Tags = dto.Tags;
 
         entity.LastModificationTime = TimeHelper.Now;
 

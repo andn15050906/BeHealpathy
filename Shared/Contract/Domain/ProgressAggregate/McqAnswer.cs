@@ -5,6 +5,7 @@ public sealed class McqAnswer : Entity
 {
     // Attributes
     public string Content { get; set; }
+    public string? OptionValue { get; set; }
     public int Score { get; set; }
     public int Index { get; set; }
 
@@ -15,10 +16,11 @@ public sealed class McqAnswer : Entity
     }
 #pragma warning restore CS8618
 
-    public McqAnswer(Guid id, string content, int score)
+    public McqAnswer(Guid id, string content, string? optionValue, int score)
     {
         Id = id;
         Content = content;
+        OptionValue = optionValue;
         Score = score;
     }
 }

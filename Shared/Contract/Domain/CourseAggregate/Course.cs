@@ -21,6 +21,7 @@ public sealed class Course : AuditedEntity
     public string? AdvisorExpectedOutcome { get; set; }             // In comparison with Enrollment.Outcome
     public string? Outcomes { get; set; }
     public string? Requirements { get; set; }
+    public string? Tags { get; set; }
     public int ExpectedCompletion { get; set; }                     // in days
 
     public byte LectureCount { get; private set; }
@@ -53,7 +54,7 @@ public sealed class Course : AuditedEntity
     public Course(Guid id, Guid creatorId, Guid instructorId, Guid leafCategoryId,
         string title, string? thumbUrl, string? intro, string? description, CourseStatus status,
         double price, double? discount, DateTime? discountExpiry,
-        CourseLevel level, string? advisorExpectedOutcome, string? outcomes, string? requirements, int? expectedCompletion,
+        CourseLevel level, string? advisorExpectedOutcome, string? outcomes, string? requirements, string? tags, int? expectedCompletion,
         List<Lecture> lectures)
     {
         Id = id;
@@ -75,6 +76,7 @@ public sealed class Course : AuditedEntity
         AdvisorExpectedOutcome = advisorExpectedOutcome ?? string.Empty;
         Outcomes = outcomes ?? string.Empty;
         Requirements = requirements ?? string.Empty;
+        Tags = tags ?? string.Empty;
         ExpectedCompletion = expectedCompletion ?? 0;
 
         Lectures = lectures;

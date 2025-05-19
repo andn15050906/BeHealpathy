@@ -30,9 +30,9 @@ public sealed class CreateMcqQuestionHandler : RequestHandler<CreateMcqQuestionC
 
     private static McqQuestion Adapt(CreateMcqQuestionCommand command)
     {
-        List<McqAnswer> answers = command.Rq.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content, _.Score ?? 0)).ToList();
+        List<McqAnswer> answers = command.Rq.Answers.Select(_ => new McqAnswer(Guid.NewGuid(), _.Content, _.OptionValue, _.Score ?? 0)).ToList();
 
         // 0 as index
-        return new McqQuestion(command.Id, command.Rq.Content, command.Rq.Explanation, 0, command.Rq.SurveyId, answers);
+        return new McqQuestion(command.Id, command.Rq.Content, command.Rq.Precondition, 0, command.Rq.SurveyId, answers);
     }
 }

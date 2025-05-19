@@ -7,6 +7,8 @@ namespace Contract.Services.Implementations;
 
 public sealed class CloudStorageService : IStorageService
 {
+    public const int MAX_FILE_SIZE = 10485760;
+
     private readonly Cloudinary _client;
 
     public CloudStorageService(CloudStorageConfig config)
@@ -57,7 +59,7 @@ public sealed class CloudStorageService : IStorageService
             }
             return null;
         }
-        catch (Exception /*ex*/)
+        catch (Exception ex)
         {
             return null;
         }

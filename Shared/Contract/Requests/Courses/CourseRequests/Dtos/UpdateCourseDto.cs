@@ -22,5 +22,6 @@ public sealed class UpdateCourseDto
     public string? AdvisorExpectedOutcome { get; init; }
     public string? Outcomes { get; init; }
     public string? Requirements { get; init; }
+    public string? Tags { get; init; }
     public int? ExpectedCompletion { get; init; }
 }

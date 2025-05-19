@@ -23,7 +23,7 @@ public sealed class SurveyModel
            {
                Id = _.Id,
                Content = _.Content,
-               Explanation = _.Explanation,
+               Precondition = _.Precondition,
                Index = _.Index,
                SurveyId = _.SurveyId,
                Answers = _.Answers.Select(_ => new McqAnswerModel

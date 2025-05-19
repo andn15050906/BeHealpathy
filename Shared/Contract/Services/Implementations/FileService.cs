@@ -22,6 +22,8 @@ public sealed class FileService : IFileService
 
     public async Task<List<Multimedia>> SaveMediasAndUpdateDtos(List<(CreateMediaDto, Guid)> dto_sourceIds)
     {
+        // Item1 != null -> Url-based
+        // Item2 != null -> File-based
         List<(Multimedia?, MediaWithStream?)> list = [];
 
         for (var i = 0; i < dto_sourceIds.Count; i++)
@@ -40,17 +42,15 @@ public sealed class FileService : IFileService
         }
 
         var dtosWithFile = list.Where(_ => _.Item2 is not null).Select(_ => _.Item2).ToList();
-        var medias = await SaveNotNullMedias(dtosWithFile);
-        var j = 0;
+        var medias = await SaveMedias(dtosWithFile);
         for (var i = 0; i < list.Count; i++)
-            if (list[i].Item1 is null)
+            if (list[i].Item1 is null && medias.Count > i && dto_sourceIds.Count > i)
             {
-                list[i] = (medias[j], null);
-                j++;
+                list[i] = (medias[i], null);
                 dto_sourceIds[i].Item1.UpdateAfterSave(list[i].Item1);
             }
 
-        return list.Select(_ => _.Item1!).ToList();
+        return list.Where(_ => _.Item1 is not null).Select(_ => _.Item1!).ToList();
     }
 
     public async Task<Multimedia?> SaveMediaAndUpdateDto(CreateMediaDto dto, Guid sourceId)
@@ -133,28 +133,6 @@ public sealed class FileService : IFileService
         return result;
     }
 
-    public async Task<List<Multimedia>> SaveNotNullMedias(List<MediaWithStream?> medias)
-    {
-        List<Task<Multimedia?>> tasks = [];
-        for (var i = 0; i < medias.Count; i++)
-        {
-            var media = medias[i];
-
-            tasks.Add(
-                media is not null
-                    ? _storage.SaveFile(media)
-                    : Task.FromResult<Multimedia?>(null)
-            );
-        }
-        await Task.WhenAll(tasks);
-
-        List<Multimedia> result = [];
-        foreach (var task in tasks)
-            if (task.Result is not null)
-                result.Add(task.Result);
-        return result;
-    }
-
     public async Task<List<Multimedia?>> UpdateMedias(List<MediaWithStream?> medias, List<string>? removedIdentifiers)
     {
         Task<bool[]> deleteTask = removedIdentifiers is not null
@@ -162,18 +140,6 @@ public sealed class FileService : IFileService
             : Task.FromResult(Array.Empty<bool>());
 
         Task<List<Multimedia?>> saveTask = SaveMedias(medias);
-
-        await Task.WhenAll(deleteTask, saveTask);
-        return saveTask.Result;
-    }
-
-    public async Task<List<Multimedia>> UpdateNotNullMedias(List<MediaWithStream?> medias, List<string>? removedIdentifiers)
-    {
-        Task<bool[]> deleteTask = removedIdentifiers is not null
-            ? _storage.DeleteFiles(removedIdentifiers)
-            : Task.FromResult(Array.Empty<bool>());
-
-        Task<List<Multimedia>> saveTask = SaveNotNullMedias(medias);
 
         await Task.WhenAll(deleteTask, saveTask);
         return saveTask.Result;

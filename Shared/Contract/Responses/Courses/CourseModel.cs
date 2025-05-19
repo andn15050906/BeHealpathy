@@ -25,6 +25,7 @@ public sealed class CourseModel
     public string AdvisorExpectedOutcome { get; set; } = string.Empty;
     public string Outcomes { get; set; } = string.Empty;
     public string Requirements { get; set; } = string.Empty;
+    public string Tags { get; set; } = string.Empty;
     public int ExpectedCompletion { get; set; }
 
     public byte LectureCount { get; set; }
@@ -55,12 +56,18 @@ public sealed class CourseModel
             Intro = _.Intro,
             Description = _.Description,
             Status = _.Status,
+
             Price = _.Price,
             Discount = _.Discount,
             DiscountExpiry = _.DiscountExpiry,
+
             Level = _.Level,
             Outcomes = _.Outcomes,
             Requirements = _.Requirements,
+            Tags = _.Tags,
+            AdvisorExpectedOutcome = _.AdvisorExpectedOutcome,
+            ExpectedCompletion = _.ExpectedCompletion,
+
             LectureCount = _.LectureCount,
             LearnerCount = _.LearnerCount,
             RatingCount = _.RatingCount,

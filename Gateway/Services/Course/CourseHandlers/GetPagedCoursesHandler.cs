@@ -95,22 +95,25 @@ public sealed class GetPagedCoursesHandler : RequestHandler<GetPagedCoursesQuery
                     Intro = _.Intro,
                     Description = _.Description,
                     Status = _.Status,
+
                     Price = _.Price,
                     Discount = _.Discount,
                     DiscountExpiry = _.DiscountExpiry,
+
                     Level = _.Level,
                     Outcomes = _.Outcomes,
+                    Requirements = _.Requirements,
+                    Tags = _.Tags,
                     AdvisorExpectedOutcome = _.AdvisorExpectedOutcome,
                     ExpectedCompletion = _.ExpectedCompletion,
-                    Requirements = _.Requirements,
 
                     LectureCount = _.LectureCount,
                     LearnerCount = _.LearnerCount,
                     RatingCount = _.RatingCount,
                     TotalRating = _.TotalRating,
+
                     LeafCategoryId = _.LeafCategoryId,
-                    InstructorId = _.InstructorId,
-                    //public UserMinModel Creator { get; set; }
+                    InstructorId = _.InstructorId
                 }
             )
             .Skip(request.Rq.PageIndex * request.Rq.PageSize)
