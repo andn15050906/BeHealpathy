@@ -2,7 +2,7 @@
 
 public sealed class QueryArticleDto : PagingQueryDto
 {
-    public Guid? CreatorId { get; set; }
+    public Guid? CreatorId { get; init; }
 
     public string? Title { get; set; }
     public string? Status { get; set; }
