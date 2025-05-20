@@ -1,5 +1,12 @@
-﻿using Contract.Messaging.ApiClients.Http;
+﻿using Contract.Domain.ProgressAggregate;
+using Contract.Domain.Shared.MultimediaBase;
+using Contract.Messaging.ApiClients.Http;
+using Contract.Requests.Progress.RoadmapRequests;
+using Contract.Requests.Progress.RoadmapRequests.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Gateway.Controllers.Progress;
 
@@ -8,6 +15,71 @@ public sealed class RoadmapsController : ContractController
     public RoadmapsController(IMediator mediator) : base(mediator)
     {
     }
+
+    public static MentalHealthDataService DataService = new MentalHealthDataService();
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllRoadmaps([FromServices] HealpathyContext context)
+    {
+        var roadmaps = await context.Roadmaps
+            .Include(_ => _.Phases).ThenInclude(_ => _.Recommendations)
+            .Select(Contract.Responses.Progress.RoadmapModel.MapExpression)
+            .ToListAsync();
+
+        return Ok(roadmaps);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> Create(CURoadmapDto dto, [FromServices] IFileService fileService)
+    {
+        var roadmapId = Guid.NewGuid();
+        List<Multimedia> medias = [];
+
+        if (dto.Thumb is not null)
+        {
+            var image = await fileService.SaveImageAndUpdateDto(dto.Thumb, roadmapId);
+            if (image is not null)
+                medias.Add(image);
+        }
+
+        CURoadmapCommand command = new(roadmapId, dto, ClientId, medias);
+        return await Send(command);
+    }
+
+    [HttpPatch]
+    [Authorize]
+    public async Task<IActionResult> Update(CURoadmapDto dto, [FromServices] IFileService fileService)
+    {
+        if (dto.Id is null)
+            return BadRequest();
+
+        var roadmapId = (Guid)dto.Id;
+        List<Multimedia> medias = [];
+
+        if (dto.Thumb is not null)
+        {
+            var image = await fileService.SaveImageAndUpdateDto(dto.Thumb, roadmapId);
+            if (image is not null)
+                medias.Add(image);
+        }
+
+        CURoadmapCommand command = new(roadmapId, dto, ClientId, medias);
+        return await Send(command);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        DeleteRoadmapCommand command = new(id, ClientId);
+        return await Send(command);
+    }
+
+
+
+
+
 
     public class CompletionData
     {
@@ -1522,7 +1594,231 @@ public sealed class RoadmapsController : ContractController
 
         public void MigrateToDb(HealpathyContext context)
         {
-            //context
+            var advisorId_deepSea1 = Guid.Parse("BB093A37-6450-48EF-8C2A-6605EB620444");
+
+
+
+            var roadmaps = _defaultRoadmaps.Select(_ => {
+                var id = Guid.NewGuid();
+                var currentPhaseIndex = 0;
+                return new Roadmap
+                {
+                    Id = id,
+                    AdvisorId = advisorId_deepSea1,
+
+                    Title = _.Title,
+                    IntroText = JsonSerializer.Serialize(_.IntroText),
+                    Description = _.Description,
+                    Category = _.Category,
+                    ThumbUrl = _.Image,
+
+                    Price = null,
+                    Discount = null,
+                    DiscountExpiry = null,
+                    Coupons = string.Empty,
+
+                    Phases = _allPhases.Values.SelectMany(phase => phase.Values.Select(phase =>
+                    {
+                        currentPhaseIndex++;
+                        var phaseId = Guid.NewGuid();
+
+                        var nonActions = phase.Tips.Select(tip => new RoadmapRecommendation
+                        {
+                            RoadmapPhaseId = phaseId,
+
+                            Title = tip.Title,
+                            Content = tip.Content,
+                            Description = null,
+                            IsAction = false,
+
+                            Duration = null,
+                            MoodTags = null,
+                            IsGeneralTip = true,
+                            Source = null,
+
+                            TargetEntityId = null,
+                            EntityType = null
+                        });
+
+                        var actions = phase.Actions.Select(action => new RoadmapRecommendation
+                        {
+                            RoadmapPhaseId = phaseId,
+
+                            Title = action.Title,
+                            Content = null,
+                            Description = action.Description,
+                            IsAction = true,
+
+                            Duration = null,
+                            MoodTags = JsonSerializer.Serialize(action.MoodTags),
+                            IsGeneralTip = false,
+                            Source = null,
+
+                            TargetEntityId = null,
+                            EntityType = null
+                        });
+
+                        return new RoadmapPhase
+                        {
+                            Id = phaseId,
+                            RoadmapId = id,
+
+                            Title = phase.Title,
+                            Description = JsonSerializer.Serialize(phase.CompletionCriteria),
+                            Introduction = phase.Description ?? phase.Introduction,
+                            Index = currentPhaseIndex,
+                            TimeSpan = 3,
+                            IsRequiredToAdvance = false,
+                            QuestionsToAdvance = null,
+                            VideoUrl = null,
+
+                            // Milestones
+                            Recommendations = nonActions.Union(actions).ToList()
+                        };
+                    }).ToList()).ToList()
+                };
+            });
+            context.Roadmaps.AddRange(roadmaps);
+
+
+
+            // Mental profile
+
+
+
+            var surveyId = Guid.NewGuid();
+
+            var answerId_student = Guid.NewGuid();
+            var answerId_university = Guid.NewGuid();
+            var answerId_worker = Guid.NewGuid();
+            var answerId_elder = Guid.NewGuid();
+
+            var answer_student = _suggestionData.UserTypeOptions.Where(_ => _.Value == "student").FirstOrDefault();
+            var answer_university = _suggestionData.UserTypeOptions.Where(_ => _.Value == "university").FirstOrDefault();
+            var answer_worker = _suggestionData.UserTypeOptions.Where(_ => _.Value == "worker").FirstOrDefault();
+            var answer_elder = _suggestionData.UserTypeOptions.Where(_ => _.Value == "elderly").FirstOrDefault();
+
+            var question1 = new McqQuestion
+            {
+                SurveyId = surveyId,
+                Content = "Công việc hiện tại của bạn là gì?",
+                Precondition = null,
+                Index = 0,
+                Answers = [
+                    new McqAnswer {
+                        Id = answerId_student,
+                        Content = answer_student?.Text ?? string.Empty,
+                        OptionValue = answer_student?.Value ?? string.Empty,
+                        Score = 0,
+                        Index = 0
+                    },
+                    new McqAnswer {
+                        Id = answerId_university,
+                        Content = answer_university?.Text ?? string.Empty,
+                        OptionValue = answer_university?.Value ?? string.Empty,
+                        Score = 0,
+                        Index = 1
+                    },
+                    new McqAnswer {
+                        Id = answerId_worker,
+                        Content = answer_worker?.Text ?? string.Empty,
+                        OptionValue = answer_worker?.Value ?? string.Empty,
+                        Score = 0,
+                        Index = 2
+                    },
+                    new McqAnswer {
+                        Id = answerId_elder,
+                        Content = answer_elder?.Text ?? string.Empty,
+                        OptionValue = answer_elder?.Value ?? string.Empty,
+                        Score = 0,
+                        Index = 3
+                    }
+                ]
+            };
+            var question2_student = new McqQuestion
+            {
+                SurveyId = surveyId,
+                Content = "Vấn đề hiện tại của bạn là gì?",
+                Precondition = answerId_student.ToString(),
+                Index = 1,
+                Answers = _suggestionData.IssueOptions["student"]
+                    .Select(_ => new McqAnswer { Content = _.Text, OptionValue = _.Value, Score = 0, Index = 1 }).ToList()
+            };
+            var question2_university = new McqQuestion
+            {
+                SurveyId = surveyId,
+                Content = "Vấn đề hiện tại của bạn là gì?",
+                Precondition = answerId_university.ToString(),
+                Index = 1,
+                Answers = _suggestionData.IssueOptions["university"]
+                    .Select(_ => new McqAnswer { Content = _.Text, OptionValue = _.Value, Score = 0, Index = 1 }).ToList()
+            };
+            var question2_worker = new McqQuestion
+            {
+                SurveyId = surveyId,
+                Content = "Vấn đề hiện tại của bạn là gì?",
+                Precondition = answerId_worker.ToString(),
+                Index = 1,
+                Answers = _suggestionData.IssueOptions["worker"]
+                    .Select(_ => new McqAnswer { Content = _.Text, OptionValue = _.Value, Score = 0, Index = 1 }).ToList()
+            };
+            //var question2_elder = new McqQuestion
+            //{
+            //    SurveyId = surveyId,
+            //    Content = "Vấn đề hiện tại của bạn là gì?",
+            //    Precondition = answerId_elder.ToString(),
+            //    Index = 1,
+            //    Answers = _suggestionData.IssueOptions["elderly"]
+            //        .Select(_ => new McqAnswer { Content = _.Text, OptionValue = _.Value, Score = 0, Index = 1 }).ToList()
+            //};
+            var question3 = new McqQuestion
+            {
+                SurveyId = surveyId,
+                Content = "Vấn đề đó thường xảy ra ở đâu?",
+                Precondition = null,
+                Index = 2,
+                Answers = _suggestionData.WhereOptions
+                    .Select(_ => new McqAnswer { Content = _.Text, OptionValue = _.Value, Score = 0, Index = 2 }).ToList()
+            };
+            var question4 = new McqQuestion
+            {
+                SurveyId = surveyId,
+                Content = "Vấn đề này thường xảy ra vào thời gian nào?",
+                Precondition = null,
+                Index = 3,
+                Answers = _suggestionData.WhenOptions
+                    .Select(_ => new McqAnswer { Content = _.Text, OptionValue = _.Value, Score = 0, Index = 3 }).ToList()
+            };
+            var question5 = new McqQuestion
+            {
+                SurveyId = surveyId,
+                Content = "Những ai là người liên quan đến vấn đề này?",
+                Precondition = null,
+                Index = 4,
+                Answers = _suggestionData.RelatedOptions
+                    .Select(_ => new McqAnswer { Content = _.Text, OptionValue = _.Value, Score = 0, Index = 4 }).ToList()
+            };
+
+            var survey = new Survey
+            {
+                Id = surveyId,
+                Name = "First_Evaluation",
+                Description = "First_Evaluation",
+                IsScientific = false,
+                Questions = [
+                    question1,
+                    question2_student,
+                    question2_university,
+                    question2_worker,
+                    //question2_elder,
+                    question3,
+                    question4,
+                    question5
+                ]
+            };
+            context.Surveys.Add(survey);
+
+            context.SaveChanges();
         }
 
         public List<PhaseModel> GetRoadmapSteps()
@@ -1589,143 +1885,4 @@ public sealed class RoadmapsController : ContractController
             return _completionViewData;
         }
     }
-
-    private MentalHealthDataService _dataService = new MentalHealthDataService();
-
-    [HttpPost]
-    public void Migrate([FromServices] HealpathyContext context)
-    {
-        _dataService.MigrateToDb(context);
-        /*
-        private readonly List<RoadmapModel> _defaultRoadmaps;
-            GetMentalHealthRoadmaps
-        private readonly Dictionary<string, Dictionary<string, PhaseDetail>> _allPhases;
-            GetPhaseDetails
-        private readonly MentalProfile _mental
-        private readonly List<Recommendation> _recommendationData;
-            GetRecommendationData
-        private readonly SuggestionData _suggestionData;
-            GetSuggestionData
-        private readonly CompletionData _completionData;
-            GetCompletionData
-        private readonly Dictionary<int, DetailedStep> _detailedSteps;
-            GetDetailedStep
-        private readonly CompletionViewData _completionViewData;
-            GetCompletionViewData
-        */
-
-        /*_dataService.GetMentalProfileData();
-        _dataService.GetRecommendationData();
-        _dataService.GetSuggestionData();
-        _dataService.GetMentalHealthRoadmaps();
-        _dataService.GetRoadmapDetails(roadmapId);
-        _dataService.GetRoadmapSteps();
-        _dataService.GetPhaseDetails(roadmapId, phaseId);
-        _dataService.GetDetailedStep(stepId);
-        _dataService.GetCompletionData();
-        _dataService.GetCompletionViewData();
-        */
-    }
-
-    [HttpGet("mental-profile")]
-    public IActionResult GetMentalProfileData()
-    {
-        return Ok(_dataService.GetMentalProfileData());
-    }
-
-    [HttpGet("recommendations")]
-    public IActionResult GetRecommendationData()
-    {
-        return Ok(_dataService.GetRecommendationData());
-    }
-
-    [HttpGet("suggestions")]
-    public IActionResult GetSuggestionData()
-    {
-        return Ok(_dataService.GetSuggestionData());
-    }
-
-    [HttpGet]
-    public IActionResult GetMentalHealthRoadmaps()
-    {
-        return Ok(_dataService.GetMentalHealthRoadmaps());
-    }
-
-    [HttpGet("details/{id}")]
-    public IActionResult GetRoadmapDetails(string id)
-    {
-        return Ok(_dataService.GetRoadmapDetails(id));
-    }
-
-    [HttpGet("roadmap-steps")]
-    public IActionResult GetRoadmapSteps()
-    {
-        return Ok(_dataService.GetRoadmapSteps());
-    }
-
-    [HttpGet("phase")]
-    public IActionResult GetPhaseDetails([FromQuery] string roadmapId, [FromQuery] string phaseId)
-    {
-        return Ok(_dataService.GetPhaseDetails(roadmapId, phaseId));
-    }
-
-    [HttpGet("phase/{stepId?}")]
-    public IActionResult GetDetailedStep(int? stepId)
-    {
-        return Ok(_dataService.GetDetailedStep(stepId));
-    }
-
-    [HttpGet("completion")]
-    public IActionResult GetCompletionData()
-    {
-        return Ok(_dataService.GetCompletionData());
-    }
-
-    [HttpGet("completion-view")]
-    public IActionResult GetCompletionViewData()
-    {
-        return Ok(_dataService.GetCompletionViewData());
-    }
-
-    /*
-    [HttpGet]
-    public async Task<IActionResult> GetPaged([FromQuery] QueryRoadmapDto dto)
-    {
-        GetPagedRoadmapsQuery query = new(dto);
-        return await Send(query);
-    }
-    [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id)
-    {
-        GetRoadmapByIdQuery query = new(id);
-        return await Send(query);
-    }
-
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> Create(CURoadmapDto dto)
-    {
-        CURoadmapCommand command = new(Guid.NewGuid(), dto, ClientId);
-        return await Send(command);
-    }
-
-    [HttpPatch]
-    [Authorize]
-    public async Task<IActionResult> Update(CURoadmapDto dto)
-    {
-        if (dto.Id is null)
-            return BadRequest();
-
-        CURoadmapCommand command = new((Guid)dto.Id, dto, ClientId);
-        return await Send(command);
-    }
-
-    [HttpDelete("{id}")]
-    [Authorize]
-    public async Task<IActionResult> Delete(Guid id)
-    {
-        DeleteRoadmapCommand command = new(id, ClientId);
-        return await Send(command);
-    }
-    */
 }

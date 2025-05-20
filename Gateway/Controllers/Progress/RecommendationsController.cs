@@ -4,6 +4,7 @@ using Gateway.Services.AI.ChatBot;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Gateway.Controllers.Progress.RoadmapsController;
 
 namespace Gateway.Controllers.Progress;
 
@@ -66,14 +67,52 @@ public sealed class RecommendationsController : ContractController
     [HttpGet("quotes")]
     public IActionResult GetQuotes()
     {
-        var mentalProfile = new MentalProfile(Guid.NewGuid(), Guid.NewGuid(), "", "");
+        var quotes = new List<Recommendation>()
+        {
+            new Recommendation
+            {
+                Content = "Hãy dành 5 phút mỗi ngày để thực hành hít thở sâu. Điều này sẽ giúp giảm căng thẳng và cải thiện tập trung.",
+                IsMotivation = false,
+                Source = "TS. Nguyễn An Tâm, Chuyên gia tâm lý"
+            },
+            new Recommendation
+            {
+                Content = "Mỗi ngày hãy ghi lại 3 điều bạn biết ơn. Thói quen này sẽ giúp bạn tập trung vào những điều tích cực trong cuộc sống.",
+                IsMotivation = false,
+                Source = "Nghiên cứu về Tâm lý học Tích cực"
+            },
+            new Recommendation
+            {
+                Content = "Hãy nhớ rằng, mỗi bước nhỏ đều quan trọng. Bạn không cần phải hoàn hảo, chỉ cần tiến bộ mỗi ngày.",
+                IsMotivation = true,
+                Source = ""
+            },
+            new Recommendation
+            {
+                Content = "Thử thách không phải để đánh bại bạn, mà để giúp bạn khám phá sức mạnh bên trong mình.",
+                IsMotivation = true,
+                Source = ""
+            }
+        };
 
-        return Ok();
+        return Ok(quotes);
     }
 
-    [HttpGet("actions")]
-    public IActionResult GetActions()
+    [HttpGet("recommendations")]
+    public IActionResult GetRecommendationData()
     {
-        return Ok();
+        return Ok(DataService.GetRecommendationData());
+    }
+
+    [HttpGet("completion")]
+    public IActionResult GetCompletionData()
+    {
+        return Ok(DataService.GetCompletionData());
+    }
+
+    [HttpGet("completion-view")]
+    public IActionResult GetCompletionViewData()
+    {
+        return Ok(DataService.GetCompletionViewData());
     }
 }

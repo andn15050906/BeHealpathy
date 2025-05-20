@@ -3,13 +3,12 @@
 public sealed class CURoadmapMilestoneDto
 {
     public Guid? Id { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public string EventName { get; set; } = string.Empty;
-    public int RepeatTimesRequired { get; set; }
-    public int Index { get; set; } = 0;
-    public bool IsRequired { get; set; } = false;
 
+    public string? Title { get; set; }
+    public string? EventName { get; set; }
+    public string? Content { get; set; }
 
-
-    public List<CURoadmapRecommendationDto> Recommendations { get; set; } = [];
+    public bool? IsCompleted { get; set; }
+    public bool? IsSkipped { get; set; }
+    public string? Feedback { get; set; }
 }

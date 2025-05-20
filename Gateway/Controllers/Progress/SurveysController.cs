@@ -26,6 +26,7 @@ public sealed class SurveysController : ContractController
         return await Send(query);
     }
 
+    /*
     [HttpGet("all-questions")]
     public IActionResult GetQuestions()
     {
@@ -98,6 +99,7 @@ public sealed class SurveysController : ContractController
 
         return Ok(questions);
     }
+    */
 
     public class Answer(string content, Guid? treePath = null)
     {
