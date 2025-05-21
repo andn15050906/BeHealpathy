@@ -76,7 +76,7 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             Title = dto.Title ?? string.Empty,
             Description = dto.Description,
             TimeSpan = dto.TimeSpan ?? 0,
-            Milestones = []
+            Recommendations = []
         };
 
         //foreach (var milestoneDto in dto.Milestones)

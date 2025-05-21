@@ -31,7 +31,7 @@ public sealed class RoadmapsController : ContractController
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> Create(CURoadmapDto dto, [FromServices] IFileService fileService)
+    public async Task<IActionResult> Create([FromForm] CURoadmapDto dto, [FromServices] IFileService fileService)
     {
         var roadmapId = Guid.NewGuid();
         List<Multimedia> medias = [];
@@ -49,7 +49,7 @@ public sealed class RoadmapsController : ContractController
 
     [HttpPatch]
     [Authorize]
-    public async Task<IActionResult> Update(CURoadmapDto dto, [FromServices] IFileService fileService)
+    public async Task<IActionResult> Update([FromForm] CURoadmapDto dto, [FromServices] IFileService fileService)
     {
         if (dto.Id is null)
             return BadRequest();
@@ -1604,7 +1604,6 @@ public sealed class RoadmapsController : ContractController
                 return new Roadmap
                 {
                     Id = id,
-                    AdvisorId = advisorId_deepSea1,
 
                     Title = _.Title,
                     IntroText = JsonSerializer.Serialize(_.IntroText),
