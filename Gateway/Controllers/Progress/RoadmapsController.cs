@@ -23,6 +23,7 @@ public sealed class RoadmapsController : ContractController
     {
         var roadmaps = await context.Roadmaps
             .Include(_ => _.Phases).ThenInclude(_ => _.Recommendations)
+            .Where(_ => !_.IsDeleted)
             .Select(Contract.Responses.Progress.RoadmapModel.MapExpression)
             .ToListAsync();
 
