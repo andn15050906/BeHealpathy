@@ -38,6 +38,8 @@ public sealed class CourseProgress : AuditedEntity
         CourseId = courseId;
         CreatorId = creatorId;
         BillId = billId;
+
+        Outcome = string.Empty;
     }
 
     public CourseProgress(Guid id, Guid courseId, Guid creatorId)
@@ -45,6 +47,8 @@ public sealed class CourseProgress : AuditedEntity
         Id = id;
         CourseId = courseId;
         CreatorId = creatorId;
+
+        Outcome = string.Empty;
     }
 #pragma warning restore CS8618
 }

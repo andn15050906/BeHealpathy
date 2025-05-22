@@ -2,11 +2,11 @@
 
 public sealed class PaymentResponseDto
 {
-    public string code { get; set; }
-    public string id { get; set; }
-    public bool cancel { get; set; }
-    public string status { get; set; }
-    public string orderCode { get; set; }
+    public string? code { get; set; }
+    public string? id { get; set; }
+    public bool? cancel { get; set; }
+    public string? status { get; set; }
+    public string? orderCode { get; set; }
 
     /*public long vnp_Amount { get; set; }
     public string vnp_BankCode { get; set; }

@@ -105,7 +105,7 @@ public sealed class BillsController : ContractController
 
     [HttpGet("redirect-payos/premium/{billId}/{status}")]
     public async Task<IActionResult> PremiumPurchased(
-        Guid billId, string status, [FromQuery] PaymentResponseDto response,
+        Guid billId, string status, [FromQuery] PaymentResponseDto? response,
         [FromServices] IOptions<AppInfoOptions> appInfo
     )
     {
@@ -129,7 +129,7 @@ public sealed class BillsController : ContractController
             new UpdateBillDto
             {
                 Id = billId,
-                IsSuccessful = response.status == statuses[0]
+                IsSuccessful = (response.status ?? string.Empty).Equals(statuses[0], StringComparison.CurrentCultureIgnoreCase)
             },
             ClientId
         );
@@ -139,7 +139,7 @@ public sealed class BillsController : ContractController
 
     [HttpGet("redirect-payos/course/{billId}/{status}")]
     public async Task<IActionResult> CoursePurchased(
-        Guid billId, string status, [FromQuery] PaymentResponseDto response,
+        Guid billId, string status, [FromQuery] PaymentResponseDto? response,
         [FromServices] IOptions<AppInfoOptions> appInfo
     )
     {
@@ -163,7 +163,7 @@ public sealed class BillsController : ContractController
             new UpdateBillDto
             {
                 Id = billId,
-                IsSuccessful = response.status == statuses[0]
+                IsSuccessful = (response.status ?? string.Empty).Equals(statuses[0], StringComparison.CurrentCultureIgnoreCase)
             },
             ClientId
         );
