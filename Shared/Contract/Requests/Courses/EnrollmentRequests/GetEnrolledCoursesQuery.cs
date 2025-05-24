@@ -2,7 +2,7 @@
 
 namespace Contract.Requests.Courses.EnrollmentRequests;
 
-public sealed class GetEnrolledCoursesQuery : IRequest<Result<List<EnrollmentModel>>>
+public sealed class GetEnrolledCoursesQuery : IRequest<Result<List<CourseProgressModel>>>
 {
     public Guid UserId { get; init; }
 

@@ -148,8 +148,8 @@ public sealed class CourseHttpService : HttpApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<EnrollmentModel>>> GetPagedAsync(GetPagedEnrollmentsQuery query)
-        => await GetAsync<PagedResult<EnrollmentModel>>(API.Courses.EnrollmentBaseUri);
+    public async Task<Result<PagedResult<CourseProgressModel>>> GetPagedAsync(GetPagedEnrollmentsQuery query)
+        => await GetAsync<PagedResult<CourseProgressModel>>(API.Courses.EnrollmentBaseUri);
 
     public async Task<Result> CreateAsync(CreateEnrollmentCommand command)
         => await PostAsync(API.Courses.EnrollmentBaseUri, command.Rq);

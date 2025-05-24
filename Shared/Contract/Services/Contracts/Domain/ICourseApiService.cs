@@ -48,7 +48,7 @@ public interface ICourseApiService
 
 
 
-    Task<Result<PagedResult<EnrollmentModel>>> GetPagedAsync(GetPagedEnrollmentsQuery query);
+    Task<Result<PagedResult<CourseProgressModel>>> GetPagedAsync(GetPagedEnrollmentsQuery query);
     Task<Result> CreateAsync(CreateEnrollmentCommand command);
     Task<Result> DeleteAsync(DeleteEnrollmentCommand command);
 

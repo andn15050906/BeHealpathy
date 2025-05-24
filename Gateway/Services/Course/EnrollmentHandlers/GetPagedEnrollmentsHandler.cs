@@ -6,22 +6,22 @@ using Contract.Responses.Courses;
 
 namespace Gateway.Services.Course.EnrollmentHandlers;
 
-public class GetPagedEnrollmentsHandler : RequestHandler<GetPagedEnrollmentsQuery, PagedResult<EnrollmentModel>, HealpathyContext>
+public class GetPagedEnrollmentsHandler : RequestHandler<GetPagedEnrollmentsQuery, PagedResult<CourseProgressModel>, HealpathyContext>
 {
     public GetPagedEnrollmentsHandler(HealpathyContext context, IAppLogger logger) : base(context, logger) { }
 
-    public override async Task<Result<PagedResult<EnrollmentModel>>> Handle(GetPagedEnrollmentsQuery request, CancellationToken cancellationToken)
+    public override async Task<Result<PagedResult<CourseProgressModel>>> Handle(GetPagedEnrollmentsQuery request, CancellationToken cancellationToken)
     {
         try
         {
             var query = _context.GetPagingQuery(
-                EnrollmentModel.MapExpression,
+                CourseProgressModel.MapExpression,
                 GetPredicate(request),
                 request.Rq.PageIndex,
                 request.Rq.PageSize
             );
 
-            PagedResult<EnrollmentModel> result = await query.ExecuteWithOrderBy(_ => _.CreationTime);
+            PagedResult<CourseProgressModel> result = await query.ExecuteWithOrderBy(_ => _.CreationTime);
 
             return ToQueryResult(result);
         }
@@ -34,9 +34,9 @@ public class GetPagedEnrollmentsHandler : RequestHandler<GetPagedEnrollmentsQuer
     private Expression<Func<CourseProgress, bool>>? GetPredicate(GetPagedEnrollmentsQuery query)
     {
         if (query.Rq.CourseId is not null)
-            return _ => _.CourseId == query.Rq.CourseId;
+            return _ => _.CourseId == query.Rq.CourseId && !_.IsDeleted;
         if (query.Rq.IsGetEnrolledCourse == true)
-            return _ => _.CreatorId == query.UserId;
+            return _ => _.CreatorId == query.UserId && !_.IsDeleted;
         return _ => true;
     }
 }

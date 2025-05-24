@@ -151,8 +151,8 @@ public sealed class CourseMQService : MQApiClient, ICourseApiService
 
 
 
-    public async Task<Result<PagedResult<EnrollmentModel>>> GetPagedAsync(GetPagedEnrollmentsQuery query)
-        => await Send<GetPagedEnrollmentsQuery, PagedResult<EnrollmentModel>>(query);
+    public async Task<Result<PagedResult<CourseProgressModel>>> GetPagedAsync(GetPagedEnrollmentsQuery query)
+        => await Send<GetPagedEnrollmentsQuery, PagedResult<CourseProgressModel>>(query);
 
     public async Task<Result> CreateAsync(CreateEnrollmentCommand command)
         => await Send(command);

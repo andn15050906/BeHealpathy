@@ -3,7 +3,7 @@ using Contract.Responses.Courses;
 
 namespace Contract.Requests.Courses.EnrollmentRequests;
 
-public sealed class GetPagedEnrollmentsQuery : IRequest<Result<PagedResult<EnrollmentModel>>>
+public sealed class GetPagedEnrollmentsQuery : IRequest<Result<PagedResult<CourseProgressModel>>>
 {
     public QueryEnrollmentDto Rq { get; init; }
 
