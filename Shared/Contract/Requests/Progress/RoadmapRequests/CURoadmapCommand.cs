@@ -1,9 +1,10 @@
 ﻿using Contract.Domain.Shared.MultimediaBase;
 using Contract.Requests.Progress.RoadmapRequests.Dtos;
+using Contract.Responses.Progress;
 
 namespace Contract.Requests.Progress.RoadmapRequests;
 
-public sealed class CURoadmapCommand : IRequest<Result>
+public sealed class CURoadmapCommand : IRequest<Result<RoadmapModel>>
 {
     public Guid Id { get; init; }
     public bool IsCompensating { get; set; }

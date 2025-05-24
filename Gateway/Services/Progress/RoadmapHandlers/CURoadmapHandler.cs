@@ -2,26 +2,29 @@
 using Contract.Helpers;
 using Contract.Requests.Progress.RoadmapRequests;
 using Contract.Requests.Progress.RoadmapRequests.Dtos;
+using Contract.Responses.Progress;
 using Infrastructure.DataAccess.SQLServer.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Services.Progress.RoadmapHandlers;
 
 public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger)
-    : RequestHandler<CURoadmapCommand, HealpathyContext>(context, logger)
+    : RequestHandler<CURoadmapCommand, RoadmapModel, HealpathyContext>(context, logger)
 {
-    public override async Task<Result> Handle(CURoadmapCommand command, CancellationToken cancellationToken)
+    public override async Task<Result<RoadmapModel>> Handle(CURoadmapCommand command, CancellationToken cancellationToken)
     {
         try
         {
+            Roadmap? entity;
+
             if (command.Rq.Id is null)
             {
-                Roadmap entity = AddRoadmap(command);
+                entity = AddRoadmap(command);
                 await _context.Roadmaps.InsertExt(entity);
             }
             else
             {
-                Roadmap? entity = await _context.Roadmaps
+                entity = await _context.Roadmaps
                     .Include(_ => _.Phases).ThenInclude(_ => _.Milestones)
                     .Include(_ => _.Phases).ThenInclude(_ => _.Recommendations)
                     .AsSplitQuery()
@@ -32,8 +35,8 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
                 UpdateRoadmap(entity, command.Rq);
             }
 
-            await _context.SaveChangesAsync(cancellationToken);
-            return command.Rq.Id is null ? Created() : Ok();
+            await _context.SaveChangesAsync();
+            return command.Rq.Id is null ? Created() : Ok(RoadmapModel.MapExpression.Compile().Invoke(entity));
         }
         catch (Exception ex)
         {
@@ -72,10 +75,15 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
     {
         var phase = new RoadmapPhase
         {
-            Index = index,
             Title = dto.Title ?? string.Empty,
             Description = dto.Description,
+            Introduction = dto.Introduction,
+            Index = dto.Index ?? 0,
             TimeSpan = dto.TimeSpan ?? 0,
+
+            IsRequiredToAdvance = dto.IsRequiredToAdvance ?? false,
+            QuestionsToAdvance = dto.QuestionsToAdvance,
+            VideoUrl = dto.VideoUrl,
             Recommendations = []
         };
 
@@ -128,6 +136,20 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
             entity.Title = dto.Title;
         if (!string.IsNullOrEmpty(dto.IntroText) && dto.IntroText != entity.IntroText)
             entity.IntroText = dto.IntroText;
+        if (!string.IsNullOrEmpty(dto.Description) && dto.Description != entity.Description)
+            entity.Description = dto.Description;
+        if (!string.IsNullOrEmpty(dto.Category) && dto.Category != entity.Category)
+            entity.Category = dto.Category;
+        if (!string.IsNullOrEmpty(dto.Thumb?.Url) && dto.Thumb?.Url != entity.ThumbUrl)
+            entity.ThumbUrl = dto.Thumb?.Url ?? string.Empty;
+        if (dto.Price is not null)
+            entity.Price = dto.Price;
+        if (dto.Discount is not null)
+            entity.Discount = dto.Discount;
+        if (dto.DiscountExpiry is not null)
+            entity.DiscountExpiry = dto.DiscountExpiry;
+        if (dto.Coupons is not null)
+            entity.Coupons = dto.Coupons;
 
         entity.Phases.RemoveAll(phase => !dto.Phases.Any(_ => _.Id == phase.Id));
         foreach (var child in dto.Phases)
@@ -142,12 +164,17 @@ public sealed class CURoadmapHandler(HealpathyContext context, IAppLogger logger
 
     private static void UpdatePhase(RoadmapPhase entity, CURoadmapPhaseDto dto)
     {
-        entity.Index = dto.Index ?? 0;
         if (!string.IsNullOrEmpty(dto.Title) && dto.Title != entity.Title)
             entity.Title = dto.Title;
         if (!string.IsNullOrEmpty(dto.Description) && dto.Description != entity.Description)
             entity.Description = dto.Description;
+        if (!string.IsNullOrEmpty(dto.Introduction) && dto.Introduction != entity.Introduction)
+            entity.Introduction = dto.Introduction;
+        entity.Index = dto.Index ?? 0;
         entity.TimeSpan = dto.TimeSpan ?? 0;
+        entity.IsRequiredToAdvance = dto.IsRequiredToAdvance ?? false;
+        entity.QuestionsToAdvance = dto.QuestionsToAdvance;
+        entity.VideoUrl = dto.VideoUrl;
 
         entity.Milestones.RemoveAll(milestone => !dto.Recommendations.Any(_ => _.Id == milestone.Id));
         foreach (var child in dto.Recommendations)

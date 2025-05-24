@@ -13,5 +13,5 @@ public sealed class RoadmapPhaseModel
     public string QuestionsToAdvance { get; set; }          = string.Empty;
     public string VideoUrl { get; set; }                    = string.Empty;
 
-    public IEnumerable<RoadmapMilestoneModel> Milestones { get; set; }
+    public IEnumerable<RoadmapRecommendationModel> Recommendations { get; set; }
 }

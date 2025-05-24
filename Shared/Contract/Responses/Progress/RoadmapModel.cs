@@ -59,17 +59,20 @@ public sealed class RoadmapModel
                 QuestionsToAdvance = _.QuestionsToAdvance,
                 VideoUrl = _.VideoUrl,
 
-                Milestones = _.Milestones.Select(_ => new RoadmapMilestoneModel
+                Recommendations = _.Recommendations.Select(_ => new RoadmapRecommendationModel
                 {
                     Id = _.Id,
-
+                    RoadmapPhaseId = _.RoadmapPhaseId,
                     Title = _.Title,
-                    EventName = _.EventName,
                     Content = _.Content,
-
-                    IsCompleted = _.IsCompleted,
-                    IsSkipped = _.IsSkipped,
-                    Feedback = _.Feedback
+                    Description = _.Description,
+                    IsAction = _.IsAction,
+                    Duration = _.Duration,
+                    MoodTags = _.MoodTags,
+                    IsGeneralTip = _.IsGeneralTip,
+                    Source = _.Source,
+                    EntityType = _.EntityType,
+                    TargetEntityId = _.TargetEntityId
                 })
             })
         };
