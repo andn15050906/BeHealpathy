@@ -3,6 +3,7 @@ using Contract.Requests.Courses.EnrollmentRequests;
 using Contract.Requests.Courses.EnrollmentRequests.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gateway.Controllers.Courses;
 
@@ -26,6 +27,27 @@ public sealed class EnrollmentsController : ContractController
     {
         CreateEnrollmentCommand command = new(Guid.NewGuid(), dto, ClientId);
         return await Send(command);
+    }
+
+    [HttpPost("update-progress/{courseId}/{index}")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProgress(Guid courseId, int index, [FromServices] HealpathyContext context)
+    {
+        try
+        {
+            var progress = await context.CourseProgress.FirstOrDefaultAsync(_ => _.CourseId == courseId && _.CreatorId == ClientId && !_.IsDeleted);
+            if (progress is not null)
+            {
+                progress.CurrentIndex = index;
+            }
+
+            await context.SaveChangesAsync();
+            return Ok(progress);
+        }
+        catch (Exception ex)
+        {
+            return new JsonResult(ex.Message) { StatusCode = 500 };
+        }
     }
 
     [HttpDelete("{id}")]
