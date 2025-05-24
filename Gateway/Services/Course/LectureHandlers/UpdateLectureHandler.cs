@@ -34,13 +34,19 @@ public class UpdateLectureHandler : RequestHandler<UpdateLectureCommand, Healpat
 
     private void ApplyChanges(Lecture entity, UpdateLectureCommand command)
     {
-        entity.Title = command.Rq.Title ?? string.Empty;
-        entity.Content = command.Rq.Content ?? string.Empty;
-        entity.ContentSummary = command.Rq.ContentSummary ?? string.Empty;
+        if (command.Rq.Title is not null)
+            entity.Title = command.Rq.Title;
+        if (command.Rq.Content is not null)
+            entity.Content = command.Rq.Content;
+        if (command.Rq.ContentSummary is not null)
+            entity.ContentSummary = command.Rq.ContentSummary;
         entity.LastModificationTime = TimeHelper.Now;
 
-        entity.Index = command.Rq.Index ?? 0;
-        entity.LectureType = command.Rq.LectureType ?? string.Empty;
-        entity.MetaData = command.Rq.MetaData ?? string.Empty;
+        if (command.Rq.Index is not null)
+            entity.Index = (int)command.Rq.Index;
+        if (command.Rq.LectureType is not null)
+            entity.LectureType = command.Rq.LectureType;
+        if (command.Rq.MetaData is not null)
+            entity.MetaData = command.Rq.MetaData;
     }
 }
